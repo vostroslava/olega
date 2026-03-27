@@ -4,6 +4,11 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 
 const revealSelectors = ".reveal";
+const assetBasePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
+function assetPath(path: string) {
+  return `${assetBasePath}${path}`;
+}
 
 export function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -150,7 +155,7 @@ export function HomePage() {
 
                 <div className="hero-media">
                   <Image
-                    src="/assets/hero-architecture.svg"
+                    src={assetPath("/assets/hero-architecture.svg")}
                     alt="Современный дом с панорамным остеклением и алюминиевыми фасадными системами"
                     fill
                     priority
@@ -335,7 +340,7 @@ export function HomePage() {
               <div className="project-grid">
                 {[
                   {
-                    image: "/assets/case-avenue.svg",
+                    image: assetPath("/assets/case-avenue.svg"),
                     alt: "ТЦ Авеню с фасадным остеклением",
                     tag: "Торговый объект",
                     title: "ТЦ «Авеню»",
@@ -343,7 +348,7 @@ export function HomePage() {
                     note: "Фасад, атриум, витражи",
                   },
                   {
-                    image: "/assets/case-euromedica.svg",
+                    image: assetPath("/assets/case-euromedica.svg"),
                     alt: "Медицинский центр с современным остеклением",
                     tag: "Медицинский комплекс",
                     title: "МЦ «Евромедика»",
@@ -351,7 +356,7 @@ export function HomePage() {
                     note: "2019–2020 · алюминий и стекло",
                   },
                   {
-                    image: "/assets/case-arbat.svg",
+                    image: assetPath("/assets/case-arbat.svg"),
                     alt: "ТЦ Арбат с витражными вставками и фасадным остеклением",
                     tag: "Коммерческая недвижимость",
                     title: "ТЦ «Арбат»",
