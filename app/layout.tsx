@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
 import { Inter, Manrope } from "next/font/google";
+import { StructuredData } from "@/components/seo/structured-data";
+import {
+  createOrganizationStructuredData,
+  createWebsiteStructuredData,
+} from "@/lib/seo";
+import { siteConfig } from "@/lib/site-config";
 import "./globals.css";
 
 const inter = Inter({
@@ -15,15 +21,36 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "СтеклоСтройГрупп | Фасады, окна и остекление под ключ",
-  description:
-    "Производство и монтаж окон ПВХ, алюминиевых дверей, фасадных систем, витражей и панорамного остекления по всей Беларуси.",
+  metadataBase: new URL(siteConfig.siteUrl),
+  title: {
+    default: siteConfig.defaultTitle,
+    template: siteConfig.titleTemplate,
+  },
+  description: siteConfig.defaultDescription,
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "СтеклоСтройГрупп | Фасады, окна и остекление под ключ",
-    description:
-      "Производство и монтаж окон ПВХ, алюминиевых дверей, фасадных систем, витражей и панорамного остекления по всей Беларуси.",
+    title: siteConfig.defaultTitle,
+    description: siteConfig.defaultDescription,
     type: "website",
-    locale: "ru_BY",
+    locale: siteConfig.locale,
+    siteName: siteConfig.companyName,
+    url: "/",
+    images: [
+      {
+        url: siteConfig.ogImage,
+        width: 1200,
+        height: 630,
+        alt: siteConfig.companyName,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.defaultTitle,
+    description: siteConfig.defaultDescription,
+    images: [siteConfig.ogImage],
   },
 };
 
@@ -34,7 +61,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru" className={`${inter.variable} ${manrope.variable}`}>
-      <body>{children}</body>
+      <body>
+        <StructuredData data={createOrganizationStructuredData()} />
+        <StructuredData data={createWebsiteStructuredData()} />
+        {children}
+      </body>
     </html>
   );
 }

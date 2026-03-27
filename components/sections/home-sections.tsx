@@ -27,7 +27,7 @@ type RequestSectionProps = {
   defaultProduct?: string;
 };
 
-function SectionHeading({
+export function SectionHeading({
   eyebrow,
   title,
   description,
@@ -41,6 +41,54 @@ function SectionHeading({
       <p className="eyebrow">{eyebrow}</p>
       <h2>{title}</h2>
       {description ? <p>{description}</p> : null}
+    </div>
+  );
+}
+
+export function MetricsBand() {
+  return (
+    <div className="trust-bar reveal reveal-delay">
+      {TRUST_METRICS.map(([value, label]) => (
+        <article key={value}>
+          <strong>{value}</strong>
+          <span>{label}</span>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+export function ProjectsGrid({
+  projects = PROJECTS,
+}: {
+  projects?: typeof PROJECTS;
+}) {
+  return (
+    <div className="project-grid">
+      {projects.map((item) => (
+        <article className="project-card reveal" key={item.id}>
+          <div className="project-image">
+            <Image
+              src={assetPath(item.image)}
+              alt={item.alt}
+              fill
+              sizes="(max-width: 1180px) 100vw, 33vw"
+            />
+          </div>
+          <div className="project-body">
+            <p className="card-tag">{item.tag}</p>
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+            <strong>{item.note}</strong>
+            <div className="project-link-stack">
+              <Link href={`/proekty/${item.slug}/`}>Подробнее о проекте</Link>
+              <Link href={`/uslugi/${item.relatedServiceSlug}/`}>
+                Похожая услуга: {item.relatedServiceLabel}
+              </Link>
+            </div>
+          </div>
+        </article>
+      ))}
     </div>
   );
 }
@@ -90,14 +138,7 @@ export function HeroSection() {
           </div>
         </div>
 
-        <div className="trust-bar reveal reveal-delay">
-          {TRUST_METRICS.map(([value, label]) => (
-            <article key={value}>
-              <strong>{value}</strong>
-              <span>{label}</span>
-            </article>
-          ))}
-        </div>
+        <MetricsBand />
       </div>
     </section>
   );
@@ -191,32 +232,14 @@ export function ProjectsSection() {
           description="В макете кейсы показаны как крупные объектные карточки, а не как мелкий список без визуальной ценности."
         />
 
-        <div className="project-grid">
-          {PROJECTS.map((item) => (
-            <article className="project-card reveal" key={item.id}>
-              <div className="project-image">
-                <Image
-                  src={assetPath(item.image)}
-                  alt={item.alt}
-                  fill
-                  sizes="(max-width: 1180px) 100vw, 33vw"
-                />
-              </div>
-              <div className="project-body">
-                <p className="card-tag">{item.tag}</p>
-                <h3>{item.title}</h3>
-                <p>{item.text}</p>
-                <strong>{item.note}</strong>
-              </div>
-            </article>
-          ))}
-        </div>
+        <ProjectsGrid />
 
         <div className="quote-banner reveal">
           <p>
             Сайт должен показывать не просто конструкции, а масштаб объектов и то, как компания
             справляется с ними под ключ.
           </p>
+          <Link href="/proekty/">Открыть все проекты</Link>
         </div>
       </div>
     </section>

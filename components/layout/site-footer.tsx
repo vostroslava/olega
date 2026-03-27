@@ -32,6 +32,11 @@ export function SiteFooter() {
               {product.title}
             </Link>
           ))}
+          <Link href="/uslugi/">Все услуги</Link>
+          <Link href="/proekty/">Все проекты</Link>
+          <Link href="/o-kompanii/">О компании</Link>
+          <Link href="/partneram/">Партнёрам</Link>
+          <Link href="/kontakty/">Контакты</Link>
         </div>
 
         <div className="footer-column">

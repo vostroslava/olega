@@ -12,6 +12,7 @@ URL после включения Pages:
 - корректный `basePath` для project pages `/olega`
 - отключена `next/image`-оптимизация для статического хостинга
 - workflow автодеплоя в `.github/workflows/deploy-pages.yml`
+- форма поддерживает внешний статический endpoint через `NEXT_PUBLIC_FORM_ENDPOINT`
 
 Что нужно сделать в GitHub:
 
@@ -20,6 +21,17 @@ URL после включения Pages:
 3. В поле `Source` выбрать `GitHub Actions`
 4. Сохранить настройки
 5. Запушить изменения в `main` или вручную запустить workflow `Deploy GitHub Pages`
+
+Как включить реальную отправку формы:
+
+1. Подключить внешний статический form service, например `Formspree`
+2. Получить endpoint вида `https://formspree.io/f/xxxxxxx`
+3. Открыть `Settings -> Secrets and variables -> Actions -> Variables`
+4. Создать переменную `NEXT_PUBLIC_FORM_ENDPOINT`
+5. Вставить туда endpoint формы
+6. Запустить новый деплой
+
+Если переменная не задана, сайт автоматически использует fallback через `mailto:`
 
 Как проверить локально:
 

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { StructuredData } from "@/components/seo/structured-data";
 import { SiteHeader } from "@/components/layout/site-header";
 import { FaqSection, ProcessSection, RequestSection } from "@/components/sections/home-sections";
 import { MobileCta } from "@/components/ui/mobile-cta";
@@ -10,6 +11,10 @@ import {
   PROCESS_STEPS,
   ServicePageData,
 } from "@/lib/site-data";
+import {
+  createBreadcrumbStructuredData,
+  createServiceStructuredData,
+} from "@/lib/seo";
 import { assetPath } from "@/lib/site-utils";
 
 type ServicePageProps = {
@@ -18,9 +23,24 @@ type ServicePageProps = {
 
 export function ServicePage({ service }: ServicePageProps) {
   const relatedProjects = getProjectsByIds(service.relatedProjectIds);
+  const servicePath = `/uslugi/${service.slug}/`;
 
   return (
     <div className="page-shell">
+      <StructuredData
+        data={createBreadcrumbStructuredData([
+          { name: "Главная", path: "/" },
+          { name: "Услуги", path: "/uslugi/" },
+          { name: service.title, path: servicePath },
+        ])}
+      />
+      <StructuredData
+        data={createServiceStructuredData({
+          name: service.title,
+          description: service.lead,
+          path: servicePath,
+        })}
+      />
       <SiteHeader />
 
       <main className="page-main">

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ServicePage } from "@/components/service-page";
 import { getServiceBySlug, SERVICE_PAGES } from "@/lib/site-data";
+import { buildPageMetadata } from "@/lib/seo";
 
 type ServiceRouteProps = {
   params: Promise<{
@@ -23,16 +24,11 @@ export async function generateMetadata({ params }: ServiceRouteProps): Promise<M
     return {};
   }
 
-  return {
-    title: `${service.title} | СтеклоСтройГрупп`,
+  return buildPageMetadata({
+    title: service.title,
     description: service.lead,
-    openGraph: {
-      title: `${service.title} | СтеклоСтройГрупп`,
-      description: service.lead,
-      type: "website",
-      locale: "ru_BY",
-    },
-  };
+    path: `/uslugi/${service.slug}/`,
+  });
 }
 
 export default async function ServiceRoutePage({ params }: ServiceRouteProps) {
