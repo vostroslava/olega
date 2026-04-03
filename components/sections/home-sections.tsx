@@ -125,8 +125,8 @@ export function HeroSection() {
 
           <div className="hero-media">
             <Image
-              src={assetPath("/assets/hero-architecture.svg")}
-              alt="Современный дом с панорамным остеклением и алюминиевыми фасадными системами"
+              src={assetPath("/assets/photos/hero-company-facade.png")}
+              alt="Современный коммерческий объект с фасадным остеклением"
               fill
               priority
               sizes="(max-width: 860px) 100vw, 56vw"
@@ -183,7 +183,14 @@ export function ProductsSection() {
         <div className="product-grid">
           {PRODUCTS.map((item) => (
             <article className="product-card reveal" key={item.slug}>
-              <div className={`product-visual ${item.visual}`} />
+              <div className="product-visual">
+                <Image
+                  src={assetPath(item.image)}
+                  alt={item.alt}
+                  fill
+                  sizes="(max-width: 1180px) 100vw, 33vw"
+                />
+              </div>
               <p className="card-tag">{item.tag}</p>
               <h3>{item.title}</h3>
               <p>{item.text}</p>
@@ -207,6 +214,15 @@ export function StandardsSection() {
             Собственное производство, конструкторское бюро, монтажные бригады и сервис после сдачи
             объекта. Именно это и должен показывать сайт.
           </p>
+
+          <div className="standards-photo">
+            <Image
+              src={assetPath("/assets/photos/company-production.png")}
+              alt="Производственный цех СтеклоСтройГрупп"
+              fill
+              sizes="(max-width: 1180px) 100vw, 42vw"
+            />
+          </div>
         </div>
 
         <div className="standards-grid">

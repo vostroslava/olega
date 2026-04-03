@@ -526,11 +526,16 @@ p {
 }
 
 .product-visual {
+  position: relative;
   height: 11rem;
   margin-bottom: 1rem;
   border-radius: 18px;
   border: 1px solid rgba(28, 28, 30, 0.06);
   overflow: hidden;
+}
+
+.product-visual img {
+  object-fit: cover;
 }
 
 .product-visual-window {
@@ -585,6 +590,19 @@ p {
 .standards-grid strong,
 .standards-grid p {
   color: #fff;
+}
+
+.standards-photo {
+  position: relative;
+  min-height: 18rem;
+  margin-top: 0.4rem;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.standards-photo img {
+  object-fit: cover;
 }
 
 .standards-grid {

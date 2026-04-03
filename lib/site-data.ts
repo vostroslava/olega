@@ -6,6 +6,8 @@ export type NavItem = {
 export type Product = {
   slug: string;
   visual: string;
+  image: string;
+  alt: string;
   tag: string;
   title: string;
   text: string;
@@ -122,6 +124,8 @@ export const PRODUCTS: Product[] = [
   {
     slug: "okna-pvh",
     visual: "product-visual-window",
+    image: "/assets/photos/product-window.png",
+    alt: "Белые окна ПВХ в светлом интерьере",
     tag: "Частные дома и квартиры",
     title: "Окна ПВХ",
     text: "Энергоэффективные решения для жилых объектов с акцентом на тепло и шумоизоляцию.",
@@ -130,6 +134,8 @@ export const PRODUCTS: Product[] = [
   {
     slug: "alyuminievye-sistemy",
     visual: "product-visual-aluminium",
+    image: "/assets/photos/product-aluminium-door.png",
+    alt: "Белая алюминиевая дверь со стеклянными вставками",
     tag: "Для домов и коммерции",
     title: "Алюминиевые системы",
     text: "Современные окна и двери для проектов, где важны геометрия, долговечность и дизайн.",
@@ -138,6 +144,8 @@ export const PRODUCTS: Product[] = [
   {
     slug: "fasady-i-vitrazhi",
     visual: "product-visual-facade",
+    image: "/assets/photos/project-avenue.png",
+    alt: "Фасад коммерческого объекта Авеню",
     tag: "Коммерческие объекты",
     title: "Фасады и витражи",
     text: "Фасадное остекление, атриумы и витражные конструкции для ТЦ, офисов и медцентров.",
@@ -146,6 +154,8 @@ export const PRODUCTS: Product[] = [
   {
     slug: "panoramnoe-osteklenie",
     visual: "product-visual-panoramic",
+    image: "/assets/photos/hero-company-facade.png",
+    alt: "Современный объект с панорамным фасадным остеклением",
     tag: "Частные и mixed-use объекты",
     title: "Панорамное остекление",
     text: "Большие светопрозрачные плоскости для домов, террас, салонов и входных групп.",
@@ -154,6 +164,8 @@ export const PRODUCTS: Product[] = [
   {
     slug: "peregorodki-i-vkhodnye-gruppy",
     visual: "product-visual-entrance",
+    image: "/assets/photos/product-partitions.png",
+    alt: "Стеклянные перегородки и двери в офисном пространстве",
     tag: "Офисы и общественные пространства",
     title: "Перегородки и входные группы",
     text: "Потоки людей, свет и визуальная чистота в одном конструктиве.",
@@ -162,6 +174,8 @@ export const PRODUCTS: Product[] = [
   {
     slug: "zimnie-sady",
     visual: "product-visual-garden",
+    image: "/assets/photos/product-winter-garden.png",
+    alt: "Зимний сад с алюминиевым каркасом и большим количеством стекла",
     tag: "Нестандартные проекты",
     title: "Зимние сады и нестандартные решения",
     text: "Индивидуальные проекты с визуализацией, подбором систем и монтажом под объект.",
@@ -192,7 +206,7 @@ export const PROJECTS: Project[] = [
   {
     id: "avenue",
     slug: "tc-avenyu",
-    image: "/assets/case-avenue.svg",
+    image: "/assets/photos/project-avenue.png",
     alt: "ТЦ Авеню с фасадным остеклением",
     tag: "Торговый объект",
     title: "ТЦ «Авеню»",
@@ -221,7 +235,7 @@ export const PROJECTS: Project[] = [
   {
     id: "euromedica",
     slug: "mc-evromedika",
-    image: "/assets/case-euromedica.svg",
+    image: "/assets/photos/project-euromedica.png",
     alt: "Медицинский центр с современным остеклением",
     tag: "Медицинский комплекс",
     title: "МЦ «Евромедика»",
@@ -250,7 +264,7 @@ export const PROJECTS: Project[] = [
   {
     id: "arbat",
     slug: "tc-arbat",
-    image: "/assets/case-arbat.svg",
+    image: "/assets/photos/project-arbat.png",
     alt: "ТЦ Арбат с витражными вставками и фасадным остеклением",
     tag: "Коммерческая недвижимость",
     title: "ТЦ «Арбат»",
