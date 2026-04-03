@@ -6,6 +6,7 @@ import {
   HERO_CLIENT_MARKS,
   HOME_FAQ,
   PARTNER_BENEFITS,
+  OPERATIONS_GALLERY,
   PROCESS_STEPS,
   PRODUCTS,
   PROJECTS,
@@ -281,6 +282,46 @@ export function TrustSection() {
               <span className="testimonial-mark">Почему это важно</span>
               <h3>{item.title}</h3>
               <p>{item.text}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function OperationsSection({
+  eyebrow = "Как выглядит работа",
+  title = "Производство, выезд, логистика и сопровождение проекта",
+  description = "Показываем не абстрактный сервис, а реальные рабочие процессы, которые удалось достать со старого сайта: объект, команда, комплектующие, доставка и внутренняя стеклянная архитектура.",
+}: {
+  eyebrow?: string;
+  title?: string;
+  description?: string;
+}) {
+  return (
+    <section className="section operations-proof">
+      <div className="container">
+        <SectionHeading eyebrow={eyebrow} title={title} description={description} />
+
+        <div className="operations-grid">
+          {OPERATIONS_GALLERY.map((item, index) => (
+            <article
+              className={`operation-card reveal ${index % 3 === 1 ? "reveal-delay" : index % 3 === 2 ? "reveal-delay-2" : ""}`}
+              key={item.title}
+            >
+              <div className="operation-image">
+                <Image
+                  src={assetPath(item.image)}
+                  alt={item.alt}
+                  fill
+                  sizes="(max-width: 1180px) 100vw, 33vw"
+                />
+              </div>
+              <div className="operation-copy">
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+              </div>
             </article>
           ))}
         </div>

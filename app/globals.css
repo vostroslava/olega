@@ -828,6 +828,37 @@ p {
   box-shadow: var(--shadow-md);
 }
 
+.operations-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.operation-card {
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.78));
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow: var(--shadow-md);
+}
+
+.operation-image {
+  position: relative;
+  min-height: 15rem;
+}
+
+.operation-image img {
+  object-fit: cover;
+}
+
+.operation-copy {
+  padding: 1.35rem;
+}
+
+.operation-copy h3 {
+  margin-bottom: 0.8rem;
+}
+
 .testimonial-card {
   position: relative;
 }
@@ -1702,6 +1733,7 @@ p {
   .footer-grid,
   .product-grid,
   .project-grid,
+  .operations-grid,
   .document-grid,
   .project-detail-grid,
   .partners-grid,

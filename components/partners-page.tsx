@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { StructuredData } from "@/components/seo/structured-data";
 import {
   MetricsBand,
+  OperationsSection,
   RequestSection,
   SectionHeading,
 } from "@/components/sections/home-sections";
@@ -115,6 +116,12 @@ export function PartnersPage() {
             </div>
           </div>
         </section>
+
+        <OperationsSection
+          eyebrow="Как выглядит сопровождение"
+          title="То, что партнёр получает помимо коммерческого предложения"
+          description="Со старого сайта добрали рабочие материалы: выезд на объект, консультации, комплектующие, логистику и реальные зоны применения. Это лучше показывает зрелость подрядчика, чем придуманные отзывы."
+        />
 
         <section className="section">
           <div className="container">

@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import {
   FaqSection,
   HeroSection,
+  OperationsSection,
   PartnersSection,
   ProcessSection,
   ProductsSection,
@@ -30,6 +31,7 @@ export function HomePage() {
         <ProductsSection />
         <StandardsSection />
         <TrustSection />
+        <OperationsSection />
         <ProjectsSection />
         <ProcessSection />
         <PartnersSection />

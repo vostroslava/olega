@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { StructuredData } from "@/components/seo/structured-data";
 import {
   MetricsBand,
+  OperationsSection,
   ProcessSection,
   RequestSection,
   SectionHeading,
@@ -115,6 +116,12 @@ export function AboutPage() {
             </div>
           </div>
         </section>
+
+        <OperationsSection
+          eyebrow="Что видно по компании"
+          title="Не только фасады на рендерах, но и реальная рабочая среда"
+          description="Со старого сайта забрали рабочие фото: объектный выезд, комплектующие, логистику, внутренние зоны и консультации. Это честный материал, который лучше фейковых отзывов показывает уровень компании."
+        />
 
         <ProcessSection />
 
