@@ -18,6 +18,7 @@ import {
 } from "@/lib/site-data";
 import {
   createBreadcrumbStructuredData,
+  createFaqStructuredData,
   createServiceStructuredData,
 } from "@/lib/seo";
 
@@ -45,6 +46,7 @@ export function ServicePage({ service }: ServicePageProps) {
           path: servicePath,
         })}
       />
+      <StructuredData data={createFaqStructuredData(service.faq)} />
       <SiteHeader />
 
       <main className="page-main">

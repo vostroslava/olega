@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { siteConfig } from "@/lib/site-config";
+import { CONTACTS } from "@/lib/site-data";
 
 type BuildPageMetadataArgs = {
   title: string;
@@ -69,6 +70,8 @@ export function createOrganizationStructuredData() {
     legalName: siteConfig.legalName,
     url: siteConfig.siteUrl,
     logo: `${siteConfig.siteUrl}${siteConfig.ogImage}`,
+    email: CONTACTS.primaryEmail,
+    telephone: CONTACTS.phones.map((item) => item.label),
     address: {
       "@type": "PostalAddress",
       streetAddress: "пер. Коммунистический, д. 2, оф. 5",
@@ -86,6 +89,26 @@ export function createWebsiteStructuredData() {
     name: siteConfig.companyName,
     url: siteConfig.siteUrl,
     inLanguage: "ru-BY",
+  };
+}
+
+type FaqStructuredDataItem = {
+  question: string;
+  answer: string;
+};
+
+export function createFaqStructuredData(items: FaqStructuredDataItem[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
   };
 }
 

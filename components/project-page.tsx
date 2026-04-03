@@ -21,6 +21,16 @@ export function ProjectPage({ project }: ProjectPageProps) {
   const relatedProjects = PROJECTS.filter((item) => item.id !== project.id).slice(0, 2);
   const projectPath = `/proekty/${project.slug}/`;
   const keyFacts = [project.location, project.timeline, project.area].filter(Boolean) as string[];
+  const currentIndex = PROJECTS.findIndex((item) => item.id === project.id);
+  const previousProject = currentIndex > 0 ? PROJECTS[currentIndex - 1] : null;
+  const nextProject =
+    currentIndex >= 0 && currentIndex < PROJECTS.length - 1 ? PROJECTS[currentIndex + 1] : null;
+  const factCards = [
+    { label: "Локация", value: project.location },
+    { label: "Период", value: project.timeline ?? "Поэтапная реализация" },
+    { label: "Масштаб", value: project.area },
+    { label: "Направление", value: project.relatedServiceLabel },
+  ];
 
   return (
     <div className="page-shell">
@@ -102,6 +112,18 @@ export function ProjectPage({ project }: ProjectPageProps) {
                 </div>
               </div>
             </div>
+
+            <div className="project-facts-grid">
+              {factCards.map((item, index) => (
+                <article
+                  className={`project-fact-card reveal ${index === 1 ? "reveal-delay" : index === 2 ? "reveal-delay-2" : ""}`}
+                  key={item.label}
+                >
+                  <span>{item.label}</span>
+                  <strong>{item.value}</strong>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -156,6 +178,22 @@ export function ProjectPage({ project }: ProjectPageProps) {
 
         <section className="section project-links">
           <div className="container">
+            <div className="project-navigation reveal">
+              <Link href="/proekty/">Назад ко всем кейсам</Link>
+              <div className="project-navigation-links">
+                {previousProject ? (
+                  <Link href={`/proekty/${previousProject.slug}/`}>
+                    Предыдущий: {previousProject.title}
+                  </Link>
+                ) : null}
+                {nextProject ? (
+                  <Link href={`/proekty/${nextProject.slug}/`}>
+                    Следующий: {nextProject.title}
+                  </Link>
+                ) : null}
+              </div>
+            </div>
+
             <div className="service-crosslinks">
               <article className="partner-card reveal">
                 <h3>Связанная услуга</h3>

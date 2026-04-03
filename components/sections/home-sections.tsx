@@ -3,6 +3,7 @@ import Link from "next/link";
 import {
   CONTACTS,
   HERO_PROOF,
+  HERO_CLIENT_MARKS,
   HOME_FAQ,
   PARTNER_BENEFITS,
   PROCESS_STEPS,
@@ -16,6 +17,7 @@ import {
 } from "@/lib/site-data";
 import { assetPath } from "@/lib/site-utils";
 import { RequestForm } from "@/components/ui/request-form";
+import { QuickEstimate } from "@/components/ui/quick-estimate";
 
 type FaqItem = {
   question: string;
@@ -123,6 +125,15 @@ export function HeroSection() {
                 <li key={item}>{item}</li>
               ))}
             </ul>
+
+            <div className="hero-social-proof">
+              <span>Уже работали с объектами такого уровня</span>
+              <div className="hero-chip-strip">
+                {HERO_CLIENT_MARKS.map((item) => (
+                  <strong key={item}>{item}</strong>
+                ))}
+              </div>
+            </div>
           </div>
 
           <div className="hero-media">
@@ -141,6 +152,22 @@ export function HeroSection() {
         </div>
 
         <MetricsBand />
+      </div>
+    </section>
+  );
+}
+
+export function QuickEstimateSection() {
+  return (
+    <section className="section estimate" id="quick-estimate">
+      <div className="container">
+        <SectionHeading
+          eyebrow="Быстрый ориентир"
+          title="Поймите формат проекта ещё до звонка"
+          description="Это не финальное коммерческое предложение, а быстрый способ понять, насколько запрос типовой, нужен ли выезд на объект и как быстро вернёмся с расчётом."
+        />
+
+        <QuickEstimate />
       </div>
     </section>
   );

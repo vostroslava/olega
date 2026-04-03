@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { CONTACTS } from "@/lib/site-data";
 
 type MobileCtaProps = {
   heroId: string;
@@ -45,9 +46,14 @@ export function MobileCta({ heroId, requestId, href, label }: MobileCtaProps) {
 
   return (
     <div className={`mobile-cta ${visible ? "is-visible" : ""}`} id="mobile-cta">
-      <a className="button button-primary button-full" href={href}>
-        {label}
-      </a>
+      <div className="mobile-cta-inner">
+        <a className="button button-secondary" href={CONTACTS.phones[0].href}>
+          Позвонить
+        </a>
+        <a className="button button-primary" href={href}>
+          {label}
+        </a>
+      </div>
     </div>
   );
 }
