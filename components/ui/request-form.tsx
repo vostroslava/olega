@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { CONTACTS, REQUEST_OPTIONS } from "@/lib/site-data";
 
 type RequestFormProps = {
@@ -19,6 +19,9 @@ export function RequestForm({ defaultProduct }: RequestFormProps) {
   );
   const [noteSuccess, setNoteSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(REQUEST_OPTIONS[0]);
+  const [isProductMenuOpen, setIsProductMenuOpen] = useState(false);
+  const selectRef = useRef<HTMLDivElement | null>(null);
 
   const initialProduct = useMemo(() => {
     if (defaultProduct && REQUEST_OPTIONS.includes(defaultProduct)) {
@@ -27,6 +30,21 @@ export function RequestForm({ defaultProduct }: RequestFormProps) {
 
     return REQUEST_OPTIONS[0];
   }, [defaultProduct]);
+
+  useEffect(() => {
+    setSelectedProduct(initialProduct);
+  }, [initialProduct]);
+
+  useEffect(() => {
+    function handlePointerDown(event: MouseEvent) {
+      if (!selectRef.current?.contains(event.target as Node)) {
+        setIsProductMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handlePointerDown);
+    return () => document.removeEventListener("mousedown", handlePointerDown);
+  }, []);
 
   const fallbackToMail = ({
     name,
@@ -71,7 +89,7 @@ export function RequestForm({ defaultProduct }: RequestFormProps) {
     const company = formData.get("company")?.toString().trim() || "";
     const name = formData.get("name")?.toString().trim() || "";
     const phone = formData.get("phone")?.toString().trim() || "";
-    const product = formData.get("product")?.toString().trim() || "";
+    const product = selectedProduct;
     const message = formData.get("message")?.toString().trim() || "";
     const consent = formData.get("consent") === "on";
 
@@ -171,13 +189,43 @@ export function RequestForm({ defaultProduct }: RequestFormProps) {
       </label>
       <label>
         <span>Тип запроса</span>
-        <select name="product" defaultValue={initialProduct}>
-          {REQUEST_OPTIONS.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
+        <div className="custom-select" ref={selectRef}>
+          <input type="hidden" name="product" value={selectedProduct} />
+          <button
+            className={`custom-select-trigger ${isProductMenuOpen ? "is-open" : ""}`}
+            type="button"
+            aria-haspopup="listbox"
+            aria-expanded={isProductMenuOpen}
+            onClick={() => setIsProductMenuOpen((open) => !open)}
+          >
+            <span>{selectedProduct}</span>
+            <span className="custom-select-arrow" aria-hidden="true">
+              ▾
+            </span>
+          </button>
+
+          <div className={`custom-select-menu ${isProductMenuOpen ? "is-open" : ""}`} role="listbox">
+            {REQUEST_OPTIONS.map((option) => {
+              const isSelected = option === selectedProduct;
+
+              return (
+                <button
+                  key={option}
+                  className={`custom-select-option ${isSelected ? "is-selected" : ""}`}
+                  type="button"
+                  role="option"
+                  aria-selected={isSelected}
+                  onClick={() => {
+                    setSelectedProduct(option);
+                    setIsProductMenuOpen(false);
+                  }}
+                >
+                  {option}
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </label>
       <label>
         <span>Комментарий</span>

@@ -312,7 +312,8 @@ p {
 .button:focus-visible,
 .site-nav .nav-cta:focus-visible,
 .request-form input:focus-visible,
-.request-form select:focus-visible,
+.custom-select-trigger:focus-visible,
+.custom-select-option:focus-visible,
 .request-form textarea:focus-visible,
 .faq-item summary:focus-visible {
   outline: 3px solid rgba(200, 169, 110, 0.45);
@@ -907,7 +908,6 @@ p {
 }
 
 .request-form input,
-.request-form select,
 .request-form textarea {
   width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -926,6 +926,77 @@ p {
 .request-form textarea {
   resize: vertical;
   min-height: 7rem;
+}
+
+.custom-select {
+  position: relative;
+}
+
+.custom-select-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.92rem 1rem;
+  color: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.custom-select-trigger.is-open {
+  border-color: rgba(200, 169, 110, 0.55);
+}
+
+.custom-select-arrow {
+  flex: 0 0 auto;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.9rem;
+  transition: transform 180ms ease;
+}
+
+.custom-select-trigger.is-open .custom-select-arrow {
+  transform: rotate(180deg);
+}
+
+.custom-select-menu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 0.55rem);
+  z-index: 12;
+  display: none;
+  padding: 0.45rem;
+  border-radius: 14px;
+  background: #2a2a2d;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+}
+
+.custom-select-menu.is-open {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.custom-select-option {
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  padding: 0.9rem 0.95rem;
+  color: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.custom-select-option:hover,
+.custom-select-option.is-selected {
+  background: rgba(200, 169, 110, 0.18);
 }
 
 .checkbox-field {
