@@ -31,6 +31,7 @@ type RequestSectionProps = {
   title?: string;
   description?: string;
   defaultProduct?: string;
+  showEstimate?: boolean;
 };
 
 export function SectionHeading({
@@ -154,22 +155,6 @@ export function HeroSection() {
         </div>
 
         <MetricsBand />
-      </div>
-    </section>
-  );
-}
-
-export function QuickEstimateSection() {
-  return (
-    <section className="section estimate" id="quick-estimate">
-      <div className="container">
-        <SectionHeading
-          eyebrow="Быстрый ориентир"
-          title="Поймите формат проекта ещё до звонка"
-          description="Это не финальное коммерческое предложение, а быстрый способ понять, насколько запрос типовой, нужен ли выезд на объект и как быстро вернёмся с расчётом."
-        />
-
-        <QuickEstimate />
       </div>
     </section>
   );
@@ -473,10 +458,11 @@ export function RequestSection({
   title = "Получить расчёт и консультацию по объекту",
   description = "Оставьте имя, телефон, тип запроса и короткое описание объекта. Технические детали уточним уже на следующем касании.",
   defaultProduct,
+  showEstimate = false,
 }: RequestSectionProps) {
   return (
     <section className="section request" id="request">
-      <div className="container request-shell">
+      <div className={`container request-shell ${showEstimate ? "request-shell-extended" : ""}`}>
         <div className="request-copy reveal">
           <p className="eyebrow">{eyebrow}</p>
           <h2>{title}</h2>
@@ -497,7 +483,25 @@ export function RequestSection({
           </div>
         </div>
 
-        <RequestForm defaultProduct={defaultProduct} />
+        {showEstimate ? (
+          <div className="request-tools">
+            <div className="request-estimate">
+              <div className="request-estimate-copy reveal">
+                <p className="eyebrow">Быстрый ориентир</p>
+                <h3>Сначала быстро поймите формат задачи</h3>
+                <p>
+                  Это не коммерческое предложение, а короткий ориентир перед отправкой формы:
+                  насколько запрос типовой, нужен ли выезд и как лучше зайти в расчёт.
+                </p>
+              </div>
+              <QuickEstimate />
+            </div>
+
+            <RequestForm defaultProduct={defaultProduct} />
+          </div>
+        ) : (
+          <RequestForm defaultProduct={defaultProduct} />
+        )}
       </div>
     </section>
   );

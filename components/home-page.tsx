@@ -10,7 +10,6 @@ import {
   ProcessSection,
   ProductsSection,
   ProjectsSection,
-  QuickEstimateSection,
   RequestSection,
   StandardsSection,
   TrustSection,
@@ -28,7 +27,6 @@ export function HomePage() {
 
       <main id="top">
         <HeroSection />
-        <QuickEstimateSection />
         <ProductsSection />
         <StandardsSection />
         <TrustSection />
@@ -38,7 +36,7 @@ export function HomePage() {
         <ProcessSection />
         <PartnersSection />
         <FaqSection />
-        <RequestSection />
+        <RequestSection showEstimate />
       </main>
 
       <SiteFooter />
