@@ -13,6 +13,7 @@ import {
   RequestSection,
   StandardsSection,
   TrustSection,
+  WindowAssemblySection,
 } from "@/components/sections/home-sections";
 import { MobileCta } from "@/components/ui/mobile-cta";
 import { RevealInit } from "@/components/ui/reveal-init";
@@ -29,6 +30,7 @@ export function HomePage() {
         <HeroSection />
         <ProductsSection />
         <StandardsSection />
+        <WindowAssemblySection />
         <TrustSection />
         <DocumentsSection />
         <OperationsSection />

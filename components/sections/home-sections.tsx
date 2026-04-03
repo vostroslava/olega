@@ -20,6 +20,7 @@ import {
 import { assetPath } from "@/lib/site-utils";
 import { RequestForm } from "@/components/ui/request-form";
 import { QuickEstimate } from "@/components/ui/quick-estimate";
+import { WindowAssemblySequence } from "@/components/ui/window-assembly-sequence";
 
 type FaqItem = {
   question: string;
@@ -282,6 +283,54 @@ export function TrustSection() {
             </p>
           </div>
           <Link href="/o-kompanii/#documents">Перейти к документам</Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function WindowAssemblySection() {
+  return (
+    <section className="section assembly-section" id="window-assembly">
+      <div className="container assembly-shell">
+        <div className="assembly-copy reveal">
+          <p className="eyebrow">Окно как система</p>
+          <h2>Показываем конструкцию по слоям, а не обещаем абстрактное качество</h2>
+          <p>
+            В этой сцене окно собирается на одной оси: профиль, стеклопакет, прижим и фурнитура
+            сходятся без смены ракурса. Это не декоративный эффект, а визуальное объяснение того,
+            что именно делает систему стабильной и собранной.
+          </p>
+
+          <div className="assembly-facts">
+            <article className="assembly-fact">
+              <strong>Одна ось сборки</strong>
+              <p>Все слои сходятся строго по горизонтали без вращения и случайного разлёта.</p>
+            </article>
+            <article className="assembly-fact">
+              <strong>Читается состав</strong>
+              <p>Отдельно видны профиль, стеклопакет, прижимные слои и узел ручки с фурнитурой.</p>
+            </article>
+            <article className="assembly-fact">
+              <strong>Финал без трюков</strong>
+              <p>Сцена заканчивается собранным окном в том же положении, в котором она начиналась.</p>
+            </article>
+          </div>
+
+          <div className="hero-actions">
+            <a className="button button-primary" href="#request">
+              Обсудить конфигурацию
+            </a>
+            <Link className="button button-secondary" href="/uslugi/okna-pvh/">
+              Смотреть систему ПВХ
+            </Link>
+          </div>
+
+          <p className="assembly-scroll-note">Прокрутите секцию: окно собирается по слоям.</p>
+        </div>
+
+        <div className="assembly-stage reveal reveal-delay">
+          <WindowAssemblySequence rootId="window-assembly" />
         </div>
       </div>
     </section>
