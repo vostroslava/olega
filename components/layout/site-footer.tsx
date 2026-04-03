@@ -49,6 +49,7 @@ export function SiteFooter() {
 
       <div className="container footer-bottom">
         <p>© {new Date().getFullYear()} ООО «СтеклоСтройГрупп». Все права защищены.</p>
+        <Link href="/politika-konfidentsialnosti/">Политика конфиденциальности</Link>
       </div>
     </footer>
   );

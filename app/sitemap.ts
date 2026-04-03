@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/kontakty/",
     "/o-kompanii/",
     "/partneram/",
+    "/politika-konfidentsialnosti/",
   ];
 
   return [

@@ -20,6 +20,7 @@ type ProjectPageProps = {
 export function ProjectPage({ project }: ProjectPageProps) {
   const relatedProjects = PROJECTS.filter((item) => item.id !== project.id).slice(0, 2);
   const projectPath = `/proekty/${project.slug}/`;
+  const keyFacts = [project.location, project.timeline, project.area].filter(Boolean) as string[];
 
   return (
     <div className="page-shell">
@@ -54,9 +55,8 @@ export function ProjectPage({ project }: ProjectPageProps) {
               <h1>{project.title}</h1>
               <p className="hero-lead">{project.text}</p>
               <p className="page-hero-text">
-                Этот кейс нужен не просто как карточка объекта. Он показывает, что компания умеет
-                вести сложные проекты под ключ и собирать фасад, витражи и внутренний стеклянный
-                контур как единое решение.
+                Показываем объект целиком: от фасадного решения и стеклянного контура до
+                технической логики реализации и результата для заказчика.
               </p>
 
               <div className="hero-actions">
@@ -72,9 +72,9 @@ export function ProjectPage({ project }: ProjectPageProps) {
             <aside className="page-hero-panel reveal reveal-delay">
               <strong>Ключевые параметры</strong>
               <ul className="page-highlight-list">
-                <li>{project.location}</li>
-                <li>{project.year}</li>
-                <li>{project.area}</li>
+                {keyFacts.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
               </ul>
             </aside>
           </div>
@@ -125,9 +125,8 @@ export function ProjectPage({ project }: ProjectPageProps) {
               <article>
                 <strong>Связанная услуга</strong>
                 <p>
-                  Этот кейс логично связан с направлением «{project.relatedServiceLabel}», поэтому
-                  после просмотра объекта пользователь может перейти в релевантную услугу, а не
-                  упираться в тупик.
+                  Если вам нужен похожий объект, переходите в профильную услугу, чтобы посмотреть
+                  типовые решения, сценарии применения и формат расчёта.
                 </p>
               </article>
             </div>
@@ -149,8 +148,8 @@ export function ProjectPage({ project }: ProjectPageProps) {
                 >
                   <h3>{item}</h3>
                   <p>
-                    Этот тезис помогает считывать масштаб объекта и понимать, почему такой кейс
-                    уместно показывать на коммерческом сайте компании.
+                    Этот пункт помогает быстрее понять масштаб объекта, состав работ и релевантность
+                    кейса для похожей задачи.
                   </p>
                 </article>
               ))}

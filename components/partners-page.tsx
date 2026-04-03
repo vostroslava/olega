@@ -39,15 +39,14 @@ export function PartnersPage() {
               </div>
 
               <p className="eyebrow">B2B-направление</p>
-              <h1>Отдельная страница для застройщиков, дилеров, архитекторов и подрядчиков</h1>
+              <h1>Решения для застройщиков, дилеров, архитекторов и подрядчиков</h1>
               <p className="hero-lead">
-                Партнёрский сценарий не должен выглядеть как обычная форма для частного клиента.
-                Здесь важны расчёты, техническая поддержка, сроки и понятная коммуникация по
-                объекту.
+                Берём в работу коммерческие и партнёрские задачи, где важны расчёты, техническая
+                поддержка, сроки и понятная коммуникация по объекту.
               </p>
               <p className="page-hero-text">
-                Эта страница нужна, чтобы сайт разговаривал не только с частником, но и с B2B
-                сегментом: застройщиками, архитектурными бюро, дилерами и подрядными командами.
+                Подключаемся как производитель и подрядчик к объектам разного масштаба: от
+                дилерских поставок до комплексного фасадного и витражного контура.
               </p>
 
               <div className="hero-actions">
@@ -61,7 +60,7 @@ export function PartnersPage() {
             </div>
 
             <aside className="page-hero-panel reveal reveal-delay">
-              <strong>Для кого эта страница</strong>
+              <strong>Кому подходит формат</strong>
               <ul className="page-highlight-list">
                 {PARTNER_AUDIENCES.map((item) => (
                   <li key={item}>{item}</li>
@@ -81,7 +80,7 @@ export function PartnersPage() {
           <div className="container">
             <SectionHeading
               eyebrow="Что получает партнёр"
-              title="На B2B-странице должны читаться выгоды сотрудничества, а не общий рекламный текст"
+              title="Что получает партнёр в работе с нами"
             />
 
             <div className="service-crosslinks">
@@ -102,7 +101,7 @@ export function PartnersPage() {
           <div className="container process-shell">
             <SectionHeading
               eyebrow="Как строится работа"
-              title="Партнёрский процесс должен быть коротким, внятным и технически убедительным"
+              title="Понятный партнёрский процесс без лишних касаний"
             />
 
             <div className="process-grid process-grid-partner">
@@ -121,7 +120,7 @@ export function PartnersPage() {
           <div className="container">
             <SectionHeading
               eyebrow="Куда вести дальше"
-              title="Ниже партнёр должен сразу видеть релевантные направления и кейсы"
+              title="Ключевые направления и кейсы для B2B-задач"
             />
 
             <div className="service-crosslinks">

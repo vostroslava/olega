@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FormEvent, useMemo, useState } from "react";
 import { CONTACTS, REQUEST_OPTIONS } from "@/lib/site-data";
 
@@ -8,6 +9,7 @@ type RequestFormProps = {
 };
 
 const formEndpoint = process.env.NEXT_PUBLIC_FORM_ENDPOINT?.trim() ?? "";
+const isGoogleAppsScriptEndpoint = /script\.google(?:usercontent)?\.com/.test(formEndpoint);
 
 export function RequestForm({ defaultProduct }: RequestFormProps) {
   const [note, setNote] = useState(
@@ -31,11 +33,13 @@ export function RequestForm({ defaultProduct }: RequestFormProps) {
     phone,
     product,
     message,
+    consent,
   }: {
     name: string;
     phone: string;
     product: string;
     message: string;
+    consent: boolean;
   }) => {
     const subject = encodeURIComponent(`Заявка на расчёт: ${product || "новый запрос"}`);
     const body = encodeURIComponent(
@@ -45,6 +49,7 @@ export function RequestForm({ defaultProduct }: RequestFormProps) {
         `Имя: ${name}`,
         `Телефон: ${phone}`,
         `Тип запроса: ${product || "не указано"}`,
+        `Согласие на обработку персональных данных: ${consent ? "да" : "нет"}`,
         "",
         "Комментарий:",
         message || "не указан",
@@ -67,9 +72,10 @@ export function RequestForm({ defaultProduct }: RequestFormProps) {
     const phone = formData.get("phone")?.toString().trim() || "";
     const product = formData.get("product")?.toString().trim() || "";
     const message = formData.get("message")?.toString().trim() || "";
+    const consent = formData.get("consent") === "on";
 
     if (!formEndpoint) {
-      fallbackToMail({ name, phone, product, message });
+      fallbackToMail({ name, phone, product, message, consent });
       return;
     }
 
@@ -78,34 +84,60 @@ export function RequestForm({ defaultProduct }: RequestFormProps) {
     setNote("Отправляем заявку...");
 
     try {
-      const response = await fetch(formEndpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
+      if (isGoogleAppsScriptEndpoint) {
+        const payload = new URLSearchParams({
           name,
           phone,
           product,
           message,
+          consent: consent ? "yes" : "no",
           source: "steklostroygroup-site",
           page: window.location.href,
-        }),
-      });
+          submittedAt: new Date().toISOString(),
+        });
 
-      if (!response.ok) {
-        throw new Error("Request failed");
+        // Apps Script web apps work more reliably from static hosting without JSON preflight.
+        await fetch(formEndpoint, {
+          method: "POST",
+          body: payload,
+          mode: "no-cors",
+        });
+      } else {
+        const response = await fetch(formEndpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            name,
+            phone,
+            product,
+            message,
+            consent,
+            source: "steklostroygroup-site",
+            page: window.location.href,
+            submittedAt: new Date().toISOString(),
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Request failed");
+        }
       }
 
       form.reset();
-      setNote("Заявка отправлена. Мы свяжемся с вами в ближайшее рабочее время.");
+      setNote(
+        isGoogleAppsScriptEndpoint
+          ? "Заявка отправлена. Мы сохранили запрос и свяжемся с вами в ближайшее рабочее время."
+          : "Заявка отправлена. Мы свяжемся с вами в ближайшее рабочее время."
+      );
       setNoteSuccess(true);
     } catch {
       setNote(
         `Не удалось отправить заявку напрямую. Открываем fallback через ${CONTACTS.primaryEmail}.`
       );
-      fallbackToMail({ name, phone, product, message });
+      fallbackToMail({ name, phone, product, message, consent });
     } finally {
       setSubmitting(false);
     }
@@ -138,6 +170,14 @@ export function RequestForm({ defaultProduct }: RequestFormProps) {
           rows={4}
           placeholder="Например: частный дом, входная группа, фасад, офис, ориентировочные сроки"
         />
+      </label>
+
+      <label className="checkbox-field">
+        <input type="checkbox" name="consent" required />
+        <span>
+          Даю согласие на обработку персональных данных в соответствии с{" "}
+          <Link href="/politika-konfidentsialnosti/">политикой конфиденциальности</Link>.
+        </span>
       </label>
 
       <button className="button button-primary button-full" type="submit" disabled={submitting}>

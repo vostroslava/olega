@@ -12,7 +12,8 @@ URL после включения Pages:
 - корректный `basePath` для project pages `/olega`
 - отключена `next/image`-оптимизация для статического хостинга
 - workflow автодеплоя в `.github/workflows/deploy-pages.yml`
-- форма поддерживает внешний статический endpoint через `NEXT_PUBLIC_FORM_ENDPOINT`
+- форма поддерживает внешний endpoint через `NEXT_PUBLIC_FORM_ENDPOINT`
+- для `Google Apps Script` уже встроена совместимая отправка без JSON preflight
 
 Что нужно сделать в GitHub:
 
@@ -24,12 +25,17 @@ URL после включения Pages:
 
 Как включить реальную отправку формы:
 
-1. Подключить внешний статический form service, например `Formspree`
-2. Получить endpoint вида `https://formspree.io/f/xxxxxxx`
-3. Открыть `Settings -> Secrets and variables -> Actions -> Variables`
-4. Создать переменную `NEXT_PUBLIC_FORM_ENDPOINT`
-5. Вставить туда endpoint формы
-6. Запустить новый деплой
+Рекомендуемый вариант:
+
+1. Настроить `Google Sheets + Google Apps Script`
+2. Открыть инструкцию в `GOOGLE_SHEETS_FORM_SETUP.md`
+3. Получить endpoint вида `https://script.google.com/macros/s/.../exec`
+4. Открыть `Settings -> Secrets and variables -> Actions -> Variables`
+5. Создать переменную `NEXT_PUBLIC_FORM_ENDPOINT`
+6. Вставить туда endpoint формы
+7. Запустить новый деплой
+
+Альтернативно можно использовать любой другой form endpoint, если он принимает `POST`
 
 Если переменная не задана, сайт автоматически использует fallback через `mailto:`
 

@@ -1,9 +1,13 @@
-import Image from "next/image";
 import Link from "next/link";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { StructuredData } from "@/components/seo/structured-data";
 import { SiteHeader } from "@/components/layout/site-header";
-import { FaqSection, ProcessSection, RequestSection } from "@/components/sections/home-sections";
+import {
+  FaqSection,
+  ProcessSection,
+  ProjectsGrid,
+  RequestSection,
+} from "@/components/sections/home-sections";
 import { MobileCta } from "@/components/ui/mobile-cta";
 import { RevealInit } from "@/components/ui/reveal-init";
 import {
@@ -15,7 +19,6 @@ import {
   createBreadcrumbStructuredData,
   createServiceStructuredData,
 } from "@/lib/seo";
-import { assetPath } from "@/lib/site-utils";
 
 type ServicePageProps = {
   service: ServicePageData;
@@ -69,7 +72,7 @@ export function ServicePage({ service }: ServicePageProps) {
             </div>
 
             <aside className="page-hero-panel reveal reveal-delay">
-              <strong>Что важно на этой странице</strong>
+              <strong>Ключевые преимущества</strong>
               <ul className="page-highlight-list">
                 {service.highlights.map((item) => (
                   <li key={item}>{item}</li>
@@ -83,10 +86,10 @@ export function ServicePage({ service }: ServicePageProps) {
           <div className="container">
             <div className="section-heading reveal">
               <p className="eyebrow">Преимущества</p>
-              <h2>Что клиент должен понять за первый экран и ближайшие блоки</h2>
+              <h2>Почему это направление выбирают для сложных и типовых объектов</h2>
               <p>
-                На странице услуги важна конкретика: где решение применимо, за счёт чего оно
-                выигрывает и почему проект стоит доверить одному подрядчику.
+                Здесь собраны ключевые преимущества направления: где оно работает лучше всего, за
+                счёт чего выигрывает и что получает заказчик на объекте.
               </p>
             </div>
 
@@ -133,29 +136,10 @@ export function ServicePage({ service }: ServicePageProps) {
           <div className="container">
             <div className="section-heading reveal">
               <p className="eyebrow">Связанные кейсы</p>
-              <h2>Примеры объектов, которые помогают считывать компетенцию</h2>
+              <h2>Реальные объекты по этому направлению</h2>
             </div>
 
-            <div className="project-grid">
-              {relatedProjects.map((project) => (
-                <article className="project-card reveal" key={project.id}>
-                  <div className="project-image">
-                    <Image
-                      src={assetPath(project.image)}
-                      alt={project.alt}
-                      fill
-                      sizes="(max-width: 1180px) 100vw, 33vw"
-                    />
-                  </div>
-                  <div className="project-body">
-                    <p className="card-tag">{project.tag}</p>
-                    <h3>{project.title}</h3>
-                    <p>{project.text}</p>
-                    <strong>{project.note}</strong>
-                  </div>
-                </article>
-              ))}
-            </div>
+            <ProjectsGrid projects={relatedProjects} />
           </div>
         </section>
 
@@ -165,10 +149,10 @@ export function ServicePage({ service }: ServicePageProps) {
           <div className="container summary-shell reveal">
             <div className="summary-copy">
               <p className="eyebrow">Почему это работает</p>
-              <h2>Решение не заканчивается на продаже конструкции</h2>
+              <h2>Что входит в работу помимо самой конструкции</h2>
               <p>
-                Для сильной страницы услуги важно показать связку: проектирование, производство,
-                монтаж и постпроектное сопровождение.
+                Берём на себя не только подбор системы, но и проектирование, производство, монтаж и
+                сопровождение после сдачи объекта.
               </p>
             </div>
 

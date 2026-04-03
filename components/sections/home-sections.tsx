@@ -4,7 +4,6 @@ import {
   CONTACTS,
   HERO_PROOF,
   HOME_FAQ,
-  INTRO_ITEMS,
   PARTNER_BENEFITS,
   PROCESS_STEPS,
   PRODUCTS,
@@ -144,40 +143,14 @@ export function HeroSection() {
   );
 }
 
-export function IntroSection() {
-  return (
-    <section className="section intro">
-      <div className="container intro-grid">
-        <div className="section-heading reveal">
-          <p className="eyebrow">Что делает новый макет сильнее</p>
-          <h2>Сайт выглядит как уверенный производитель, а не как шаблонный каталог</h2>
-        </div>
-
-        <div className="intro-list">
-          {INTRO_ITEMS.map((item, index) => (
-            <article
-              className={`intro-card reveal ${index === 1 ? "reveal-delay" : index === 2 ? "reveal-delay-2" : ""}`}
-              key={item.number}
-            >
-              <span>{item.number}</span>
-              <h3>{item.title}</h3>
-              <p>{item.text}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 export function ProductsSection() {
   return (
     <section className="section products" id="products">
       <div className="container">
         <SectionHeading
           eyebrow="Продукция"
-          title="Ключевые направления, с которых начинается знакомство с компанией"
-          description="На первом уровне клиент должен быстро найти нужное направление, понять его задачу и перейти к конкретной услуге."
+          title="Ключевые направления для частных и коммерческих объектов"
+          description="Быстро выберите нужное направление, сравните задачи и перейдите к детальной странице услуги."
         />
 
         <div className="product-grid">
@@ -212,7 +185,7 @@ export function StandardsSection() {
           <h2>Полный цикл с инженерным контролем, а не просто изготовление конструкций</h2>
           <p>
             Собственное производство, конструкторское бюро, монтажные бригады и сервис после сдачи
-            объекта. Именно это и должен показывать сайт.
+            объекта. Заказчик получает один понятный контур ответственности на всех этапах.
           </p>
 
           <div className="standards-photo">
@@ -244,16 +217,16 @@ export function ProjectsSection() {
       <div className="container">
         <SectionHeading
           eyebrow="Проекты"
-          title="Кейсы, которые дают ощущение масштаба и реальной компетенции"
-          description="В макете кейсы показаны как крупные объектные карточки, а не как мелкий список без визуальной ценности."
+          title="Реальные объекты, по которым видно масштаб и опыт компании"
+          description="Показываем коммерческие и общественные объекты, чтобы было понятно, с какими задачами компания уже работала."
         />
 
         <ProjectsGrid />
 
         <div className="quote-banner reveal">
           <p>
-            Сайт должен показывать не просто конструкции, а масштаб объектов и то, как компания
-            справляется с ними под ключ.
+            Посмотрите реализованные объекты, чтобы оценить уровень задач, качество фасадного
+            контура и опыт работы с коммерческими проектами.
           </p>
           <Link href="/proekty/">Открыть все проекты</Link>
         </div>
@@ -268,7 +241,7 @@ export function ProcessSection() {
       <div className="container process-shell">
         <SectionHeading
           eyebrow="Как работаем"
-          title="Процесс должен выглядеть простым и управляемым для клиента"
+          title="Понятный процесс от замера до монтажа"
         />
 
         <div className="process-grid">
@@ -291,8 +264,8 @@ export function PartnersSection() {
       <div className="container partners-shell">
         <SectionHeading
           eyebrow="Партнёрам"
-          title="Отдельная B2B-подача для застройщиков, дилеров, архитекторов и подрядчиков"
-          description="Этот блок нужен, чтобы сайт не говорил только с частным клиентом. Он должен быть понятен и для бизнеса."
+          title="Формат работы для застройщиков, дилеров, архитекторов и подрядчиков"
+          description="Отдельно показываем расчёты, техподдержку и формат взаимодействия для B2B-проектов."
         />
 
         <div className="partners-grid">
@@ -314,7 +287,7 @@ export function FaqSection({ items = HOME_FAQ }: { items?: FaqItem[] }) {
       <div className="container faq-shell">
         <div className="section-heading reveal">
           <p className="eyebrow">FAQ</p>
-          <h2>В макете сразу закрываем главные вопросы до звонка менеджеру</h2>
+          <h2>Частые вопросы перед расчётом и выездом на объект</h2>
         </div>
 
         <div className="faq-list">
@@ -335,8 +308,8 @@ export function FaqSection({ items = HOME_FAQ }: { items?: FaqItem[] }) {
 
 export function RequestSection({
   eyebrow = "Получить расчёт",
-  title = "Форма должна быть короткой, понятной и не пугать количеством полей",
-  description = "Для первой версии достаточно получить имя, телефон, тип запроса и короткое описание объекта. Всё лишнее добирает менеджер в следующем касании.",
+  title = "Получить расчёт и консультацию по объекту",
+  description = "Оставьте имя, телефон, тип запроса и короткое описание объекта. Технические детали уточним уже на следующем касании.",
   defaultProduct,
 }: RequestSectionProps) {
   return (
