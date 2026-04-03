@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import {
+  CERTIFICATION_DOCUMENTS,
   CONTACTS,
   HERO_PROOF,
   HERO_CLIENT_MARKS,
@@ -282,6 +283,48 @@ export function TrustSection() {
               <span className="testimonial-mark">Почему это важно</span>
               <h3>{item.title}</h3>
               <p>{item.text}</p>
+            </article>
+          ))}
+        </div>
+
+        <div className="document-summary-banner reveal">
+          <div>
+            <p className="card-tag">Документы со старого сайта</p>
+            <h3>Нашли и сохранили 6 подтверждающих документов</h3>
+            <p>
+              В старом сайте опубликованы ISO 9001:2015, техническая компетентность и
+              сертификаты по дверям, окнам, стеклопакетам и элементам остекления.
+            </p>
+          </div>
+          <Link href="/o-kompanii/#documents">Перейти к документам</Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function DocumentsSection() {
+  return (
+    <section className="section documents-proof" id="documents">
+      <div className="container">
+        <SectionHeading
+          eyebrow="Сертификация и документы"
+          title="Публичные документы, которые были опубликованы на старом сайте"
+          description="Собрали названия и ссылки из страницы «О компании». Это самый конкретный trust-слой, который удалось добрать из legacy-сайта."
+        />
+
+        <div className="document-proof-grid">
+          {CERTIFICATION_DOCUMENTS.map((item, index) => (
+            <article
+              className={`document-proof-card reveal ${index % 3 === 1 ? "reveal-delay" : index % 3 === 2 ? "reveal-delay-2" : ""}`}
+              key={item.title}
+            >
+              <p className="card-tag">PDF-документ</p>
+              <h3>{item.title}</h3>
+              <p>{item.note}</p>
+              <a href={item.href} target="_blank" rel="noreferrer">
+                Открыть документ
+              </a>
             </article>
           ))}
         </div>

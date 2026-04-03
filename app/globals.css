@@ -806,6 +806,61 @@ p {
   margin-top: 0.85rem;
 }
 
+.document-summary-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.35rem 1.5rem;
+  border-radius: var(--radius-lg);
+  background: rgba(28, 28, 30, 0.96);
+  box-shadow: 0 30px 80px rgba(17, 17, 19, 0.18);
+}
+
+.document-summary-banner h3,
+.document-summary-banner p {
+  color: #fff;
+}
+
+.document-summary-banner > div {
+  display: grid;
+  gap: 0.55rem;
+  max-width: 52rem;
+}
+
+.document-summary-banner a {
+  color: #fff;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.document-proof-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.document-proof-card {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1.4rem;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.78));
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow: var(--shadow-md);
+}
+
+.document-proof-card a {
+  color: var(--accent-dark);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.document-proof-card a:hover {
+  color: var(--text);
+}
+
 .logo-strip {
   display: flex;
   flex-wrap: wrap;
@@ -1735,6 +1790,7 @@ p {
   .project-grid,
   .operations-grid,
   .document-grid,
+  .document-proof-grid,
   .project-detail-grid,
   .partners-grid,
   .testimonial-grid,
@@ -1832,6 +1888,10 @@ p {
   .project-filter-bar,
   .contact-actions {
     flex-direction: column;
+  }
+
+  .document-summary-banner {
+    align-items: flex-start;
   }
 
   .mobile-cta-inner {

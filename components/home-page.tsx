@@ -2,6 +2,7 @@ import { StructuredData } from "@/components/seo/structured-data";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import {
+  DocumentsSection,
   FaqSection,
   HeroSection,
   OperationsSection,
@@ -31,6 +32,7 @@ export function HomePage() {
         <ProductsSection />
         <StandardsSection />
         <TrustSection />
+        <DocumentsSection />
         <OperationsSection />
         <ProjectsSection />
         <ProcessSection />

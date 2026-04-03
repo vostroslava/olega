@@ -88,6 +88,12 @@ export type OperationsGalleryItem = {
   alt: string;
 };
 
+export type CertificationDocument = {
+  title: string;
+  note: string;
+  href: string;
+};
+
 export const NAV_ITEMS: NavItem[] = [
   { label: "Продукция", href: "/uslugi/" },
   { label: "Проекты", href: "/proekty/" },
@@ -108,9 +114,9 @@ export const CONTACTS = {
     { label: "+375 33 300 08 18", href: "tel:+375333000818" },
     { label: "+375 29 634 50 86", href: "tel:+375296345086" },
   ],
-  postalAddress: "г. Могилёв, пер. Коммунистический, д. 2, оф. 5, 212030",
+  postalAddress: "г. Могилёв, пер. Коммунистический, д. 2, оф. 5, 3 этаж, 212030",
   legalAddress: "Могилёвский район, д. Брыли, ул. Юбилейная, 18, 212032",
-  bankDetails: "ААТ «БНБ-Банк», БИК: BLNBBY2X, УНП: 791356349",
+  bankDetails: "ААТ «БНБ-Банк», г. Минск, БИК: BLNBBY2X, УНП: 791356349",
   responseTime: "Отвечаем в рабочее время и быстро берём заявку в расчёт",
   serviceArea: "Работаем по Могилёву и по всей Беларуси",
   coordinates: {
@@ -186,6 +192,39 @@ export const TRUST_REASONS = [
   {
     title: "Связь после сдачи объекта",
     text: "Гарантия и сервис остаются рабочей частью проекта, что особенно важно для коммерческих и эксплуатационно нагруженных объектов.",
+  },
+] as const;
+
+export const CERTIFICATION_DOCUMENTS: CertificationDocument[] = [
+  {
+    title: "Свидетельство о технической компетентности",
+    note: "Упоминается на странице «О компании» старого сайта",
+    href: "https://mysite.hostfly.by/data/s/t/steklostroygroup.by/preview_Q2NsU/gallery/%D0%A1%D0%B2%D0%B8%D0%B4%20%D1%82%D0%B5%D1%85.%D0%BA%D0%BE%D0%BC%D0%BF._compressed.pdf",
+  },
+  {
+    title: "Сертификат соответствия: блоки дверные наружные и внутренние",
+    note: "Документ по дверным блокам, указанный на старом сайте",
+    href: "https://mysite.hostfly.by/data/s/t/steklostroygroup.by/preview_Q2NsU/gallery/%D0%A1%D0%B5%D1%80%D1%82%D0%B8%D1%84%D0%B8%D0%BA%D0%B0%D1%82%D1%8B%20%D0%94%D0%B2%D0%B5%D1%80%D0%B8%20%D0%BD%D0%B0%D1%80%20%D0%B8%20%D0%B2%D0%BD%D1%83%D1%82%D1%80._compressed.pdf",
+  },
+  {
+    title: "Сертификат соответствия системы менеджмента качества ISO 9001:2015",
+    note: "Ключевой trust-документ из старого сайта",
+    href: "https://mysite.hostfly.by/data/s/t/steklostroygroup.by/preview_Q2NsU/gallery/ISO-9001_compressed.pdf",
+  },
+  {
+    title: "Сертификат соответствия на стеклопакеты клеёные",
+    note: "Отдельный документ по стеклопакетам",
+    href: "https://mysite.hostfly.by/data/s/t/steklostroygroup.by/preview_Q2NsU/gallery/%D1%81%D1%82%D0%B5%D0%BA%D0%BB%D0%BE%D0%BF%D0%B0%D0%BA%D0%B5%D1%82%D1%8B_compressed.pdf",
+  },
+  {
+    title: "Сертификат соответствия на оконные и дверные блоки из алюминиевых и ПВХ-профилей",
+    note: "Документ по основным оконным и дверным решениям",
+    href: "https://mysite.hostfly.by/data/s/t/steklostroygroup.by/preview_Q2NsU/gallery/%D0%BE%D0%BA%D0%BE%D0%BD%D0%BD%D1%8B%D0%B5%20%D0%B1%D0%BB%D0%BE%D0%BA%D0%B8_compressed.pdf",
+  },
+  {
+    title: "Сертификат соответствия на элементы остекления балконов и лоджий",
+    note: "Документ по элементам остекления",
+    href: "https://mysite.hostfly.by/data/s/t/steklostroygroup.by/preview_Q2NsU/gallery/%D1%81%D0%B5%D1%80%D1%82%D0%B8%D1%84%D0%B8%D0%BA%D0%B0%D1%82%20%D1%8D%D0%BB%D0%B5%D0%BC%D0%B5%D0%BD%D1%82%D1%8B%20%D0%BE%D1%81%D1%82%D0%B5%D0%BA%D0%BB%D0%B5%D0%BD%D0%B8%D1%8F_compressed.pdf",
   },
 ] as const;
 
@@ -465,16 +504,20 @@ export const PROCESS_STEPS = [
 
 export const PARTNER_BENEFITS = [
   {
-    title: "Гибкие условия сотрудничества",
-    text: "Партнёрские цены, поддержка по расчётам и понятная коммуникация на старте проекта.",
+    title: "Гибкие партнёрские условия",
+    text: "На старом сайте компания обещает индивидуальные условия и гибкую систему скидок для надёжных партнёров.",
   },
   {
     title: "Техническая и маркетинговая поддержка",
-    text: "Помощь по конструктиву, совместный брендинг, подготовка материалов и участие в тендерах.",
+    text: "Помощь по расчётам, конструктиву, материалам и партнёрскому продвижению без лишних касаний.",
   },
   {
     title: "Стабильные сроки производства",
     text: "Когда сайт обещает сроки, за этим должно стоять реальное производство и контроль исполнения.",
+  },
+  {
+    title: "Совместный брендинг и тендеры",
+    text: "Старый сайт отдельно обещает возможность совместного брендинга и участия в тендерах.",
   },
 ];
 

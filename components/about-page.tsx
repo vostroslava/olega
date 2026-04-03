@@ -3,6 +3,7 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { StructuredData } from "@/components/seo/structured-data";
 import {
+  DocumentsSection,
   MetricsBand,
   OperationsSection,
   ProcessSection,
@@ -72,6 +73,8 @@ export function AboutPage() {
             <MetricsBand />
           </div>
         </section>
+
+        <DocumentsSection />
 
         <section className="section">
           <div className="container">
