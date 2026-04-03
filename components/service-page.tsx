@@ -7,6 +7,7 @@ import {
   ProcessSection,
   ProjectsGrid,
   RequestSection,
+  SectionHeading,
 } from "@/components/sections/home-sections";
 import { MobileCta } from "@/components/ui/mobile-cta";
 import { RevealInit } from "@/components/ui/reveal-init";
@@ -102,6 +103,28 @@ export function ServicePage({ service }: ServicePageProps) {
                   <span>{String(index + 1).padStart(2, "0")}</span>
                   <h3>{item.title}</h3>
                   <p>{item.text}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="section">
+          <div className="container">
+            <SectionHeading
+              eyebrow="Что входит в работу"
+              title="Что берём на себя по этому направлению"
+              description="Формируем решение под ключ: от инженерной подготовки и расчёта до монтажа и сопровождения после сдачи."
+            />
+
+            <div className="service-crosslinks">
+              {service.deliverables.map((item, index) => (
+                <article
+                  className={`partner-card reveal ${index === 1 ? "reveal-delay" : index === 2 ? "reveal-delay-2" : ""}`}
+                  key={item}
+                >
+                  <h3>{String(index + 1).padStart(2, "0")}</h3>
+                  <p>{item}</p>
                 </article>
               ))}
             </div>

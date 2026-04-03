@@ -414,8 +414,10 @@ p {
 .intro-card,
 .product-card,
 .project-card,
+.document-card,
 .process-card,
 .partner-card,
+.testimonial-card,
 .faq-item,
 .request-form {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.78));
@@ -458,8 +460,10 @@ p {
 .intro-card,
 .product-card,
 .project-card,
+.document-card,
 .process-card,
 .partner-card,
+.testimonial-card,
 .faq-item {
   border-radius: var(--radius-lg);
   padding: 1.5rem;
@@ -621,6 +625,64 @@ p {
 .standards-grid strong {
   display: block;
   font-size: 1.1rem;
+}
+
+.trust-proof-shell {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.document-grid,
+.testimonial-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.document-card h3,
+.testimonial-card h3 {
+  margin-top: 0.9rem;
+}
+
+.document-card p:last-child,
+.testimonial-card p:last-child {
+  margin-top: 0.85rem;
+}
+
+.logo-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.logo-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0.7rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.66);
+  color: var(--text);
+  font-family: var(--font-manrope), sans-serif;
+  font-size: 0.96rem;
+  font-weight: 700;
+  box-shadow: var(--shadow-md);
+}
+
+.testimonial-card {
+  position: relative;
+}
+
+.testimonial-mark {
+  display: inline-flex;
+  margin-bottom: 0.2rem;
+  color: var(--accent-dark);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .projects .section-heading h2,
@@ -816,6 +878,7 @@ p {
 }
 
 .request-form {
+  position: relative;
   display: grid;
   gap: 1rem;
   padding: 1.5rem;
@@ -827,6 +890,14 @@ p {
 .request-form label {
   display: grid;
   gap: 0.5rem;
+}
+
+.bot-field {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }
 
 .request-form span {
@@ -1323,8 +1394,10 @@ p {
   .footer-grid,
   .product-grid,
   .project-grid,
+  .document-grid,
   .project-detail-grid,
   .partners-grid,
+  .testimonial-grid,
   .contacts-grid,
   .contact-card-grid,
   .service-application-grid,

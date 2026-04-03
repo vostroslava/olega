@@ -141,16 +141,13 @@ export function ProjectPage({ project }: ProjectPageProps) {
             </div>
 
             <div className="service-application-grid">
-              {project.highlights.map((item, index) => (
+              {project.proofPoints.map((item, index) => (
                 <article
                   className={`partner-card reveal ${index === 1 ? "reveal-delay" : index === 2 ? "reveal-delay-2" : ""}`}
-                  key={item}
+                  key={item.title}
                 >
-                  <h3>{item}</h3>
-                  <p>
-                    Этот пункт помогает быстрее понять масштаб объекта, состав работ и релевантность
-                    кейса для похожей задачи.
-                  </p>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
                 </article>
               ))}
             </div>

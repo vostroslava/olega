@@ -68,11 +68,19 @@ export function RequestForm({ defaultProduct }: RequestFormProps) {
 
     const form = event.currentTarget;
     const formData = new FormData(form);
+    const company = formData.get("company")?.toString().trim() || "";
     const name = formData.get("name")?.toString().trim() || "";
     const phone = formData.get("phone")?.toString().trim() || "";
     const product = formData.get("product")?.toString().trim() || "";
     const message = formData.get("message")?.toString().trim() || "";
     const consent = formData.get("consent") === "on";
+
+    if (company) {
+      setNote("Заявка отправлена. Мы свяжемся с вами в ближайшее рабочее время.");
+      setNoteSuccess(true);
+      form.reset();
+      return;
+    }
 
     if (!formEndpoint) {
       fallbackToMail({ name, phone, product, message, consent });
@@ -149,6 +157,14 @@ export function RequestForm({ defaultProduct }: RequestFormProps) {
         <span>Имя</span>
         <input type="text" name="name" placeholder="Как к вам обращаться" required />
       </label>
+
+      <div className="bot-field" aria-hidden="true">
+        <label>
+          <span>Компания</span>
+          <input type="text" name="company" tabIndex={-1} autoComplete="off" />
+        </label>
+      </div>
+
       <label>
         <span>Телефон</span>
         <input type="tel" name="phone" placeholder="+375 __ ___ __ __" required />

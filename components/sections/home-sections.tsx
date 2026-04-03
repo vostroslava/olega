@@ -9,7 +9,10 @@ import {
   PRODUCTS,
   PROJECTS,
   STANDARDS,
+  TRUST_DOCUMENTS,
   TRUST_METRICS,
+  TRUST_OBJECT_MARKS,
+  TRUST_REASONS,
 } from "@/lib/site-data";
 import { assetPath } from "@/lib/site-utils";
 import { RequestForm } from "@/components/ui/request-form";
@@ -202,6 +205,54 @@ export function StandardsSection() {
           {STANDARDS.map((item) => (
             <article key={item.title}>
               <strong>{item.title}</strong>
+              <p>{item.text}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function TrustSection() {
+  return (
+    <section className="section trust-proof">
+      <div className="container trust-proof-shell">
+        <SectionHeading
+          eyebrow="Доверие и подтверждения"
+          title="Факты, документы и объекты, которые усиливают решение о заявке"
+          description="Показываем не абстрактное качество, а конкретные сигналы доверия: сертификацию, гарантию, скорость запуска и типы объектов, где компания уже работала."
+        />
+
+        <div className="document-grid">
+          {TRUST_DOCUMENTS.map((item, index) => (
+            <article
+              className={`document-card reveal ${index === 1 ? "reveal-delay" : index === 2 ? "reveal-delay-2" : ""}`}
+              key={item.title}
+            >
+              <p className="card-tag">{item.meta}</p>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </article>
+          ))}
+        </div>
+
+        <div className="logo-strip reveal">
+          {TRUST_OBJECT_MARKS.map((item) => (
+            <span className="logo-chip" key={item}>
+              {item}
+            </span>
+          ))}
+        </div>
+
+        <div className="testimonial-grid">
+          {TRUST_REASONS.map((item, index) => (
+            <article
+              className={`testimonial-card reveal ${index === 1 ? "reveal-delay" : index === 2 ? "reveal-delay-2" : ""}`}
+              key={item.title}
+            >
+              <span className="testimonial-mark">Почему это важно</span>
+              <h3>{item.title}</h3>
               <p>{item.text}</p>
             </article>
           ))}

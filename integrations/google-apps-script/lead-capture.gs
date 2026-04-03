@@ -13,6 +13,25 @@ function doGet() {
 function doPost(e) {
   try {
     const lead = parseLead_(e);
+
+    if (lead.company) {
+      return ContentService.createTextOutput(
+        JSON.stringify({
+          ok: true,
+          skipped: "honeypot",
+        }),
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    if (isDuplicateLead_(lead)) {
+      return ContentService.createTextOutput(
+        JSON.stringify({
+          ok: true,
+          skipped: "duplicate",
+        }),
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
+
     const sheet = getSheet_();
 
     ensureHeader_(sheet);
@@ -54,6 +73,7 @@ function parseLead_(e) {
     page: valueOrDefault_(params.page, ""),
     source: valueOrDefault_(params.source, "steklostroygroup-site"),
     consent: valueOrDefault_(params.consent, "no"),
+    company: valueOrDefault_(params.company, ""),
   };
 }
 
@@ -93,3 +113,29 @@ function valueOrDefault_(value, fallback) {
   return String(value);
 }
 
+function isDuplicateLead_(lead) {
+  const cache = CacheService.getScriptCache();
+  const fingerprint = [
+    normalizeValue_(lead.phone),
+    normalizeValue_(lead.product),
+    normalizeValue_(lead.page),
+  ].join("|");
+
+  if (!fingerprint || fingerprint === "||") {
+    return false;
+  }
+
+  if (cache.get(fingerprint)) {
+    return true;
+  }
+
+  cache.put(fingerprint, "1", 300);
+  return false;
+}
+
+function normalizeValue_(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/\s+/g, "")
+    .replace(/[^a-z0-9/:_-]/g, "");
+}
