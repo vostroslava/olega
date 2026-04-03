@@ -19,8 +19,6 @@ import {
 } from "@/lib/site-data";
 import { assetPath } from "@/lib/site-utils";
 import { RequestForm } from "@/components/ui/request-form";
-import { QuickEstimate } from "@/components/ui/quick-estimate";
-import { WindowAssemblySequence } from "@/components/ui/window-assembly-sequence";
 
 type FaqItem = {
   question: string;
@@ -32,7 +30,6 @@ type RequestSectionProps = {
   title?: string;
   description?: string;
   defaultProduct?: string;
-  showEstimate?: boolean;
 };
 
 export function SectionHeading({
@@ -289,54 +286,6 @@ export function TrustSection() {
   );
 }
 
-export function WindowAssemblySection() {
-  return (
-    <section className="section assembly-section" id="window-assembly">
-      <div className="container assembly-shell">
-        <div className="assembly-copy reveal">
-          <p className="eyebrow">Окно как система</p>
-          <h2>Показываем конструкцию по слоям, а не обещаем абстрактное качество</h2>
-          <p>
-            В этой сцене окно собирается на одной оси: профиль, стеклопакет, прижим и фурнитура
-            сходятся без смены ракурса. Это не декоративный эффект, а визуальное объяснение того,
-            что именно делает систему стабильной и собранной.
-          </p>
-
-          <div className="assembly-facts">
-            <article className="assembly-fact">
-              <strong>Одна ось сборки</strong>
-              <p>Все слои сходятся строго по горизонтали без вращения и случайного разлёта.</p>
-            </article>
-            <article className="assembly-fact">
-              <strong>Читается состав</strong>
-              <p>Отдельно видны профиль, стеклопакет, прижимные слои и узел ручки с фурнитурой.</p>
-            </article>
-            <article className="assembly-fact">
-              <strong>Финал без трюков</strong>
-              <p>Сцена заканчивается собранным окном в том же положении, в котором она начиналась.</p>
-            </article>
-          </div>
-
-          <div className="hero-actions">
-            <a className="button button-primary" href="#request">
-              Обсудить конфигурацию
-            </a>
-            <Link className="button button-secondary" href="/uslugi/okna-pvh/">
-              Смотреть систему ПВХ
-            </Link>
-          </div>
-
-          <p className="assembly-scroll-note">Прокрутите секцию: окно собирается по слоям.</p>
-        </div>
-
-        <div className="assembly-stage reveal reveal-delay">
-          <WindowAssemblySequence rootId="window-assembly" />
-        </div>
-      </div>
-    </section>
-  );
-}
-
 export function DocumentsSection() {
   return (
     <section className="section documents-proof" id="documents">
@@ -507,11 +456,10 @@ export function RequestSection({
   title = "Получить расчёт и консультацию по объекту",
   description = "Оставьте имя, телефон, тип запроса и короткое описание объекта. Технические детали уточним уже на следующем касании.",
   defaultProduct,
-  showEstimate = false,
 }: RequestSectionProps) {
   return (
     <section className="section request" id="request">
-      <div className={`container request-shell ${showEstimate ? "request-shell-extended" : ""}`}>
+      <div className="container request-shell">
         <div className="request-copy reveal">
           <p className="eyebrow">{eyebrow}</p>
           <h2>{title}</h2>
@@ -532,25 +480,7 @@ export function RequestSection({
           </div>
         </div>
 
-        {showEstimate ? (
-          <div className="request-tools">
-            <div className="request-estimate">
-              <div className="request-estimate-copy reveal">
-                <p className="eyebrow">Быстрый ориентир</p>
-                <h3>Сначала быстро поймите формат задачи</h3>
-                <p>
-                  Это не коммерческое предложение, а короткий ориентир перед отправкой формы:
-                  насколько запрос типовой, нужен ли выезд и как лучше зайти в расчёт.
-                </p>
-              </div>
-              <QuickEstimate />
-            </div>
-
-            <RequestForm defaultProduct={defaultProduct} />
-          </div>
-        ) : (
-          <RequestForm defaultProduct={defaultProduct} />
-        )}
+        <RequestForm defaultProduct={defaultProduct} />
       </div>
     </section>
   );
