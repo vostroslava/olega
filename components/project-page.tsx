@@ -155,23 +155,35 @@ export function ProjectPage({ project }: ProjectPageProps) {
           </div>
         </section>
 
-        <section className="section project-highlights">
+        <section className="section project-proof-band">
           <div className="container">
-            <div className="section-heading reveal">
-              <p className="section-kicker">Почему кейс важен</p>
-              <h2>Тезисы, которые усиливают доверие на коммерческой странице</h2>
-            </div>
+            <div className="project-proof-shell reveal">
+              <div className="project-proof-copy">
+                <p className="section-kicker">Почему этот кейс усиливает доверие</p>
+                <h2>У объекта должен быть не только красивый фасад, но и понятный доказательный вес</h2>
+                <p>{project.result}</p>
 
-            <div className="service-application-grid">
-              {project.proofPoints.map((item, index) => (
-                <article
-                  className={`partner-card reveal ${index === 1 ? "reveal-delay" : index === 2 ? "reveal-delay-2" : ""}`}
-                  key={item.title}
-                >
-                  <h3>{item.title}</h3>
-                  <p>{item.text}</p>
-                </article>
-              ))}
+                <div className="hero-actions">
+                  <Link className="button button-primary" href={`/uslugi/${project.relatedServiceSlug}/`}>
+                    Перейти в услугу
+                  </Link>
+                  <a className="button button-secondary" href="#request">
+                    Обсудить похожий проект
+                  </a>
+                </div>
+              </div>
+
+              <div className="project-proof-stack">
+                {project.proofPoints.map((item, index) => (
+                  <article
+                    className={index === 1 ? "reveal-delay" : index === 2 ? "reveal-delay-2" : ""}
+                    key={item.title}
+                  >
+                    <h3>{item.title}</h3>
+                    <p>{item.text}</p>
+                  </article>
+                ))}
+              </div>
             </div>
           </div>
         </section>

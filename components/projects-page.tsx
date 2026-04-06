@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { SiteFooter } from "@/components/layout/site-footer";
@@ -15,6 +16,7 @@ import { MobileCta } from "@/components/ui/mobile-cta";
 import { RevealInit } from "@/components/ui/reveal-init";
 import { PROJECTS } from "@/lib/site-data";
 import { createBreadcrumbStructuredData, createItemListStructuredData } from "@/lib/seo";
+import { assetPath } from "@/lib/site-utils";
 
 const projectFilters = [
   { key: "all", label: "Все проекты" },
@@ -50,7 +52,17 @@ export function ProjectsPage() {
       <SiteHeader />
 
       <main className="page-main">
-        <section className="page-hero section">
+        <section className="page-hero page-hero-dark section">
+          <div className="page-hero-backdrop">
+            <Image
+              src={assetPath("/assets/photos/facade-evening.jpg")}
+              alt="Коммерческий фасадный объект"
+              fill
+              priority
+              sizes="100vw"
+            />
+          </div>
+
           <div className="container page-hero-shell reveal" id="projects-hero">
             <div className="page-hero-copy">
               <div className="page-breadcrumbs">
@@ -59,7 +71,7 @@ export function ProjectsPage() {
                 <span>Проекты</span>
               </div>
 
-              <p className="eyebrow">Реализованные объекты</p>
+              <p className="section-kicker">Реализованные объекты</p>
               <h1>Реализованные объекты СтеклоСтройГрупп</h1>
               <p className="hero-lead">
                 От торговых и медицинских комплексов до объектов со сложной внутренней
@@ -81,7 +93,7 @@ export function ProjectsPage() {
               </div>
             </div>
 
-            <aside className="page-hero-panel reveal reveal-delay">
+            <aside className="page-hero-rail reveal reveal-delay">
               <strong>Что дают кейсы</strong>
               <ul className="page-highlight-list">
                 <li>Понимание масштаба и состава работ</li>

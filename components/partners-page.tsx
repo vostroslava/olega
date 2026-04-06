@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
@@ -17,6 +18,7 @@ import {
   PRODUCTS,
 } from "@/lib/site-data";
 import { createBreadcrumbStructuredData } from "@/lib/seo";
+import { assetPath } from "@/lib/site-utils";
 
 export function PartnersPage() {
   return (
@@ -30,7 +32,17 @@ export function PartnersPage() {
       <SiteHeader />
 
       <main className="page-main">
-        <section className="page-hero section">
+        <section className="page-hero page-hero-dark section">
+          <div className="page-hero-backdrop">
+            <Image
+              src={assetPath("/assets/photos/team-consultation.png")}
+              alt="Партнёрская и техническая консультация"
+              fill
+              priority
+              sizes="100vw"
+            />
+          </div>
+
           <div className="container page-hero-shell reveal" id="partners-hero">
             <div className="page-hero-copy">
               <div className="page-breadcrumbs">
@@ -39,7 +51,7 @@ export function PartnersPage() {
                 <span>Партнёрам</span>
               </div>
 
-              <p className="eyebrow">B2B-направление</p>
+              <p className="section-kicker">B2B-направление</p>
               <h1>Решения для застройщиков, дилеров, архитекторов и подрядчиков</h1>
               <p className="hero-lead">
                 Берём в работу коммерческие и партнёрские задачи, где важны расчёты, техническая
@@ -60,7 +72,7 @@ export function PartnersPage() {
               </div>
             </div>
 
-            <aside className="page-hero-panel reveal reveal-delay">
+            <aside className="page-hero-rail reveal reveal-delay">
               <strong>Кому подходит формат</strong>
               <ul className="page-highlight-list">
                 {PARTNER_AUDIENCES.map((item) => (

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
@@ -14,6 +15,7 @@ import { MobileCta } from "@/components/ui/mobile-cta";
 import { RevealInit } from "@/components/ui/reveal-init";
 import { COMPANY_PILLARS, CONTACTS, STANDARDS } from "@/lib/site-data";
 import { createBreadcrumbStructuredData } from "@/lib/seo";
+import { assetPath } from "@/lib/site-utils";
 
 export function AboutPage() {
   return (
@@ -27,7 +29,17 @@ export function AboutPage() {
       <SiteHeader />
 
       <main className="page-main">
-        <section className="page-hero section">
+        <section className="page-hero page-hero-dark section">
+          <div className="page-hero-backdrop">
+            <Image
+              src={assetPath("/assets/photos/company-production.png")}
+              alt="Производственный цех СтеклоСтройГрупп"
+              fill
+              priority
+              sizes="100vw"
+            />
+          </div>
+
           <div className="container page-hero-shell reveal" id="about-hero">
             <div className="page-hero-copy">
               <div className="page-breadcrumbs">
@@ -36,7 +48,7 @@ export function AboutPage() {
                 <span>О компании</span>
               </div>
 
-              <p className="eyebrow">О компании</p>
+              <p className="section-kicker">О компании</p>
               <h1>СтеклоСтройГрупп — подрядчик полного цикла по светопрозрачным конструкциям</h1>
               <p className="hero-lead">
                 Собственное производство, конструкторское бюро, монтажные бригады и сервис после
@@ -57,7 +69,7 @@ export function AboutPage() {
               </div>
             </div>
 
-            <aside className="page-hero-panel reveal reveal-delay">
+            <aside className="page-hero-rail reveal reveal-delay">
               <strong>Корпоративные опоры</strong>
               <ul className="page-highlight-list">
                 <li>Производство и проектирование в одной связке</li>

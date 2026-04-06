@@ -8,7 +8,6 @@ import {
   ProcessSection,
   ProjectsGrid,
   RequestSection,
-  SectionHeading,
 } from "@/components/sections/home-sections";
 import { MobileCta } from "@/components/ui/mobile-cta";
 import { RevealInit } from "@/components/ui/reveal-init";
@@ -130,22 +129,28 @@ export function ServicePage({ service }: ServicePageProps) {
 
         <section className="section systems-detail-band">
           <div className="container">
-            <SectionHeading
-              eyebrow="Что входит в работу"
-              title="Что берём на себя по этому направлению"
-              description="Берём решение как систему: от инженерной проработки и расчёта до производства, монтажа и сдачи объекта."
-            />
+            <div className="service-deliverables-shell">
+              <div className="service-deliverables-copy reveal">
+                <p className="section-kicker">Что входит в работу</p>
+                <h2>Не просто система, а полный инженерный контур под конкретный объект</h2>
+                <p>
+                  Берём направление целиком: от инженерной проработки и расчёта до производства,
+                  монтажа и сдачи объекта. Поэтому заказчику не нужно собирать решение из разных
+                  подрядчиков и случайных узлов.
+                </p>
+              </div>
 
-            <div className="service-crosslinks">
-              {service.deliverables.map((item, index) => (
-                <article
-                  className={`partner-card reveal ${index === 1 ? "reveal-delay" : index === 2 ? "reveal-delay-2" : ""}`}
-                  key={item}
-                >
-                  <h3>{String(index + 1).padStart(2, "0")}</h3>
-                  <p>{item}</p>
-                </article>
-              ))}
+              <div className="service-deliverables-list">
+                {service.deliverables.map((item, index) => (
+                  <article
+                    className={`service-deliverable-item reveal ${index === 1 ? "reveal-delay" : index === 2 ? "reveal-delay-2" : ""}`}
+                    key={item}
+                  >
+                    <span>{String(index + 1).padStart(2, "0")}</span>
+                    <p>{item}</p>
+                  </article>
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -161,12 +166,13 @@ export function ServicePage({ service }: ServicePageProps) {
               </p>
             </div>
 
-            <div className="service-application-grid">
+            <div className="service-application-list">
               {service.applications.map((item, index) => (
                 <article
-                  className={`partner-card reveal ${index === 1 ? "reveal-delay" : index === 2 ? "reveal-delay-2" : ""}`}
+                  className={`service-application-item reveal ${index === 1 ? "reveal-delay" : index === 3 ? "reveal-delay-2" : ""}`}
                   key={item}
                 >
+                  <span>{String(index + 1).padStart(2, "0")}</span>
                   <h3>{item}</h3>
                   <p>
                     Подбираем систему, стеклопакет, профиль и монтажный узел под конкретный режим

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
@@ -13,6 +14,7 @@ import { MobileCta } from "@/components/ui/mobile-cta";
 import { RevealInit } from "@/components/ui/reveal-init";
 import { PRODUCTS, SERVICE_SELECTION_STEPS } from "@/lib/site-data";
 import { createBreadcrumbStructuredData, createItemListStructuredData } from "@/lib/seo";
+import { assetPath } from "@/lib/site-utils";
 
 export function ServicesCatalogPage() {
   return (
@@ -34,7 +36,17 @@ export function ServicesCatalogPage() {
       <SiteHeader />
 
       <main className="page-main">
-        <section className="page-hero section">
+        <section className="page-hero page-hero-dark section">
+          <div className="page-hero-backdrop">
+            <Image
+              src={assetPath("/assets/photos/hero-company-facade.png")}
+              alt="Фасадный коммерческий объект"
+              fill
+              priority
+              sizes="100vw"
+            />
+          </div>
+
           <div className="container page-hero-shell reveal" id="services-catalog-hero">
             <div className="page-hero-copy">
               <div className="page-breadcrumbs">
@@ -43,7 +55,7 @@ export function ServicesCatalogPage() {
                 <span>Услуги</span>
               </div>
 
-              <p className="eyebrow">Каталог направлений</p>
+              <p className="section-kicker">Каталог направлений</p>
               <h1>Услуги и направления по светопрозрачным конструкциям</h1>
               <p className="hero-lead">
                 Окна ПВХ, алюминиевые системы, фасады, витражи, панорамное остекление,
@@ -65,7 +77,7 @@ export function ServicesCatalogPage() {
               </div>
             </div>
 
-            <aside className="page-hero-panel reveal reveal-delay">
+            <aside className="page-hero-rail reveal reveal-delay">
               <strong>Что вы найдёте в каталоге</strong>
               <ul className="page-highlight-list">
                 <li>Быстрый вход в нужное направление</li>

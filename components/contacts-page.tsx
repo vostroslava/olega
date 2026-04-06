@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
@@ -11,6 +12,7 @@ import {
   createBreadcrumbStructuredData,
   createLocalBusinessStructuredData,
 } from "@/lib/seo";
+import { assetPath } from "@/lib/site-utils";
 
 function ContactCard({
   title,
@@ -54,7 +56,17 @@ export function ContactsPage() {
       <SiteHeader />
 
       <main className="page-main">
-        <section className="page-hero section">
+        <section className="page-hero page-hero-dark section">
+          <div className="page-hero-backdrop">
+            <Image
+              src={assetPath("/assets/photos/team-site-supervision.png")}
+              alt="Команда СтеклоСтройГрупп на объекте"
+              fill
+              priority
+              sizes="100vw"
+            />
+          </div>
+
           <div className="container page-hero-shell reveal" id="contacts-hero">
             <div className="page-hero-copy">
               <div className="page-breadcrumbs">
@@ -63,7 +75,7 @@ export function ContactsPage() {
                 <span>Контакты</span>
               </div>
 
-              <p className="eyebrow">Контакты и заявка</p>
+              <p className="section-kicker">Контакты и заявка</p>
               <h1>Контакты, реквизиты и быстрый запрос по объекту</h1>
               <p className="hero-lead">
                 Свяжитесь удобным способом: по телефону, email, через форму сайта или по маршруту
@@ -84,7 +96,7 @@ export function ContactsPage() {
               </div>
             </div>
 
-            <aside className="page-hero-panel reveal reveal-delay">
+            <aside className="page-hero-rail reveal reveal-delay">
               <strong>Быстрые контакты</strong>
               <ul className="page-highlight-list">
                 <li>{CONTACTS.phones[0].label}</li>

@@ -9,6 +9,7 @@ import {
   ProductsSection,
   ProjectsSection,
   RequestSection,
+  StandardsSection,
   TrustSection,
 } from "@/components/sections/home-sections";
 import { MobileCta } from "@/components/ui/mobile-cta";
@@ -26,6 +27,7 @@ export function HomePage() {
         <HeroSection />
         <ProductsSection />
         <TrustSection />
+        <StandardsSection />
         <ProjectsSection />
         <ProcessSection />
         <PartnersSection />

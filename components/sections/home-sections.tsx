@@ -3,7 +3,6 @@ import Link from "next/link";
 import {
   CERTIFICATION_DOCUMENTS,
   CONTACTS,
-  HERO_CLIENT_MARKS,
   HERO_PROOF,
   HOME_FAQ,
   OPERATIONS_GALLERY,
@@ -135,25 +134,21 @@ export function HeroSection() {
               </div>
 
               <ul className="hero-proof">
-                {HERO_PROOF.map((item) => (
+                {HERO_PROOF.slice(0, 2).map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
-
-              <div className="hero-client-strip">
-                {HERO_CLIENT_MARKS.map((item) => (
-                  <span key={item}>{item}</span>
-                ))}
-              </div>
             </div>
 
             <aside className="hero-rail">
+              <p className="card-tag">Контур ответственности</p>
               {TRUST_METRICS.slice(0, 3).map(([value, label]) => (
                 <article key={value}>
                   <strong>{value}</strong>
                   <span>{label}</span>
                 </article>
               ))}
+              <Link href="/o-kompanii/#documents">Сертификация и документы</Link>
             </aside>
           </div>
         </div>
@@ -215,14 +210,17 @@ export function ProductsSection() {
             </div>
           </article>
 
-          <div className="system-mini-grid">
+          <div className="systems-list">
             {rest.map((item, index) => (
               <article
-                className={`system-mini-card reveal ${index % 3 === 1 ? "reveal-delay" : index % 3 === 2 ? "reveal-delay-2" : ""}`}
+                className={`system-list-item reveal ${index % 2 === 1 ? "reveal-delay" : ""}`}
                 key={item.slug}
               >
-                <p className="card-tag">{item.tag}</p>
-                <h3>{item.title}</h3>
+                <span>{String(index + 3).padStart(2, "0")}</span>
+                <div className="system-list-copy">
+                  <p className="card-tag">{item.tag}</p>
+                  <h3>{item.title}</h3>
+                </div>
                 <p>{item.text}</p>
                 <Link href={`/uslugi/${item.slug}/`}>{item.linkLabel}</Link>
               </article>
@@ -282,50 +280,71 @@ export function TrustSection() {
             рекламные тезисы, а доказательства, что компания умеет доводить проект до результата.
           </p>
 
+          <MetricsBand />
+
           <div className="trust-chip-strip">
-            {TRUST_OBJECT_MARKS.map((item) => (
+            {TRUST_OBJECT_MARKS.slice(0, 4).map((item) => (
               <span key={item}>{item}</span>
             ))}
+          </div>
+
+          <div className="trust-visual">
+            <Image
+              src={assetPath("/assets/photos/team-site-supervision.png")}
+              alt="Команда СтеклоСтройГрупп на объекте"
+              fill
+              sizes="(max-width: 1180px) 100vw, 42vw"
+            />
           </div>
         </div>
 
         <div className="trust-column">
-          <div className="trust-stack">
-            {TRUST_DOCUMENTS.map((item, index) => (
-              <article
-                className={`trust-card reveal ${index === 1 ? "reveal-delay" : index === 2 ? "reveal-delay-2" : ""}`}
-                key={item.title}
-              >
-                <p className="card-tag">{item.meta}</p>
-                <h3>{item.title}</h3>
-                <p>{item.text}</p>
-              </article>
-            ))}
-          </div>
-
-          <div className="reason-grid">
-            {TRUST_REASONS.map((item, index) => (
-              <article
-                className={`reason-card reveal ${index === 1 ? "reveal-delay" : index === 2 ? "reveal-delay-2" : ""}`}
-                key={item.title}
-              >
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <h3>{item.title}</h3>
-                <p>{item.text}</p>
-              </article>
-            ))}
-          </div>
-
-          <div className="document-summary-banner reveal">
-            <div>
-              <p className="card-tag">Публичные документы</p>
-              <h3>ISO 9001, техкомпетентность и сертификаты по системам уже собраны</h3>
+          <div className="trust-proof-board reveal reveal-delay">
+            <div className="trust-proof-intro">
+              <p className="card-tag">Публичные документы и рабочие гарантии</p>
+              <h3>Сайт должен подтверждать, что компания берёт проект как производственный контур</h3>
               <p>
-                Документальный слой вынесен отдельно, чтобы у заказчика был быстрый путь от
-                доверия к проверке.
+                Здесь собраны факты, которые заказчик обычно ищет перед первым касанием:
+                сертификация, гарантия, скорость включения в объект и модель ответственности.
               </p>
             </div>
-            <Link href="/o-kompanii/#documents">К документам</Link>
+
+            <div className="trust-stack">
+              {TRUST_DOCUMENTS.map((item, index) => (
+                <article
+                  className={index === 1 ? "reveal-delay" : index === 2 ? "reveal-delay-2" : ""}
+                  key={item.title}
+                >
+                  <p className="card-tag">{item.meta}</p>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
+                </article>
+              ))}
+            </div>
+
+            <div className="reason-list">
+              {TRUST_REASONS.map((item, index) => (
+                <article key={item.title}>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <div>
+                    <h3>{item.title}</h3>
+                    <p>{item.text}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <div className="document-summary-banner">
+              <div>
+                <p className="card-tag">Публичные документы</p>
+                <h3>ISO 9001, техкомпетентность и сертификаты по системам уже собраны</h3>
+                <p>
+                  Документальный слой вынесен отдельно, чтобы у заказчика был быстрый путь от
+                  доверия к проверке.
+                </p>
+              </div>
+              <Link href="/o-kompanii/#documents">К документам</Link>
+            </div>
           </div>
         </div>
       </div>
@@ -443,6 +462,18 @@ export function ProjectsSection() {
               </div>
             </article>
           ))}
+        </div>
+
+        <div className="document-summary-banner reveal">
+          <div>
+            <p className="card-tag">Дальше по структуре сайта</p>
+            <h3>Сравните объекты, а затем переходите в профильную услугу или сразу в расчёт</h3>
+            <p>
+              Этот блок нужен как быстрый мост от доверия к действию: после кейсов не должно быть
+              тупика.
+            </p>
+          </div>
+          <Link href="/proekty/">Все проекты</Link>
         </div>
       </div>
     </section>
