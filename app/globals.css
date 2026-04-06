@@ -575,12 +575,13 @@ p {
 .system-secondary {
   position: relative;
   overflow: hidden;
-  min-height: 27rem;
+  min-height: clamp(20rem, 32vw, 25rem);
+  aspect-ratio: 6 / 5;
   background: var(--surface-high);
 }
 
 .system-secondary {
-  min-height: 27rem;
+  min-height: clamp(20rem, 32vw, 25rem);
 }
 
 .system-feature-image,
@@ -592,6 +593,7 @@ p {
 .system-feature-image img,
 .system-secondary-image img {
   object-fit: cover;
+  object-position: center 48%;
   transition: transform 320ms ease;
 }
 
@@ -824,17 +826,30 @@ p {
 
 .editorial-image {
   position: relative;
-  min-height: 28rem;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
 }
 
 .editorial-image img {
   object-fit: cover;
+  object-position: center;
 }
 
 .trust-column {
   display: grid;
   gap: 1rem;
+}
+
+.trust-visual {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--surface-high);
+}
+
+.trust-visual img {
+  object-fit: cover;
+  object-position: center 40%;
 }
 
 .trust-proof-board {
@@ -963,11 +978,12 @@ p {
 
 .operation-image {
   position: relative;
-  min-height: 16rem;
+  aspect-ratio: 4 / 3;
 }
 
 .operation-image img {
   object-fit: cover;
+  object-position: center;
 }
 
 .operation-copy {
@@ -1017,7 +1033,7 @@ p {
 
 .object-thumb {
   position: relative;
-  min-height: 8rem;
+  aspect-ratio: 5 / 4;
   overflow: hidden;
   background: var(--surface-high);
 }
@@ -1045,12 +1061,13 @@ p {
 
 .project-card-media {
   position: relative;
-  min-height: 16rem;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
 }
 
 .project-card-media img {
   object-fit: cover;
+  object-position: center;
 }
 
 .project-card-index {
@@ -1345,13 +1362,14 @@ p {
 
 .project-detail-image {
   position: relative;
-  min-height: 28rem;
+  aspect-ratio: 16 / 10;
   overflow: hidden;
   background: var(--surface-high);
 }
 
 .project-detail-image img {
   object-fit: cover;
+  object-position: center;
 }
 
 .project-navigation {
