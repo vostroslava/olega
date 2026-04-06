@@ -161,7 +161,11 @@ export function ProjectPage({ project }: ProjectPageProps) {
               <div className="project-proof-copy">
                 <p className="section-kicker">Почему этот кейс усиливает доверие</p>
                 <h2>У объекта должен быть не только красивый фасад, но и понятный доказательный вес</h2>
-                <p>{project.result}</p>
+                <p>
+                  Ниже — не повтор описания объекта, а три сигнала, которые помогают следующему
+                  заказчику быстро понять, почему этот кейс релевантен по масштабу, дисциплине и
+                  типу решения.
+                </p>
 
                 <div className="hero-actions">
                   <Link className="button button-primary" href={`/uslugi/${project.relatedServiceSlug}/`}>

@@ -12,6 +12,11 @@ export function SiteFooter() {
             Производство и монтаж светопрозрачных конструкций, фасадов, окон и алюминиевых систем
             по всей Беларуси.
           </p>
+          <div className="footer-facts">
+            <p>Почтовый адрес: {CONTACTS.postalAddress}</p>
+            <p>Юридический адрес: {CONTACTS.legalAddress}</p>
+            <p>Банк: {CONTACTS.bankDetails}</p>
+          </div>
         </div>
 
         <div className="footer-column">
@@ -40,13 +45,6 @@ export function SiteFooter() {
           <Link href="/o-kompanii/">О компании</Link>
           <Link href="/partneram/">Партнёрам</Link>
           <Link href="/kontakty/">Контакты</Link>
-        </div>
-
-        <div className="footer-column">
-          <h3>Адреса и реквизиты</h3>
-          <p>Почтовый адрес: {CONTACTS.postalAddress}</p>
-          <p>Юридический адрес: {CONTACTS.legalAddress}</p>
-          <p>Банк: {CONTACTS.bankDetails}</p>
         </div>
       </div>
 

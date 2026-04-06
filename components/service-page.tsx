@@ -103,9 +103,9 @@ export function ServicePage({ service }: ServicePageProps) {
               </div>
 
               <div className="content-split-panel">
-                <strong>Что входит в рабочую логику</strong>
+                <strong>Что берём в рабочий контур</strong>
                 <ul className="page-highlight-list">
-                  {service.deliverables.slice(0, 3).map((item) => (
+                  {service.deliverables.map((item) => (
                     <li key={item}>{item}</li>
                   ))}
                 </ul>
@@ -123,34 +123,6 @@ export function ServicePage({ service }: ServicePageProps) {
                   <p>{item.text}</p>
                 </article>
               ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="section systems-detail-band">
-          <div className="container">
-            <div className="service-deliverables-shell">
-              <div className="service-deliverables-copy reveal">
-                <p className="section-kicker">Что входит в работу</p>
-                <h2>Не просто система, а полный инженерный контур под конкретный объект</h2>
-                <p>
-                  Берём направление целиком: от инженерной проработки и расчёта до производства,
-                  монтажа и сдачи объекта. Поэтому заказчику не нужно собирать решение из разных
-                  подрядчиков и случайных узлов.
-                </p>
-              </div>
-
-              <div className="service-deliverables-list">
-                {service.deliverables.map((item, index) => (
-                  <article
-                    className={`service-deliverable-item reveal ${index === 1 ? "reveal-delay" : index === 2 ? "reveal-delay-2" : ""}`}
-                    key={item}
-                  >
-                    <span>{String(index + 1).padStart(2, "0")}</span>
-                    <p>{item}</p>
-                  </article>
-                ))}
-              </div>
             </div>
           </div>
         </section>

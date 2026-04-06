@@ -280,11 +280,12 @@ export function TrustSection() {
             рекламные тезисы, а доказательства, что компания умеет доводить проект до результата.
           </p>
 
-          <MetricsBand />
-
-          <div className="trust-chip-strip">
-            {TRUST_OBJECT_MARKS.slice(0, 4).map((item) => (
-              <span key={item}>{item}</span>
+          <div className="metrics-band trust-metrics-band">
+            {TRUST_METRICS.slice(0, 3).map(([value, label]) => (
+              <article key={value} className="metric-card">
+                <strong>{value}</strong>
+                <span>{label}</span>
+              </article>
             ))}
           </div>
 
@@ -307,6 +308,11 @@ export function TrustSection() {
                 Здесь собраны факты, которые заказчик обычно ищет перед первым касанием:
                 сертификация, гарантия, скорость включения в объект и модель ответственности.
               </p>
+              <div className="trust-chip-strip">
+                {TRUST_OBJECT_MARKS.slice(0, 3).map((item) => (
+                  <span key={item}>{item}</span>
+                ))}
+              </div>
             </div>
 
             <div className="trust-stack">
