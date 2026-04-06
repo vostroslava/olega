@@ -5,10 +5,13 @@ export function SiteFooter() {
   return (
     <footer className="site-footer" id="contacts">
       <div className="container footer-grid">
-        <div>
-          <p className="eyebrow">Контакты</p>
+        <div className="footer-brand">
+          <p className="section-kicker">Контакты</p>
           <h2>СтеклоСтройГрупп</h2>
-          <p>Производство и монтаж светопрозрачных конструкций в Республике Беларусь.</p>
+          <p>
+            Производство и монтаж светопрозрачных конструкций, фасадов, окон и алюминиевых систем
+            по всей Беларуси.
+          </p>
         </div>
 
         <div className="footer-column">
@@ -49,7 +52,10 @@ export function SiteFooter() {
 
       <div className="container footer-bottom">
         <p>© {new Date().getFullYear()} ООО «СтеклоСтройГрупп». Все права защищены.</p>
-        <Link href="/politika-konfidentsialnosti/">Политика конфиденциальности</Link>
+        <div className="footer-bottom-links">
+          <Link href="/politika-konfidentsialnosti/">Политика конфиденциальности</Link>
+          <Link href="/kontakty/">Контакты</Link>
+        </div>
       </div>
     </footer>
   );

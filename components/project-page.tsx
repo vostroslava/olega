@@ -3,10 +3,7 @@ import Link from "next/link";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { StructuredData } from "@/components/seo/structured-data";
-import {
-  ProjectsGrid,
-  RequestSection,
-} from "@/components/sections/home-sections";
+import { ProjectsGrid, RequestSection } from "@/components/sections/home-sections";
 import { MobileCta } from "@/components/ui/mobile-cta";
 import { RevealInit } from "@/components/ui/reveal-init";
 import { PROJECTS, Project } from "@/lib/site-data";
@@ -50,7 +47,11 @@ export function ProjectPage({ project }: ProjectPageProps) {
       <SiteHeader />
 
       <main className="page-main">
-        <section className="page-hero section">
+        <section className="page-hero page-hero-dark section">
+          <div className="page-hero-backdrop">
+            <Image src={assetPath(project.image)} alt={project.alt} fill priority sizes="100vw" />
+          </div>
+
           <div className="container page-hero-shell reveal" id="project-hero">
             <div className="page-hero-copy">
               <div className="page-breadcrumbs">
@@ -61,12 +62,12 @@ export function ProjectPage({ project }: ProjectPageProps) {
                 <span>{project.title}</span>
               </div>
 
-              <p className="eyebrow">{project.tag}</p>
+              <p className="section-kicker">{project.tag}</p>
               <h1>{project.title}</h1>
               <p className="hero-lead">{project.text}</p>
               <p className="page-hero-text">
-                Показываем объект целиком: от фасадного решения и стеклянного контура до
-                технической логики реализации и результата для заказчика.
+                Объект целиком: фасадный контур, стеклянная архитектура, состав работ и итоговая
+                логика решения для заказчика.
               </p>
 
               <div className="hero-actions">
@@ -79,7 +80,7 @@ export function ProjectPage({ project }: ProjectPageProps) {
               </div>
             </div>
 
-            <aside className="page-hero-panel reveal reveal-delay">
+            <aside className="page-hero-rail reveal reveal-delay">
               <strong>Ключевые параметры</strong>
               <ul className="page-highlight-list">
                 {keyFacts.map((item) => (
@@ -90,7 +91,7 @@ export function ProjectPage({ project }: ProjectPageProps) {
           </div>
         </section>
 
-        <section className="section project-detail-overview">
+        <section className="section project-overview-band">
           <div className="container">
             <div className="project-detail-grid">
               <div className="project-detail-image reveal">
@@ -102,14 +103,13 @@ export function ProjectPage({ project }: ProjectPageProps) {
                 />
               </div>
 
-              <div className="project-detail-panel reveal reveal-delay">
-                <p className="eyebrow">Объём работ</p>
-                <h2>Что входило в проект</h2>
-                <div className="page-highlight-list">
+              <div className="content-split-panel reveal reveal-delay">
+                <strong>Что входило в проект</strong>
+                <ul className="page-highlight-list">
                   {project.scope.map((item) => (
                     <li key={item}>{item}</li>
                   ))}
-                </div>
+                </ul>
               </div>
             </div>
 
@@ -127,15 +127,15 @@ export function ProjectPage({ project }: ProjectPageProps) {
           </div>
         </section>
 
-        <section className="section service-summary">
-          <div className="container summary-shell reveal">
-            <div className="summary-copy">
-              <p className="eyebrow">Задача</p>
-              <h2>Контекст проекта</h2>
+        <section className="section editorial-band">
+          <div className="container editorial-shell reveal">
+            <div className="editorial-copy">
+              <p className="section-kicker">Контекст проекта</p>
+              <h2>Задача, решение и итог должны читаться как единый инженерный сценарий</h2>
               <p>{project.challenge}</p>
             </div>
 
-            <div className="summary-grid">
+            <div className="editorial-grid">
               <article>
                 <strong>Решение</strong>
                 <p>{project.solution}</p>
@@ -147,8 +147,8 @@ export function ProjectPage({ project }: ProjectPageProps) {
               <article>
                 <strong>Связанная услуга</strong>
                 <p>
-                  Если вам нужен похожий объект, переходите в профильную услугу, чтобы посмотреть
-                  типовые решения, сценарии применения и формат расчёта.
+                  Этот объект можно использовать как быстрый вход в профильное направление, если
+                  нужна похожая задача по масштабу и типу системы.
                 </p>
               </article>
             </div>
@@ -158,7 +158,7 @@ export function ProjectPage({ project }: ProjectPageProps) {
         <section className="section project-highlights">
           <div className="container">
             <div className="section-heading reveal">
-              <p className="eyebrow">Почему кейс важен</p>
+              <p className="section-kicker">Почему кейс важен</p>
               <h2>Тезисы, которые усиливают доверие на коммерческой странице</h2>
             </div>
 
@@ -199,7 +199,7 @@ export function ProjectPage({ project }: ProjectPageProps) {
                 <h3>Связанная услуга</h3>
                 <p>
                   Если вас интересует похожая задача, следующий шаг — открыть профильную страницу
-                  услуги.
+                  услуги и посмотреть систему целиком.
                 </p>
                 <Link href={`/uslugi/${project.relatedServiceSlug}/`}>
                   {project.relatedServiceLabel}
@@ -207,12 +207,12 @@ export function ProjectPage({ project }: ProjectPageProps) {
               </article>
               <article className="partner-card reveal reveal-delay">
                 <h3>Все проекты</h3>
-                <p>Посмотрите остальные кейсы, чтобы сравнить масштаб и типы объектов.</p>
+                <p>Посмотрите остальные объекты, чтобы сравнить масштаб, тип задач и подачу кейсов.</p>
                 <Link href="/proekty/">Открыть список кейсов</Link>
               </article>
               <article className="partner-card reveal reveal-delay-2">
                 <h3>Контакты и быстрый расчёт</h3>
-                <p>Если нужен быстрый следующий шаг, переходите сразу к контактам или заявке.</p>
+                <p>Если нужен следующий шаг без изучения сайта, переходите сразу к заявке или контактам.</p>
                 <Link href="/kontakty/">Перейти в контакты</Link>
               </article>
             </div>
@@ -220,11 +220,13 @@ export function ProjectPage({ project }: ProjectPageProps) {
         </section>
 
         {relatedProjects.length ? (
-          <section className="section projects">
+          <section className="section projects projects-on-light">
             <div className="container">
-              <div className="section-heading reveal">
-                <p className="eyebrow">Другие кейсы</p>
-                <h2>Ещё проекты, которые логично посмотреть после этого объекта</h2>
+              <div className="objects-header reveal">
+                <div>
+                  <p className="section-kicker">Другие кейсы</p>
+                  <h2>Ещё проекты, которые логично открыть после этого объекта</h2>
+                </div>
               </div>
               <ProjectsGrid projects={relatedProjects} />
             </div>

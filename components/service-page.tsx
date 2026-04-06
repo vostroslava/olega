@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { StructuredData } from "@/components/seo/structured-data";
@@ -11,16 +12,13 @@ import {
 } from "@/components/sections/home-sections";
 import { MobileCta } from "@/components/ui/mobile-cta";
 import { RevealInit } from "@/components/ui/reveal-init";
-import {
-  getProjectsByIds,
-  PROCESS_STEPS,
-  ServicePageData,
-} from "@/lib/site-data";
+import { getProjectsByIds, PROCESS_STEPS, ServicePageData } from "@/lib/site-data";
 import {
   createBreadcrumbStructuredData,
   createFaqStructuredData,
   createServiceStructuredData,
 } from "@/lib/seo";
+import { assetPath } from "@/lib/site-utils";
 
 type ServicePageProps = {
   service: ServicePageData;
@@ -29,6 +27,7 @@ type ServicePageProps = {
 export function ServicePage({ service }: ServicePageProps) {
   const relatedProjects = getProjectsByIds(service.relatedProjectIds);
   const servicePath = `/uslugi/${service.slug}/`;
+  const heroImage = relatedProjects[0]?.image ?? "/assets/photos/hero-company-facade.png";
 
   return (
     <div className="page-shell">
@@ -50,16 +49,22 @@ export function ServicePage({ service }: ServicePageProps) {
       <SiteHeader />
 
       <main className="page-main">
-        <section className="page-hero section">
+        <section className="page-hero page-hero-dark section">
+          <div className="page-hero-backdrop">
+            <Image src={assetPath(heroImage)} alt={service.title} fill priority sizes="100vw" />
+          </div>
+
           <div className="container page-hero-shell reveal" id="service-hero">
             <div className="page-hero-copy">
               <div className="page-breadcrumbs">
                 <Link href="/">Главная</Link>
                 <span>/</span>
+                <Link href="/uslugi/">Услуги</Link>
+                <span>/</span>
                 <span>{service.menuLabel}</span>
               </div>
 
-              <p className="eyebrow">{service.heroEyebrow}</p>
+              <p className="section-kicker">{service.heroEyebrow}</p>
               <h1>{service.title}</h1>
               <p className="hero-lead">{service.lead}</p>
               <p className="page-hero-text">{service.description}</p>
@@ -68,13 +73,13 @@ export function ServicePage({ service }: ServicePageProps) {
                 <a className="button button-primary" href="#request">
                   Получить расчёт
                 </a>
-                <Link className="button button-secondary" href="/#projects">
+                <Link className="button button-secondary" href="/proekty/">
                   Смотреть проекты
                 </Link>
               </div>
             </div>
 
-            <aside className="page-hero-panel reveal reveal-delay">
+            <aside className="page-hero-rail reveal reveal-delay">
               <strong>Ключевые преимущества</strong>
               <ul className="page-highlight-list">
                 {service.highlights.map((item) => (
@@ -85,15 +90,27 @@ export function ServicePage({ service }: ServicePageProps) {
           </div>
         </section>
 
-        <section className="section">
+        <section className="section page-content-band">
           <div className="container">
-            <div className="section-heading reveal">
-              <p className="eyebrow">Преимущества</p>
-              <h2>Почему это направление выбирают для сложных и типовых объектов</h2>
-              <p>
-                Здесь собраны ключевые преимущества направления: где оно работает лучше всего, за
-                счёт чего выигрывает и что получает заказчик на объекте.
-              </p>
+            <div className="content-split reveal">
+              <div className="content-split-copy">
+                <p className="section-kicker">Инженерная логика</p>
+                <h2>Почему это направление выбирают для сложных и типовых объектов</h2>
+                <p>
+                  Здесь важен не просто внешний вид конструкции. Решение должно одновременно
+                  работать по геометрии, эксплуатационному сценарию, монтажному узлу и визуальной
+                  подаче объекта.
+                </p>
+              </div>
+
+              <div className="content-split-panel">
+                <strong>Что входит в рабочую логику</strong>
+                <ul className="page-highlight-list">
+                  {service.deliverables.slice(0, 3).map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
 
             <div className="intro-list">
@@ -111,12 +128,12 @@ export function ServicePage({ service }: ServicePageProps) {
           </div>
         </section>
 
-        <section className="section">
+        <section className="section systems-detail-band">
           <div className="container">
             <SectionHeading
               eyebrow="Что входит в работу"
               title="Что берём на себя по этому направлению"
-              description="Формируем решение под ключ: от инженерной подготовки и расчёта до монтажа и сопровождения после сдачи."
+              description="Берём решение как систему: от инженерной проработки и расчёта до производства, монтажа и сдачи объекта."
             />
 
             <div className="service-crosslinks">
@@ -136,8 +153,12 @@ export function ServicePage({ service }: ServicePageProps) {
         <section className="section service-applications">
           <div className="container service-application-shell">
             <div className="section-heading reveal">
-              <p className="eyebrow">Где применимо</p>
-              <h2>Типовые сценарии и объекты</h2>
+              <p className="section-kicker">Применение</p>
+              <h2>Где и как это направление работает на объекте</h2>
+              <p>
+                Сценарии ниже нужны не ради заполнения страницы, а чтобы заказчик быстро соотнёс
+                свою задачу с типовым контуром применения.
+              </p>
             </div>
 
             <div className="service-application-grid">
@@ -148,8 +169,8 @@ export function ServicePage({ service }: ServicePageProps) {
                 >
                   <h3>{item}</h3>
                   <p>
-                    Подбираем конструкцию и монтажный узел под особенности объекта, график работ и
-                    ожидаемый результат.
+                    Подбираем систему, стеклопакет, профиль и монтажный узел под конкретный режим
+                    использования объекта.
                   </p>
                 </article>
               ))}
@@ -157,11 +178,13 @@ export function ServicePage({ service }: ServicePageProps) {
           </div>
         </section>
 
-        <section className="section projects">
+        <section className="section projects projects-on-light">
           <div className="container">
-            <div className="section-heading reveal">
-              <p className="eyebrow">Связанные кейсы</p>
-              <h2>Реальные объекты по этому направлению</h2>
+            <div className="objects-header reveal">
+              <div>
+                <p className="section-kicker">Связанные проекты</p>
+                <h2>Объекты, по которым видно, как направление работает в реальной эксплуатации</h2>
+              </div>
             </div>
 
             <ProjectsGrid projects={relatedProjects} />
@@ -170,18 +193,19 @@ export function ServicePage({ service }: ServicePageProps) {
 
         <ProcessSection />
 
-        <section className="section service-summary">
-          <div className="container summary-shell reveal">
-            <div className="summary-copy">
-              <p className="eyebrow">Почему это работает</p>
+        <section className="section editorial-band">
+          <div className="container editorial-shell reveal">
+            <div className="editorial-copy">
+              <p className="section-kicker">Почему это работает</p>
               <h2>Что входит в работу помимо самой конструкции</h2>
               <p>
-                Берём на себя не только подбор системы, но и проектирование, производство, монтаж и
-                сопровождение после сдачи объекта.
+                Услуга работает только тогда, когда решение связано с расчётом, производством,
+                монтажом и сервисом. Поэтому на объекте важна не только система, но и весь контур
+                исполнения.
               </p>
             </div>
 
-            <div className="summary-grid">
+            <div className="editorial-grid">
               {PROCESS_STEPS.slice(0, 3).map((step) => (
                 <article key={step.step}>
                   <strong>{step.title}</strong>
@@ -195,7 +219,7 @@ export function ServicePage({ service }: ServicePageProps) {
         <FaqSection items={service.faq} />
         <RequestSection
           eyebrow="Запрос по услуге"
-          title={`Получить расчёт по направлению «${service.title}»`}
+          title={`Запросить консультацию по направлению «${service.title}»`}
           description="Оставьте базовые данные по объекту, а все технические детали мы доберём уже на следующем касании."
           defaultProduct={service.menuLabel}
         />

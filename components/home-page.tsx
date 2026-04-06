@@ -2,16 +2,13 @@ import { StructuredData } from "@/components/seo/structured-data";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import {
-  DocumentsSection,
   FaqSection,
   HeroSection,
-  OperationsSection,
   PartnersSection,
   ProcessSection,
   ProductsSection,
   ProjectsSection,
   RequestSection,
-  StandardsSection,
   TrustSection,
 } from "@/components/sections/home-sections";
 import { MobileCta } from "@/components/ui/mobile-cta";
@@ -28,10 +25,7 @@ export function HomePage() {
       <main id="top">
         <HeroSection />
         <ProductsSection />
-        <StandardsSection />
         <TrustSection />
-        <DocumentsSection />
-        <OperationsSection />
         <ProjectsSection />
         <ProcessSection />
         <PartnersSection />

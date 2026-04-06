@@ -9,22 +9,12 @@ export function SiteHeader() {
 
   return (
     <header className="site-header">
-      <div className="topbar">
-        <div className="container topbar-inner">
-          <p>{CONTACTS.cityLine}</p>
-          <div className="topbar-links">
-            <a href={CONTACTS.phones[0].href}>{CONTACTS.phones[0].label}</a>
-            <a href={`mailto:${CONTACTS.primaryEmail}`}>{CONTACTS.primaryEmail}</a>
-          </div>
-        </div>
-      </div>
-
       <div className="container header-inner">
         <Link className="brand" href="/" aria-label="СтеклоСтройГрупп" onClick={() => setMenuOpen(false)}>
-          <span className="brand-mark">ССГ</span>
+          <span className="brand-mark">С</span>
           <span className="brand-copy">
             <strong>СтеклоСтройГрупп</strong>
-            <small>Окна, фасады, витражи, панорамное остекление</small>
+            <small>ПВХ, алюминий, фасады, витражи</small>
           </span>
         </Link>
 
@@ -46,6 +36,9 @@ export function SiteHeader() {
               {item.label}
             </Link>
           ))}
+          <a className="nav-phone" href={CONTACTS.phones[0].href} onClick={() => setMenuOpen(false)}>
+            {CONTACTS.phones[0].label}
+          </a>
           <Link className="nav-cta" href="/#request" onClick={() => setMenuOpen(false)}>
             Получить расчёт
           </Link>
