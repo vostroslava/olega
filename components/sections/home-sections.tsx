@@ -281,7 +281,7 @@ export function TrustSection() {
           </p>
 
           <div className="metrics-band trust-metrics-band">
-            {TRUST_METRICS.slice(0, 3).map(([value, label]) => (
+            {TRUST_METRICS.slice(0, 2).map(([value, label]) => (
               <article key={value} className="metric-card">
                 <strong>{value}</strong>
                 <span>{label}</span>
@@ -309,7 +309,7 @@ export function TrustSection() {
                 сертификация, гарантия, скорость включения в объект и модель ответственности.
               </p>
               <div className="trust-chip-strip">
-                {TRUST_OBJECT_MARKS.slice(0, 3).map((item) => (
+                {TRUST_OBJECT_MARKS.slice(0, 2).map((item) => (
                   <span key={item}>{item}</span>
                 ))}
               </div>

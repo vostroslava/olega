@@ -227,9 +227,9 @@ export function ProjectPage({ project }: ProjectPageProps) {
                 <Link href="/proekty/">Открыть список кейсов</Link>
               </article>
               <article className="partner-card reveal reveal-delay-2">
-                <h3>Контакты и быстрый расчёт</h3>
-                <p>Если нужен следующий шаг без изучения сайта, переходите сразу к заявке или контактам.</p>
-                <Link href="/kontakty/">Перейти в контакты</Link>
+                <h3>Быстрый вход в заявку</h3>
+                <p>Если объект похож по масштабу и задаче, следующий шаг лучше сделать сразу через заявку ниже.</p>
+                <a href="#request">Перейти к заявке</a>
               </article>
             </div>
           </div>

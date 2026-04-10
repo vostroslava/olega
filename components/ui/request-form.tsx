@@ -180,6 +180,15 @@ export function RequestForm({ defaultProduct }: RequestFormProps) {
           body: payload,
           mode: "no-cors",
         });
+
+        form.reset();
+        clearEstimateContext();
+        setMessageValue("");
+        setNote(
+          "Запрос передан в обработку. Отдельную страницу подтверждения не показываем: если не вернёмся в ближайшее рабочее время, свяжитесь с нами по телефону."
+        );
+        setNoteSuccess(true);
+        return;
       } else {
         const response = await fetch(formEndpoint, {
           method: "POST",
@@ -208,11 +217,7 @@ export function RequestForm({ defaultProduct }: RequestFormProps) {
       form.reset();
       clearEstimateContext();
       setMessageValue("");
-      setNote(
-        isGoogleAppsScriptEndpoint
-          ? "Заявка отправлена. Мы сохранили запрос и свяжемся с вами в ближайшее рабочее время."
-          : "Заявка отправлена. Мы свяжемся с вами в ближайшее рабочее время."
-      );
+      setNote("Заявка отправлена. Мы свяжемся с вами в ближайшее рабочее время.");
       setNoteSuccess(true);
       window.location.assign(
         assetPath(`/spasibo/?product=${encodeURIComponent(product)}`)
@@ -231,7 +236,13 @@ export function RequestForm({ defaultProduct }: RequestFormProps) {
     <form className="request-form reveal reveal-delay" onSubmit={handleSubmit}>
       <label>
         <span>Имя</span>
-        <input type="text" name="name" placeholder="Как к вам обращаться" required />
+        <input
+          type="text"
+          name="name"
+          autoComplete="name"
+          placeholder="Как к вам обращаться…"
+          required
+        />
       </label>
 
       <div className="bot-field" aria-hidden="true">
@@ -243,7 +254,14 @@ export function RequestForm({ defaultProduct }: RequestFormProps) {
 
       <label>
         <span>Телефон</span>
-        <input type="tel" name="phone" placeholder="+375 __ ___ __ __" required />
+        <input
+          type="tel"
+          name="phone"
+          autoComplete="tel"
+          inputMode="tel"
+          placeholder="+375 __ ___ __ __…"
+          required
+        />
       </label>
       <label>
         <span>Тип запроса</span>
@@ -339,9 +357,10 @@ export function RequestForm({ defaultProduct }: RequestFormProps) {
         <textarea
           name="message"
           rows={4}
+          autoComplete="off"
           value={messageValue}
           onChange={(event) => setMessageValue(event.target.value)}
-          placeholder="Например: частный дом, входная группа, фасад, офис, ориентировочные сроки"
+          placeholder="Например: частный дом, входная группа, фасад, офис, ориентировочные сроки…"
         />
       </label>
 

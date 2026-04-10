@@ -5,7 +5,6 @@ import { StructuredData } from "@/components/seo/structured-data";
 import { SiteHeader } from "@/components/layout/site-header";
 import {
   FaqSection,
-  ProcessSection,
   ProjectsGrid,
   RequestSection,
 } from "@/components/sections/home-sections";
@@ -146,10 +145,6 @@ export function ServicePage({ service }: ServicePageProps) {
                 >
                   <span>{String(index + 1).padStart(2, "0")}</span>
                   <h3>{item}</h3>
-                  <p>
-                    Подбираем систему, стеклопакет, профиль и монтажный узел под конкретный режим
-                    использования объекта.
-                  </p>
                 </article>
               ))}
             </div>
@@ -168,8 +163,6 @@ export function ServicePage({ service }: ServicePageProps) {
             <ProjectsGrid projects={relatedProjects} />
           </div>
         </section>
-
-        <ProcessSection />
 
         <section className="section editorial-band">
           <div className="container editorial-shell reveal">

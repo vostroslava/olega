@@ -9,6 +9,12 @@ type RevealInitProps = {
 export function RevealInit({ selector = ".reveal" }: RevealInitProps) {
   useEffect(() => {
     const elements = Array.from(document.querySelectorAll<HTMLElement>(selector));
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (prefersReducedMotion) {
+      elements.forEach((element) => element.classList.add("is-visible"));
+      return;
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {

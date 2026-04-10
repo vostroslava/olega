@@ -1,11 +1,35 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CONTACTS, NAV_ITEMS } from "@/lib/site-data";
 
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const closeOnDesktop = () => {
+      if (window.innerWidth > 860) {
+        setMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", closeOnDesktop);
+    return () => window.removeEventListener("resize", closeOnDesktop);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const shouldLockScroll = menuOpen && window.innerWidth <= 860;
+    document.body.style.overflow = shouldLockScroll ? "hidden" : "";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
 
   return (
     <header className="site-header">
@@ -21,6 +45,7 @@ export function SiteHeader() {
         <button
           className="menu-toggle"
           type="button"
+          aria-label={menuOpen ? "Закрыть меню" : "Открыть меню"}
           aria-expanded={menuOpen}
           aria-controls="site-nav"
           onClick={() => setMenuOpen((open) => !open)}
