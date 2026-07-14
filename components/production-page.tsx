@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { MonolithCta, MonolithFact, MonolithFactRail, MonolithSectionHeading } from "@/components/ui/monolith-content";
 import { MonolithPageHero } from "@/components/ui/monolith-page-hero";
 import { ArchitecturalIcon } from "@/components/ui/architectural-icons";
+import { ProductionRoute } from "@/components/ui/production-route";
 import { MobileCta } from "@/components/ui/mobile-cta";
 import { RevealInit } from "@/components/ui/reveal-init";
 import { OPERATIONS_GALLERY, PROCESS_STEPS } from "@/lib/site-data";
@@ -37,6 +38,7 @@ export function ProductionPage() {
             <div className="monolith-process-line">
               {PROCESS_STEPS.slice(0, 5).map((step) => <article className="reveal" key={step.step}><span>{step.step}</span><h3>{step.title}</h3><p>{step.text}</p></article>)}
             </div>
+            <ProductionRoute />
           </div>
         </section>
 

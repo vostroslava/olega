@@ -19,6 +19,12 @@ const objectTypes = [
   { value: "Другое", icon: "custom" as const, detail: "Нестандартная конструкция или идея" },
 ];
 const materialOptions = ["ПВХ", "Тёплый алюминий", "Холодный алюминий", "Нужна рекомендация"];
+const sceneCopy = {
+  "Частный дом": ["Панорамный контур", "Окна, двери и террасы под архитектуру дома."],
+  "Квартира": ["Городской контур", "Окна, лоджия или эркер с учётом условий помещения."],
+  "Коммерческий объект": ["Фасадный контур", "Витражи и входная группа для масштаба коммерческого объекта."],
+  "Другое": ["Свободная геометрия", "Разберём идею, эскиз или нестандартный конструктивный узел."],
+} as const;
 
 export function QuoteWizard({ compact = false }: { compact?: boolean }) {
   const [step, setStep] = useState(0);
@@ -34,6 +40,8 @@ export function QuoteWizard({ compact = false }: { compact?: boolean }) {
     () => `${objectType}; ${size || "размеры уточнить"}; ${material}${fileName ? `; файл: ${fileName}` : ""}`,
     [fileName, material, objectType, size],
   );
+  const activeObject = objectTypes.find((item) => item.value === objectType) ?? objectTypes[0];
+  const activeScene = sceneCopy[activeObject.value as keyof typeof sceneCopy];
 
   const handleFile = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -114,13 +122,21 @@ export function QuoteWizard({ compact = false }: { compact?: boolean }) {
                 ))}
               </div>
             </div>
-            <label className="quote-upload">
-              <FileArrowUp size={46} weight="thin" aria-hidden="true" />
-              <strong>{fileName || "Добавьте фото, чертёж или PDF"}</strong>
-              <span>{fileName ? "Файл выбран" : "Перетащите файл сюда или выберите на компьютере"}</span>
-              <input type="file" accept="image/*,.pdf" onChange={handleFile} />
-              <small>Умный помощник соберёт данные из файла и уточнит только недостающее</small>
-            </label>
+            <div className="quote-scene-panel" aria-live="polite">
+              <div className="quote-scene-ruler quote-scene-ruler-top" aria-hidden="true" />
+              <div className="quote-scene-object" key={activeObject.icon}>
+                <ArchitecturalIcon kind={activeObject.icon} className="quote-scene-icon" />
+              </div>
+              <p className="optical-label">{activeScene[0]}</p>
+              <strong>{objectType}</strong>
+              <span>{activeScene[1]}</span>
+              <label className="quote-upload">
+                <FileArrowUp size={36} weight="thin" aria-hidden="true" />
+                <b>{fileName || "Добавьте фото, чертёж или PDF"}</b>
+                <small>{fileName ? "Файл выбран" : "Можно добавить на этом шаге"}</small>
+                <input type="file" accept="image/*,.pdf" onChange={handleFile} />
+              </label>
+            </div>
           </>
         ) : null}
 

@@ -108,6 +108,7 @@ export function OpticalHero() {
       <GlassRefraction />
       <div className="optical-hero-shade" aria-hidden="true" />
       <div className="optical-light-caustic" aria-hidden="true" />
+      <div className="optical-glass-edge" aria-hidden="true" />
       <div className="optical-hero-intro-shutter" aria-hidden="true" />
       <div className="optical-ruler optical-ruler-left" aria-hidden="true" />
       <div className="optical-ruler optical-ruler-bottom" aria-hidden="true" />
@@ -120,11 +121,11 @@ export function OpticalHero() {
             Окна, фасады и панорамное остекление — от замера и проектирования до производства и монтажа по всей Беларуси.
           </p>
           <div className="hero-actions">
-            <Link className="button button-primary" href="/raschet/">
+            <Link className="button button-primary" href="/raschet/" data-magnetic>
               <span>Рассчитать проект</span>
               <ArrowUpRight size={20} weight="thin" aria-hidden="true" />
             </Link>
-            <Link className="button button-secondary button-on-dark" href="/proekty/">
+            <Link className="button button-secondary button-on-dark" href="/proekty/" data-magnetic>
               <span>Смотреть объекты</span>
               <ArrowUpRight size={20} weight="thin" aria-hidden="true" />
             </Link>

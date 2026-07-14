@@ -8,6 +8,8 @@ import { Phone } from "@phosphor-icons/react/dist/csr/Phone";
 import { SquareHalf } from "@phosphor-icons/react/dist/csr/SquareHalf";
 import { X } from "@phosphor-icons/react/dist/csr/X";
 import { CONTACTS, NAV_ITEMS } from "@/lib/site-data";
+import { MagneticCtas } from "@/components/ui/magnetic-ctas";
+import { AtmosphereMode } from "@/components/ui/atmosphere-mode";
 
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -37,8 +39,11 @@ export function SiteHeader() {
   }, [menuOpen]);
 
   return (
-    <header className="site-header">
-      <div className="container header-inner">
+    <>
+      <MagneticCtas />
+      <AtmosphereMode />
+      <header className="site-header">
+        <div className="container header-inner">
         <Link className="brand" href="/" aria-label="СтеклоСтройГрупп" onClick={() => setMenuOpen(false)}>
           <SquareHalf className="brand-mark" size={30} weight="thin" aria-hidden="true" />
           <strong>СтеклоСтройГрупп</strong>
@@ -100,11 +105,12 @@ export function SiteHeader() {
           </div>
         </nav>
 
-        <Link className="header-cta" href="/raschet/">
+        <Link className="header-cta" href="/raschet/" data-magnetic>
           <span>Рассчитать проект</span>
           <ArrowUpRight size={20} weight="thin" aria-hidden="true" />
         </Link>
-      </div>
-    </header>
+        </div>
+      </header>
+    </>
   );
 }

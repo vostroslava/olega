@@ -5,6 +5,7 @@ import { MonolithCta, MonolithSectionHeading } from "@/components/ui/monolith-co
 import { MonolithPageHero } from "@/components/ui/monolith-page-hero";
 import { MobileCta } from "@/components/ui/mobile-cta";
 import { ProjectGallery } from "@/components/ui/project-gallery";
+import { ProjectReveal } from "@/components/ui/project-reveal";
 import { RevealInit } from "@/components/ui/reveal-init";
 import { PROJECTS } from "@/lib/site-data";
 import { createBreadcrumbStructuredData, createItemListStructuredData } from "@/lib/seo";
@@ -20,6 +21,7 @@ export function ProjectsPage() {
         <section className="monolith-content-section" id="section-1">
           <div className="container">
             <MonolithSectionHeading label="ПОРТФОЛИО" title="Архитектура в реальной эксплуатации" text="Показываем не абстрактные обещания, а объекты с понятным типом работ, местом и инженерной задачей." />
+            <ProjectReveal />
             <ProjectGallery />
           </div>
         </section>

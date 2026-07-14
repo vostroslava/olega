@@ -25,7 +25,17 @@ export function ProjectGallery() {
       </div>
       <div className="project-gallery-list">
         {projects.map((project, index) => (
-          <Link className="project-gallery-row reveal is-visible" href={`/proekty/${project.slug}/`} key={project.id}>
+          <Link
+            className="project-gallery-row reveal is-visible"
+            href={`/proekty/${project.slug}/`}
+            key={project.id}
+            onPointerMove={(event) => {
+              const node = event.currentTarget;
+              const rect = node.getBoundingClientRect();
+              node.style.setProperty("--scan-x", `${((event.clientX - rect.left) / rect.width) * 100}%`);
+              node.style.setProperty("--scan-y", `${((event.clientY - rect.top) / rect.height) * 100}%`);
+            }}
+          >
             <span className="project-gallery-index">{String(index + 1).padStart(2, "0")}</span>
             <div className="project-gallery-media"><Image src={assetPath(project.image)} alt={project.alt} fill sizes="(max-width: 860px) 100vw, 62vw" /></div>
             <div className="project-gallery-copy">

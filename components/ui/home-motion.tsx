@@ -15,16 +15,34 @@ export function HomeMotion() {
     media.add("(min-width: 861px)", () => {
       gsap.fromTo(
         ".glass-scroll-scene-media",
-        { scale: 1.03, xPercent: 0 },
+        { scale: 1.03, xPercent: 0, clipPath: "inset(0 44% 0 0)" },
         {
           scale: 1.12,
           xPercent: -3,
+          clipPath: "inset(0 0% 0 0)",
           ease: "none",
           scrollTrigger: {
             trigger: "#glass-scene",
             start: "top bottom",
             end: "bottom top",
             scrub: 0.8,
+          },
+        }
+      );
+
+      gsap.fromTo(
+        ".glass-scroll-blueprint-path",
+        { strokeDashoffset: 1, opacity: 0.9 },
+        {
+          strokeDashoffset: 0,
+          opacity: 0,
+          stagger: 0.15,
+          ease: "none",
+          scrollTrigger: {
+            trigger: "#glass-scene",
+            start: "top 74%",
+            end: "bottom 45%",
+            scrub: 0.7,
           },
         }
       );

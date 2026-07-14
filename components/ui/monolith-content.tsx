@@ -76,7 +76,7 @@ export function MonolithCta({
           <h2>{title}</h2>
         </div>
         <p>{text}</p>
-        <Link className="button button-primary" href={href}>
+        <Link className="button button-primary" href={href} data-magnetic>
           {action}<ArrowUpRight size={20} weight="thin" aria-hidden="true" />
         </Link>
       </div>
