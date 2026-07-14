@@ -24,8 +24,8 @@ export function ProductsCatalogPage() {
           breadcrumbs={[{ label: "Главная", href: "/" }, { label: "Продукция" }]}
           title="Продукция из ПВХ, алюминия и стекла"
           lead="Окна, двери, фасады, витражи и нестандартные светопрозрачные конструкции собственного производства."
-          image="/assets/generated/hero-optical-monolith.png"
-          imageAlt="Архитектурное остекление СтеклоСтройГрупп"
+          image="/assets/photos/project-avenue.png"
+          imageAlt="Реальный фасад объекта СтеклоСтройГрупп"
           rail={["Каталог", "Подбор", "Процесс", "Объекты", "Расчёт"]}
         />
 

@@ -9,7 +9,7 @@ export function PrivacyPage() {
     <div className="page-shell">
       <SiteHeader />
       <main className="page-main monolith-inner-page">
-        <MonolithPageHero id="privacy-hero" breadcrumbs={[{ label: "Главная", href: "/" }, { label: "Конфиденциальность" }]} title="Политика конфиденциальности" lead="Какие данные мы получаем через формы сайта, зачем используем и как можно управлять их обработкой." image="/assets/generated/hero-optical-monolith.png" imageAlt="Архитектурное стекло" rail={["Данные", "Цели", "Хранение", "Права", "Контакты"]} primaryLabel="Контакты" primaryHref="/kontakty/" secondaryLabel="На главную" secondaryHref="/" />
+        <MonolithPageHero id="privacy-hero" breadcrumbs={[{ label: "Главная", href: "/" }, { label: "Конфиденциальность" }]} title="Политика конфиденциальности" lead="Какие данные мы получаем через формы сайта, зачем используем и как можно управлять их обработкой." image="/assets/photos/project-arbat.png" imageAlt="Реальный объект СтеклоСтройГрупп" rail={["Данные", "Цели", "Хранение", "Права", "Контакты"]} primaryLabel="Контакты" primaryHref="/kontakty/" secondaryLabel="На главную" secondaryHref="/" />
         <section className="legal-section" id="section-1">
           <div className="container legal-layout">
             <aside><p className="optical-label">ОПЕРАТОР ДАННЫХ</p><strong>ООО «СтеклоСтройГрупп»</strong><a href={`mailto:${CONTACTS.primaryEmail}`}>{CONTACTS.primaryEmail}</a><p>{CONTACTS.postalAddress}</p></aside>

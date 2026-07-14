@@ -1,12 +1,9 @@
 import Image from "next/image";
-import { Factory } from "@phosphor-icons/react/dist/ssr/Factory";
-import { Ruler } from "@phosphor-icons/react/dist/ssr/Ruler";
-import { SealCheck } from "@phosphor-icons/react/dist/ssr/SealCheck";
-import { ShieldCheck } from "@phosphor-icons/react/dist/ssr/ShieldCheck";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { MonolithCta, MonolithFact, MonolithFactRail, MonolithSectionHeading } from "@/components/ui/monolith-content";
 import { MonolithPageHero } from "@/components/ui/monolith-page-hero";
+import { ArchitecturalIcon } from "@/components/ui/architectural-icons";
 import { MobileCta } from "@/components/ui/mobile-cta";
 import { RevealInit } from "@/components/ui/reveal-init";
 import { OPERATIONS_GALLERY, PROCESS_STEPS } from "@/lib/site-data";
@@ -18,7 +15,7 @@ export function ProductionPage() {
     ["Точная геометрия", "Проверяем размеры, узлы и допуски до передачи конструкции на монтаж."],
     ["Документированный контроль", "Комплектация и ключевые этапы фиксируются в рабочем процессе."],
   ];
-  const icons = [Factory, Ruler, SealCheck];
+  const icons = ["draft", "profile", "quality", "install"] as const;
 
   return (
     <div className="page-shell">
@@ -48,8 +45,8 @@ export function ProductionPage() {
             <MonolithSectionHeading label="КОНТРОЛЬ" title="Качество видно в деталях" />
             <div className="production-detail-grid">
               {OPERATIONS_GALLERY.slice(0, 4).map((item, index) => {
-                const Icon = icons[index % icons.length] ?? ShieldCheck;
-                return <article className="reveal" key={item.title}><div><Image src={assetPath(item.image)} alt={item.alt} fill sizes="(max-width: 860px) 100vw, 50vw" /></div><Icon size={28} weight="thin" /><h3>{item.title}</h3><p>{item.text}</p></article>;
+                const icon = icons[index % icons.length];
+                return <article className="reveal" key={item.title}><div><Image src={assetPath(item.image)} alt={item.alt} fill sizes="(max-width: 860px) 100vw, 50vw" /></div><ArchitecturalIcon kind={icon} className="production-detail-icon" /><h3>{item.title}</h3><p>{item.text}</p></article>;
               })}
             </div>
           </div>

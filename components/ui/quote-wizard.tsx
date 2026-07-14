@@ -4,20 +4,19 @@ import Link from "next/link";
 import { ChangeEvent, FormEvent, useMemo, useState } from "react";
 import { ArrowLeft } from "@phosphor-icons/react/dist/csr/ArrowLeft";
 import { ArrowRight } from "@phosphor-icons/react/dist/csr/ArrowRight";
-import { Buildings } from "@phosphor-icons/react/dist/csr/Buildings";
 import { Check } from "@phosphor-icons/react/dist/csr/Check";
 import { FileArrowUp } from "@phosphor-icons/react/dist/csr/FileArrowUp";
-import { HouseLine } from "@phosphor-icons/react/dist/csr/HouseLine";
 import { LockKey } from "@phosphor-icons/react/dist/csr/LockKey";
 import { UserCircleCheck } from "@phosphor-icons/react/dist/csr/UserCircleCheck";
+import { ArchitecturalIcon } from "@/components/ui/architectural-icons";
 import { CONTACTS } from "@/lib/site-data";
 
 const steps = ["Объект", "Размеры", "Материалы", "Контакты"];
 const objectTypes = [
-  { value: "Частный дом", icon: HouseLine },
-  { value: "Квартира", icon: HouseLine },
-  { value: "Коммерческий объект", icon: Buildings },
-  { value: "Другое", icon: Buildings },
+  { value: "Частный дом", icon: "house" as const, detail: "Панорамные окна, двери, террасы" },
+  { value: "Квартира", icon: "apartment" as const, detail: "Окна, балкон, лоджия, эркер" },
+  { value: "Коммерческий объект", icon: "commercial" as const, detail: "Фасад, витражи, входная группа" },
+  { value: "Другое", icon: "custom" as const, detail: "Нестандартная конструкция или идея" },
 ];
 const materialOptions = ["ПВХ", "Тёплый алюминий", "Холодный алюминий", "Нужна рекомендация"];
 
@@ -101,15 +100,15 @@ export function QuoteWizard({ compact = false }: { compact?: boolean }) {
             <div className="quote-fields">
               <h3>Что вы планируете остеклить?</h3>
               <div className="quote-choice-list">
-                {objectTypes.map(({ value, icon: Icon }) => (
+                {objectTypes.map(({ value, icon, detail }) => (
                   <button
                     key={value}
                     type="button"
                     className={objectType === value ? "is-selected" : ""}
                     onClick={() => setObjectType(value)}
                   >
-                    <Icon size={24} weight="thin" aria-hidden="true" />
-                    <span>{value}</span>
+                    <ArchitecturalIcon kind={icon} className="quote-object-icon" />
+                    <span><strong>{value}</strong><small>{detail}</small></span>
                     {objectType === value ? <Check size={20} weight="thin" aria-hidden="true" /> : null}
                   </button>
                 ))}

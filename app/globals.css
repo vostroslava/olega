@@ -1563,7 +1563,7 @@ p {
   padding: 10rem 0 6rem;
   background:
     linear-gradient(90deg, rgba(7, 10, 12, 0.96), rgba(7, 10, 12, 0.58)),
-    url("/assets/generated/hero-optical-monolith.png") center / cover;
+    url("/assets/photos/project-arbat.png") center / cover;
 }
 
 .status-page-card {
@@ -3092,7 +3092,7 @@ p {
   padding: 7rem 0;
   background:
     linear-gradient(90deg, rgba(7, 10, 12, 0.98), rgba(7, 10, 12, 0.76)),
-    url("/assets/generated/hero-optical-monolith.png") center / cover;
+    url("/assets/photos/project-avenue.png") center / cover;
 }
 
 .home-quote-grid {
@@ -3194,7 +3194,12 @@ p {
   gap: 0.65rem;
 }
 
-.quote-choice-list button,
+.quote-choice-list button {
+  grid-template-columns: 4.3rem 1fr 1.5rem;
+  min-height: 5.45rem;
+  padding: 0.35rem 1rem 0.35rem 0.65rem;
+}
+
 .quote-material-grid button {
   display: grid;
   grid-template-columns: 2rem 1fr 1.5rem;
@@ -3207,6 +3212,33 @@ p {
   color: var(--text-soft);
   text-align: left;
   cursor: pointer;
+}
+
+.quote-object-icon {
+  width: 4rem;
+  height: 4rem;
+  transition: transform 360ms var(--ease-out);
+}
+
+.quote-choice-list button:hover .quote-object-icon,
+.quote-choice-list button.is-selected .quote-object-icon {
+  transform: translateY(-2px) scale(1.06);
+}
+
+.quote-choice-list button > span:not(.quote-object-icon) {
+  display: grid;
+  gap: 0.28rem;
+}
+
+.quote-choice-list button strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.quote-choice-list button small {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  line-height: 1.35;
 }
 
 .quote-choice-list button.is-selected,
@@ -3657,7 +3689,7 @@ p {
     padding: 7.5rem 2rem 2rem;
     background:
       linear-gradient(90deg, rgba(6, 9, 11, 0.97), rgba(6, 9, 11, 0.82)),
-      url("/assets/generated/hero-optical-monolith.png") 56% center / cover;
+      url("/assets/photos/project-arbat.png") 56% center / cover;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-1rem);
@@ -4561,7 +4593,7 @@ p {
   border-bottom: 1px solid var(--line);
   background:
     linear-gradient(90deg, rgba(7, 10, 12, 0.96), rgba(7, 10, 12, 0.7)),
-    url("/assets/generated/hero-optical-monolith.png") center / cover;
+    url("/assets/photos/project-avenue.png") center / cover;
 }
 
 .monolith-cta-inner {
@@ -4805,8 +4837,15 @@ p {
   object-fit: cover;
 }
 
-.production-detail-grid svg {
-  color: var(--accent);
+.production-detail-icon {
+  width: 3.15rem;
+  height: 3.15rem;
+  align-self: center;
+  transition: transform 420ms var(--ease-out);
+}
+
+.production-detail-grid article:hover .production-detail-icon {
+  transform: translateY(-4px) rotate(-2deg);
 }
 
 .production-detail-grid h3 {
@@ -4822,7 +4861,7 @@ p {
   padding: 10rem 0 6rem;
   background:
     linear-gradient(90deg, rgba(7, 10, 12, 0.98), rgba(7, 10, 12, 0.7)),
-    url("/assets/generated/hero-optical-monolith.png") center / cover fixed;
+    url("/assets/photos/project-arbat.png") center / cover fixed;
 }
 
 .quote-page-grid {
