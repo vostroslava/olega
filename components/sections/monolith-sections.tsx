@@ -7,6 +7,8 @@ import { ArrowLeft } from "@phosphor-icons/react/dist/csr/ArrowLeft";
 import { ArrowRight } from "@phosphor-icons/react/dist/csr/ArrowRight";
 import { ArrowUpRight } from "@phosphor-icons/react/dist/csr/ArrowUpRight";
 import { Factory } from "@phosphor-icons/react/dist/csr/Factory";
+import { Buildings } from "@phosphor-icons/react/dist/csr/Buildings";
+import { HouseLine } from "@phosphor-icons/react/dist/csr/HouseLine";
 import { SealCheck } from "@phosphor-icons/react/dist/csr/SealCheck";
 import { ShieldCheck } from "@phosphor-icons/react/dist/csr/ShieldCheck";
 import { PROJECTS, PRODUCTS } from "@/lib/site-data";
@@ -26,6 +28,7 @@ export function AudiencePathways() {
             <Image src={assetPath("/assets/photos/product-winter-garden.png")} alt="Панорамное остекление частного дома" fill sizes="(max-width: 860px) 100vw, 50vw" />
             <span className="audience-shade" />
             <span className="audience-index">01</span>
+            <HouseLine className="audience-icon" size={42} weight="thin" aria-hidden="true" />
             <span className="audience-copy">
               <strong>Для дома</strong>
               <small>Окна, террасы и панорамное остекление для вашего пространства</small>
@@ -36,6 +39,7 @@ export function AudiencePathways() {
             <Image src={assetPath("/assets/photos/facade-evening.jpg")} alt="Коммерческий фасад из стекла и алюминия" fill sizes="(max-width: 860px) 100vw, 50vw" />
             <span className="audience-shade" />
             <span className="audience-index">02</span>
+            <Buildings className="audience-icon" size={42} weight="thin" aria-hidden="true" />
             <span className="audience-copy">
               <strong>Для коммерческого объекта</strong>
               <small>Фасады, входные группы и алюминиевые системы для бизнеса</small>

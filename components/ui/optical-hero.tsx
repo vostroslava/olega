@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import dynamic from "next/dynamic";
 import { useEffect, useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
@@ -12,11 +11,6 @@ import { Factory } from "@phosphor-icons/react/dist/csr/Factory";
 import { SealCheck } from "@phosphor-icons/react/dist/csr/SealCheck";
 import { ShieldCheck } from "@phosphor-icons/react/dist/csr/ShieldCheck";
 import { assetPath } from "@/lib/site-utils";
-
-const GlassRefraction = dynamic(
-  () => import("@/components/ui/glass-refraction").then((module) => module.GlassRefraction),
-  { ssr: false }
-);
 
 export function OpticalHero() {
   const heroRef = useRef<HTMLElement | null>(null);
@@ -98,25 +92,22 @@ export function OpticalHero() {
     >
       <div className="optical-hero-media" aria-hidden="true">
         <Image
-          src={assetPath("/assets/photos/project-arbat.png")}
+          src={assetPath("/assets/visuals/hero-optical-monolith.png")}
           alt=""
           fill
           priority
           sizes="100vw"
         />
       </div>
-      <GlassRefraction />
       <div className="optical-hero-shade" aria-hidden="true" />
       <div className="optical-light-caustic" aria-hidden="true" />
-      <div className="optical-glass-edge" aria-hidden="true" />
       <div className="optical-hero-intro-shutter" aria-hidden="true" />
       <div className="optical-ruler optical-ruler-left" aria-hidden="true" />
       <div className="optical-ruler optical-ruler-bottom" aria-hidden="true" />
 
       <div className="container optical-hero-inner">
         <div className="optical-hero-copy reveal is-visible" data-hero-reveal>
-          <p className="optical-label">OPTICAL MONOLITH</p>
-          <h1>Стекло,<br />которое меняет<br />архитектуру</h1>
+          <h1>Стекло,<br />которое<span className="hero-mobile-break"><br /></span> меняет<br />архитектуру</h1>
           <p className="optical-hero-lead">
             Окна, фасады и панорамное остекление — от замера и проектирования до производства и монтажа по всей Беларуси.
           </p>
@@ -130,15 +121,6 @@ export function OpticalHero() {
               <ArrowUpRight size={20} weight="thin" aria-hidden="true" />
             </Link>
           </div>
-        </div>
-
-        <div className="optical-spec-label optical-spec-top" data-hero-reveal aria-hidden="true">
-          <span>LOW-IRON GLASS</span>
-          <strong>10 MM</strong>
-        </div>
-        <div className="optical-spec-label optical-spec-bottom" data-hero-reveal aria-hidden="true">
-          <span>DOUBLE GLAZING</span>
-          <strong>42 MM</strong>
         </div>
 
         <aside className="optical-proof" data-hero-proof aria-label="Преимущества компании">
@@ -157,6 +139,7 @@ export function OpticalHero() {
         </aside>
 
         <a className="hero-scroll" href="#audiences" aria-label="Перейти к следующему разделу">
+          <span>Прокрутите вниз</span>
           <ArrowDown size={20} weight="thin" aria-hidden="true" />
         </a>
       </div>

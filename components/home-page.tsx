@@ -27,9 +27,9 @@ export function HomePage() {
       <main id="top" className="home-main">
         <div className="glass-thread" aria-hidden="true" />
         <OpticalHero />
+        <AudiencePathways />
         <GlassScrollScene />
         <GlassAnatomy />
-        <AudiencePathways />
         <SolutionsShowcase />
         <ProjectShowcase />
         <ProductionStory />
