@@ -1,6 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
+import { assetPath } from "@/lib/site-utils";
 
 const layers = [
   { id: "glass", index: "01", title: "Стекло", text: "Прозрачный слой, который работает со светом, обзором и защитой пространства." },
@@ -16,6 +18,9 @@ export function GlassAnatomy() {
 
   return (
     <section className="glass-anatomy" id="glass-anatomy">
+      <div className="glass-anatomy-facade" aria-hidden="true">
+        <Image src={assetPath("/assets/photos/project-avenue.png")} alt="" fill sizes="100vw" />
+      </div>
       <div className="container glass-anatomy-grid">
         <div className="glass-anatomy-copy reveal">
           <p className="optical-label">КОНСТРУКТИВНЫЙ СРЕЗ</p>
@@ -28,14 +33,15 @@ export function GlassAnatomy() {
         </div>
 
         <div className="glass-anatomy-model reveal reveal-delay" aria-label="Интерактивный срез стеклопакета">
-          <div className={`glass-cutaway is-${active}`}>
-            <i className="glass-pane glass-pane-back" />
-            <i className="glass-pane glass-pane-front" />
-            <i className="glass-spacer" />
-            <i className="glass-seal" />
-            <i className="glass-profile" />
-            <i className="glass-system" />
-            <i className="glass-glint" />
+          <div className={`glass-cutaway-render is-${active}`}>
+            <Image
+              src={assetPath("/assets/visuals/glass-cutaway-dark.png")}
+              alt="Технический срез стеклопакета и алюминиевой фасадной системы"
+              fill
+              sizes="(max-width: 860px) 92vw, 40vw"
+              quality={92}
+            />
+            <span className={`glass-cutaway-focus glass-cutaway-focus-${active}`} aria-hidden="true" />
           </div>
         </div>
 

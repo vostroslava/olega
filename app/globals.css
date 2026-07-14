@@ -2635,29 +2635,42 @@ p {
 .glass-anatomy-active strong { display: block; font-size: 1.1rem; font-weight: 500; }
 .glass-anatomy-active p { margin-top: .45rem; color: var(--text-muted); font-size: .82rem; line-height: 1.5; }
 
-.glass-anatomy-model { min-height: 41rem; display: grid; place-items: center; }
-
-.glass-cutaway {
-  position: relative;
-  width: min(26rem, 34vw);
-  height: 37rem;
-  filter: drop-shadow(0 2.8rem 3.6rem rgba(0, 0, 0, .54));
-  transform: perspective(62rem) rotateY(-18deg) rotateX(2deg);
-  transition: transform 700ms cubic-bezier(.18,.8,.2,1);
+.glass-anatomy-facade {
+  position: absolute;
+  z-index: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 15rem;
+  opacity: .22;
+  mask-image: linear-gradient(180deg, transparent, #000 68%);
 }
 
-.glass-cutaway:hover { transform: perspective(62rem) rotateY(-8deg) rotateX(0deg) translateY(-.4rem); }
-.glass-cutaway i { position: absolute; display: block; transition: filter 300ms ease, opacity 300ms ease, transform 450ms ease; }
-.glass-pane { top: 0; width: 4.8rem; height: 27rem; border: 1px solid rgba(209, 246, 255, .76); background: linear-gradient(105deg, rgba(228, 253, 255, .18), rgba(76, 173, 208, .12) 50%, rgba(7, 27, 37, .35)); box-shadow: inset 0 0 1rem rgba(147, 235, 255, .15), 0 0 1.4rem rgba(83, 203, 247, .14); }
-.glass-pane-back { left: 20%; transform: skewY(-2deg); }
-.glass-pane-front { left: 43%; transform: skewY(-2deg); }
-.glass-spacer { top: 26.8rem; left: 17%; width: 37%; height: 2.6rem; border: 1px solid rgba(237, 188, 138, .92); background: repeating-linear-gradient(90deg, #725039 0 .38rem, #c49065 .4rem .54rem, #503525 .56rem .86rem); }
-.glass-seal { top: 29.2rem; left: 13%; width: 50%; height: 2.9rem; border: 1px solid rgba(189, 204, 206, .5); background: linear-gradient(180deg, #39464c, #121a1d); }
-.glass-profile { top: 31.7rem; left: 6%; width: 69%; height: 6.1rem; border: 2px solid rgba(205, 220, 221, .66); background: linear-gradient(135deg, #1e282d, #070b0d 48%, #243238); clip-path: polygon(0 0, 100% 0, 100% 100%, 73% 100%, 73% 62%, 25% 62%, 25% 100%, 0 100%); }
-.glass-system { top: 36.5rem; left: 0; width: 82%; height: 5.2rem; border: 2px solid rgba(203, 217, 220, .8); background: linear-gradient(90deg, #11191d, #3b484d 22%, #071014 61%, #1e2c31); clip-path: polygon(0 0, 100% 0, 100% 100%, 55% 100%, 55% 55%, 31% 55%, 31% 100%, 0 100%); }
-.glass-glint { top: 2%; left: 38%; width: 1px; height: 26rem; background: linear-gradient(180deg, transparent, rgba(239, 253, 255, .9), rgba(242, 179, 123, .7), transparent); box-shadow: 0 0 1.25rem rgba(138, 225, 255, .6); }
-.glass-cutaway.is-glass .glass-pane, .glass-cutaway.is-spacer .glass-spacer, .glass-cutaway.is-seal .glass-seal, .glass-cutaway.is-profile .glass-profile, .glass-cutaway.is-system .glass-system { filter: brightness(1.45) drop-shadow(0 0 1.1rem rgba(150, 229, 255, .5)); transform: translateY(-.3rem); }
-.glass-cutaway.is-spacer .glass-spacer { filter: brightness(1.34) drop-shadow(0 0 1rem rgba(236, 183, 129, .58)); }
+.glass-anatomy-facade img { object-fit: cover; object-position: center 45%; filter: saturate(.72) brightness(.72); }
+.glass-anatomy-grid { position: relative; z-index: 1; }
+.glass-anatomy-model { min-height: 50rem; display: grid; place-items: center; }
+
+.glass-cutaway-render {
+  position: relative;
+  width: min(34rem, 39vw);
+  height: 50rem;
+  isolation: isolate;
+  filter: drop-shadow(0 2.8rem 3.6rem rgba(0, 0, 0, .58));
+  transform: translateY(.8rem);
+  transition: transform 650ms cubic-bezier(.18,.8,.2,1), filter 420ms ease;
+}
+
+.glass-cutaway-render:hover { transform: translateY(0) scale(1.012); filter: drop-shadow(0 3.2rem 4rem rgba(0, 0, 0, .68)); }
+.glass-cutaway-render img { object-fit: contain; }
+.glass-cutaway-focus { position: absolute; z-index: 2; width: 4.25rem; height: 4.25rem; border: 1px solid rgba(200, 241, 251, .78); border-radius: 50%; box-shadow: 0 0 0 1rem rgba(138, 222, 247, .04), 0 0 1.6rem rgba(128, 218, 247, .24); transform: translate(-50%, -50%); transition: top 420ms cubic-bezier(.18,.8,.2,1), left 420ms cubic-bezier(.18,.8,.2,1), border-color 260ms ease; }
+.glass-cutaway-focus::before, .glass-cutaway-focus::after { position: absolute; top: 50%; left: 50%; background: var(--accent); content: ""; transform: translate(-50%, -50%); }
+.glass-cutaway-focus::before { width: 1.25rem; height: 1px; }
+.glass-cutaway-focus::after { width: 1px; height: 1.25rem; }
+.glass-cutaway-focus-glass { top: 27%; left: 54%; }
+.glass-cutaway-focus-spacer { top: 54%; left: 51%; border-color: rgba(233, 183, 137, .9); }
+.glass-cutaway-focus-seal { top: 59%; left: 44%; }
+.glass-cutaway-focus-profile { top: 70%; left: 49%; }
+.glass-cutaway-focus-system { top: 82%; left: 50%; }
 
 .glass-anatomy-list { padding: 0; list-style: none; border-top: 1px solid rgba(208, 233, 239, .2); }
 .glass-anatomy-list li { border-bottom: 1px solid rgba(208, 233, 239, .2); }
@@ -3307,9 +3320,9 @@ p {
   display: grid;
   align-content: center;
   justify-items: center;
-  min-height: 30rem;
+  min-height: 38rem;
   overflow: hidden;
-  padding: 2.8rem 2rem 2rem;
+  padding: 1.1rem 2rem 1.6rem;
   border-left: 1px solid var(--line);
   background: radial-gradient(circle at 50% 28%, rgba(100, 186, 219, .14), transparent 16rem), linear-gradient(145deg, rgba(20, 29, 34, .94), rgba(6, 10, 12, .78));
   text-align: center;
@@ -3329,9 +3342,10 @@ p {
 .quote-scene-panel::after { bottom: -13rem; left: -9rem; border-color: rgba(224, 173, 128, .14); }
 .quote-scene-ruler { position: absolute; z-index: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(210, 241, 250, .7), transparent); }
 .quote-scene-ruler-top { top: 1.4rem; right: 2rem; left: 2rem; }
-.quote-scene-object { position: relative; z-index: 2; display: grid; place-items: center; width: 10.5rem; height: 10.5rem; animation: quote-scene-in 520ms cubic-bezier(.18,.8,.2,1) both; }
-.quote-scene-icon { width: 100%; height: 100%; filter: drop-shadow(0 1.1rem 1.2rem rgba(0, 0, 0, .42)); }
-.quote-scene-panel > .optical-label { position: relative; z-index: 2; margin-top: 1.25rem; }
+.quote-scene-object { position: relative; z-index: 2; width: min(100%, 29rem); height: 21rem; animation: quote-scene-in 520ms cubic-bezier(.18,.8,.2,1) both; }
+.quote-scene-object img { object-fit: contain; filter: drop-shadow(0 1.5rem 1.6rem rgba(0, 0, 0, .48)); }
+.quote-scene-measure { position: absolute; z-index: 2; right: 1.4rem; bottom: .65rem; left: 1.4rem; padding-top: .55rem; border-top: 1px solid rgba(216, 242, 249, .42); color: rgba(224, 239, 241, .58); font-size: .52rem; letter-spacing: .18em; text-align: center; }
+.quote-scene-panel > .optical-label { position: relative; z-index: 2; margin-top: .35rem; }
 .quote-scene-panel > strong { position: relative; z-index: 2; margin-top: .7rem; color: var(--text); font-size: 1.18rem; font-weight: 500; }
 .quote-scene-panel > span { position: relative; z-index: 2; max-width: 17rem; margin-top: .55rem; color: var(--text-muted); font-size: .77rem; line-height: 1.45; }
 @keyframes quote-scene-in { from { opacity: 0; transform: translateY(.8rem) scale(.92); } to { opacity: 1; transform: translateY(0) scale(1); } }
@@ -4076,27 +4090,24 @@ p {
   }
 
   .glass-anatomy-model {
-    min-height: 28rem;
-    order: 3;
+    min-height: 38rem;
+    order: 2;
   }
 
-  .glass-cutaway {
-    width: min(18rem, 78vw);
-    height: 28rem;
-    transform: perspective(50rem) rotateY(-10deg) scale(.76);
-  }
+  .glass-cutaway-render { width: min(25rem, 92vw); height: 38rem; transform: none; }
+  .glass-anatomy-facade { height: 11rem; opacity: .16; }
 
-  .glass-anatomy-list { order: 2; }
+  .glass-anatomy-list { order: 3; }
   .glass-anatomy-list button { min-height: 4.15rem; }
   .glass-scroll-blueprint-path { stroke-dashoffset: 0; opacity: .42; }
 
   .quote-scene-panel {
-    min-height: 25rem;
+    min-height: 32rem;
     border-top: 1px solid var(--line);
     border-left: 0;
   }
 
-  .quote-scene-object { width: 8rem; height: 8rem; }
+  .quote-scene-object { width: 100%; height: 17rem; }
 
   .production-route { margin-top: 3.2rem; }
   .production-route-tabs { grid-template-columns: repeat(2, 1fr); }

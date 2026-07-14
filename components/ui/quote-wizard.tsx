@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { ChangeEvent, FormEvent, useMemo, useState } from "react";
 import { ArrowLeft } from "@phosphor-icons/react/dist/csr/ArrowLeft";
 import { ArrowRight } from "@phosphor-icons/react/dist/csr/ArrowRight";
@@ -10,13 +11,14 @@ import { LockKey } from "@phosphor-icons/react/dist/csr/LockKey";
 import { UserCircleCheck } from "@phosphor-icons/react/dist/csr/UserCircleCheck";
 import { ArchitecturalIcon } from "@/components/ui/architectural-icons";
 import { CONTACTS } from "@/lib/site-data";
+import { assetPath } from "@/lib/site-utils";
 
 const steps = ["Объект", "Размеры", "Материалы", "Контакты"];
 const objectTypes = [
-  { value: "Частный дом", icon: "house" as const, detail: "Панорамные окна, двери, террасы" },
-  { value: "Квартира", icon: "apartment" as const, detail: "Окна, балкон, лоджия, эркер" },
-  { value: "Коммерческий объект", icon: "commercial" as const, detail: "Фасад, витражи, входная группа" },
-  { value: "Другое", icon: "custom" as const, detail: "Нестандартная конструкция или идея" },
+  { value: "Частный дом", icon: "house" as const, detail: "Панорамные окна, двери, террасы", scene: "/assets/visuals/configurator-house.png" },
+  { value: "Квартира", icon: "apartment" as const, detail: "Окна, балкон, лоджия, эркер", scene: "/assets/visuals/configurator-apartment.png" },
+  { value: "Коммерческий объект", icon: "commercial" as const, detail: "Фасад, витражи, входная группа", scene: "/assets/visuals/configurator-commercial.png" },
+  { value: "Другое", icon: "custom" as const, detail: "Нестандартная конструкция или идея", scene: "/assets/visuals/configurator-custom.png" },
 ];
 const materialOptions = ["ПВХ", "Тёплый алюминий", "Холодный алюминий", "Нужна рекомендация"];
 const sceneCopy = {
@@ -125,7 +127,14 @@ export function QuoteWizard({ compact = false }: { compact?: boolean }) {
             <div className="quote-scene-panel" aria-live="polite">
               <div className="quote-scene-ruler quote-scene-ruler-top" aria-hidden="true" />
               <div className="quote-scene-object" key={activeObject.icon}>
-                <ArchitecturalIcon kind={activeObject.icon} className="quote-scene-icon" />
+                <Image
+                  src={assetPath(activeObject.scene)}
+                  alt={`${objectType} — архитектурная сцена`}
+                  fill
+                  sizes="(max-width: 860px) 100vw, 42vw"
+                  quality={90}
+                />
+                <span className="quote-scene-measure quote-scene-measure-width" aria-hidden="true">КОНТУР ПРОЕКТА</span>
               </div>
               <p className="optical-label">{activeScene[0]}</p>
               <strong>{objectType}</strong>
