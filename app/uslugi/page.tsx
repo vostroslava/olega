@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { ServicesCatalogPage } from "@/components/services-catalog-page";
+import { OperationsPage } from "@/components/operations-page";
 import { buildPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "Услуги",
   description:
-    "Все направления СтеклоСтройГрупп: окна ПВХ, алюминиевые системы, фасады, витражи, панорамное остекление, перегородки и зимние сады.",
+    "Услуги СтеклоСтройГрупп: замер, проектирование, производство, доставка, монтаж, герметизация и сервисное обслуживание конструкций.",
   path: "/uslugi/",
 });
 
 export default function ServicesPageRoute() {
-  return <ServicesCatalogPage />;
+  return <OperationsPage />;
 }

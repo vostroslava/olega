@@ -7,11 +7,17 @@ export const dynamic = "force-static";
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes = [
     "/",
+    "/produktsiya/",
     "/uslugi/",
+    "/dlya-doma/",
+    "/dlya-biznesa/",
     "/proekty/",
+    "/proizvodstvo/",
+    "/raschet/",
     "/kontakty/",
     "/o-kompanii/",
     "/partneram/",
+    "/novosti/",
     "/politika-konfidentsialnosti/",
   ];
 

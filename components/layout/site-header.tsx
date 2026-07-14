@@ -2,6 +2,11 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { ArrowUpRight } from "@phosphor-icons/react/dist/csr/ArrowUpRight";
+import { List } from "@phosphor-icons/react/dist/csr/List";
+import { Phone } from "@phosphor-icons/react/dist/csr/Phone";
+import { SquareHalf } from "@phosphor-icons/react/dist/csr/SquareHalf";
+import { X } from "@phosphor-icons/react/dist/csr/X";
 import { CONTACTS, NAV_ITEMS } from "@/lib/site-data";
 
 export function SiteHeader() {
@@ -35,11 +40,8 @@ export function SiteHeader() {
     <header className="site-header">
       <div className="container header-inner">
         <Link className="brand" href="/" aria-label="СтеклоСтройГрупп" onClick={() => setMenuOpen(false)}>
-          <span className="brand-mark">С</span>
-          <span className="brand-copy">
-            <strong>СтеклоСтройГрупп</strong>
-            <small>ПВХ, алюминий, фасады, витражи</small>
-          </span>
+          <SquareHalf className="brand-mark" size={30} weight="thin" aria-hidden="true" />
+          <strong>СтеклоСтройГрупп</strong>
         </Link>
 
         <button
@@ -50,24 +52,58 @@ export function SiteHeader() {
           aria-controls="site-nav"
           onClick={() => setMenuOpen((open) => !open)}
         >
-          <span />
-          <span />
-          <span />
+          <span>{menuOpen ? "Закрыть" : "Меню"}</span>
+          {menuOpen ? <X size={28} weight="thin" /> : <List size={30} weight="thin" />}
         </button>
 
         <nav className={`site-nav ${menuOpen ? "is-open" : ""}`} id="site-nav">
-          {NAV_ITEMS.map((item) => (
-            <Link key={item.href} href={item.href} onClick={() => setMenuOpen(false)}>
-              {item.label}
+          <div className="nav-primary-links">
+            {NAV_ITEMS.map((item) => item.href === "/o-kompanii/" ? (
+              <div className="nav-company-menu" key={item.href}>
+                <Link href={item.href} onClick={() => setMenuOpen(false)}>
+                  <span>{item.label}</span>
+                  <ArrowUpRight size={19} weight="thin" aria-hidden="true" />
+                </Link>
+                <div className="nav-company-panel" aria-label="Разделы компании">
+                  <Link href="/o-kompanii/">О компании</Link>
+                  <Link href="/proizvodstvo/">Производство</Link>
+                  <Link href="/partneram/">Партнёрам</Link>
+                  <Link href="/novosti/">Новости</Link>
+                </div>
+              </div>
+            ) : (
+              <Link key={item.href} href={item.href} onClick={() => setMenuOpen(false)}>
+                <span>{item.label}</span>
+                <ArrowUpRight size={19} weight="thin" aria-hidden="true" />
+              </Link>
+            ))}
+          </div>
+
+          <div className="nav-mobile-extras">
+            <Link href="/proizvodstvo/" onClick={() => setMenuOpen(false)}>Производство</Link>
+            <Link href="/partneram/" onClick={() => setMenuOpen(false)}>Партнёрам</Link>
+            <Link href="/novosti/" onClick={() => setMenuOpen(false)}>Новости</Link>
+          </div>
+
+          <div className="nav-mobile-contact">
+            <Link className="nav-cta" href="/raschet/" onClick={() => setMenuOpen(false)}>
+              <span>Рассчитать проект</span>
+              <ArrowUpRight size={20} weight="thin" aria-hidden="true" />
             </Link>
-          ))}
-          <a className="nav-phone" href={CONTACTS.phones[0].href} onClick={() => setMenuOpen(false)}>
-            {CONTACTS.phones[0].label}
-          </a>
-          <Link className="nav-cta" href="/#request" onClick={() => setMenuOpen(false)}>
-            Получить расчёт
-          </Link>
+            <a className="nav-phone" href={CONTACTS.phones[0].href} onClick={() => setMenuOpen(false)}>
+              <Phone size={21} weight="thin" aria-hidden="true" />
+              {CONTACTS.phones[0].label}
+            </a>
+            <a className="nav-phone nav-phone-secondary" href={CONTACTS.phones[1].href} onClick={() => setMenuOpen(false)}>
+              {CONTACTS.phones[1].label}
+            </a>
+          </div>
         </nav>
+
+        <Link className="header-cta" href="/raschet/">
+          <span>Рассчитать проект</span>
+          <ArrowUpRight size={20} weight="thin" aria-hidden="true" />
+        </Link>
       </div>
     </header>
   );

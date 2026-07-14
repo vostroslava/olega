@@ -5,6 +5,7 @@ const githubPagesBasePath = `/${repositoryName}`;
 const isGithubPagesBuild = process.env.GITHUB_ACTIONS === "true";
 
 const nextConfig: NextConfig = {
+  allowedDevOrigins: ["127.0.0.1"],
   output: "export",
   trailingSlash: true,
   images: {

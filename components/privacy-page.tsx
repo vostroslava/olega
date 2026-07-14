@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { MonolithPageHero } from "@/components/ui/monolith-page-hero";
 import { RevealInit } from "@/components/ui/reveal-init";
 import { CONTACTS } from "@/lib/site-data";
 
@@ -8,81 +8,21 @@ export function PrivacyPage() {
   return (
     <div className="page-shell">
       <SiteHeader />
-
-      <main className="page-main">
-        <section className="page-hero section">
-          <div className="container page-hero-shell reveal">
-            <div className="page-hero-copy">
-              <div className="page-breadcrumbs">
-                <Link href="/">Главная</Link>
-                <span>/</span>
-                <span>Политика конфиденциальности</span>
-              </div>
-
-              <p className="eyebrow">Юридическая информация</p>
-              <h1>Политика конфиденциальности и обработки персональных данных</h1>
-              <p className="hero-lead">
-                Эта страница описывает, какие данные мы получаем через формы сайта, для чего они
-                используются и как можно связаться по вопросам обработки персональных данных.
-              </p>
+      <main className="page-main monolith-inner-page">
+        <MonolithPageHero id="privacy-hero" breadcrumbs={[{ label: "Главная", href: "/" }, { label: "Конфиденциальность" }]} title="Политика конфиденциальности" lead="Какие данные мы получаем через формы сайта, зачем используем и как можно управлять их обработкой." image="/assets/generated/hero-optical-monolith.png" imageAlt="Архитектурное стекло" rail={["Данные", "Цели", "Хранение", "Права", "Контакты"]} primaryLabel="Контакты" primaryHref="/kontakty/" secondaryLabel="На главную" secondaryHref="/" />
+        <section className="legal-section" id="section-1">
+          <div className="container legal-layout">
+            <aside><p className="optical-label">ОПЕРАТОР ДАННЫХ</p><strong>ООО «СтеклоСтройГрупп»</strong><a href={`mailto:${CONTACTS.primaryEmail}`}>{CONTACTS.primaryEmail}</a><p>{CONTACTS.postalAddress}</p></aside>
+            <div className="legal-content reveal">
+              <section><span>01</span><h2>Какие данные мы собираем</h2><p>Через формы сайта мы можем получать имя, телефон, адрес электронной почты, выбранный тип запроса, текст комментария и файлы, которые пользователь прикладывает добровольно.</p></section>
+              <section><span>02</span><h2>Для чего используются данные</h2><p>Только для связи по заявке, подготовки расчёта или консультации, уточнения параметров объекта и состава работ.</p></section>
+              <section><span>03</span><h2>Как обрабатываются и хранятся данные</h2><p>В объёме, необходимом для выполнения запроса, договорных обязательств и требований законодательства. Мы не используем данные для нерелевантной рассылки и не публикуем загруженные материалы.</p></section>
+              <section><span>04</span><h2>Права пользователя</h2><p>Вы можете запросить уточнение, изменение или удаление данных, а также отозвать согласие на обработку по email {CONTACTS.primaryEmail}.</p></section>
+              <section><span>05</span><h2>Контакты</h2><p>Email: {CONTACTS.primaryEmail}<br />Телефон: {CONTACTS.phones[0].label}<br />Адрес: {CONTACTS.postalAddress}</p></section>
             </div>
-
-            <aside className="page-hero-panel reveal reveal-delay">
-              <strong>Оператор данных</strong>
-              <ul className="page-highlight-list">
-                <li>ООО «СтеклоСтройГрупп»</li>
-                <li>{CONTACTS.primaryEmail}</li>
-                <li>{CONTACTS.postalAddress}</li>
-              </ul>
-            </aside>
-          </div>
-        </section>
-
-        <section className="section">
-          <div className="container policy-content reveal">
-            <h2>1. Какие данные мы собираем</h2>
-            <p>
-              Через формы сайта мы можем получать имя, телефон, адрес электронной почты, выбранный
-              тип запроса и текст комментария, который пользователь оставляет добровольно.
-            </p>
-
-            <h2>2. Для чего используются данные</h2>
-            <p>Персональные данные используются только для связи по заявке, расчёта и консультации.</p>
-            <ul>
-              <li>обратный звонок или ответ на запрос;</li>
-              <li>подготовка расчёта, коммерческого предложения или консультации;</li>
-              <li>уточнение параметров объекта и состава работ.</li>
-            </ul>
-
-            <h2>3. Как обрабатываются данные</h2>
-            <p>
-              Данные обрабатываются в объёме, необходимом для выполнения запроса пользователя. Мы
-              не используем их для нерелевантной рассылки и не передаём третьим лицам без законных
-              оснований.
-            </p>
-
-            <h2>4. Срок хранения</h2>
-            <p>
-              Данные хранятся столько, сколько требуется для обработки обращения, исполнения
-              договорных обязательств и соблюдения применимого законодательства.
-            </p>
-
-            <h2>5. Права пользователя</h2>
-            <p>
-              Пользователь вправе запросить уточнение, изменение или удаление своих персональных
-              данных, а также отозвать согласие на обработку, направив обращение по контактам ниже.
-            </p>
-
-            <h2>6. Контакты по вопросам обработки персональных данных</h2>
-            <ul>
-              <li>email: {CONTACTS.primaryEmail}</li>
-              <li>телефон: {CONTACTS.phones[0].label}</li>
-              <li>почтовый адрес: {CONTACTS.postalAddress}</li>
-            </ul>
           </div>
         </section>
       </main>
-
       <SiteFooter />
       <RevealInit />
     </div>

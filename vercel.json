@@ -1,0 +1,11 @@
+{
+  "redirects": [
+    { "source": "/o-kompanii-proizvoditel-okon/", "destination": "/o-kompanii/", "permanent": true },
+    { "source": "/produktsiya-okna-pvh-alyuminievye-sistemy/", "destination": "/produktsiya/", "permanent": true },
+    { "source": "/uslugi-izgotovlenie-montazh-okon/", "destination": "/uslugi/", "permanent": true },
+    { "source": "/partneram-dileram-opt-pvh-aluminevye-systemy/", "destination": "/partneram/", "permanent": true },
+    { "source": "/kontakty-proizvoditel-okon/", "destination": "/kontakty/", "permanent": true },
+    { "source": "/raschet-stoimosti-okon-pvh-i-aluminevyh-konstrukcij/", "destination": "/raschet/", "permanent": true },
+    { "source": "/Новости/", "destination": "/novosti/", "permanent": true }
+  ]
+}

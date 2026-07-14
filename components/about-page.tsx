@@ -1,208 +1,59 @@
 import Image from "next/image";
-import Link from "next/link";
+import { ArrowUpRight } from "@phosphor-icons/react/dist/ssr/ArrowUpRight";
+import { FilePdf } from "@phosphor-icons/react/dist/ssr/FilePdf";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
-import { StructuredData } from "@/components/seo/structured-data";
-import {
-  DocumentsSection,
-  MetricsBand,
-  OperationsSection,
-  ProcessSection,
-  RequestSection,
-  SectionHeading,
-} from "@/components/sections/home-sections";
+import { MonolithCta, MonolithFact, MonolithFactRail, MonolithSectionHeading } from "@/components/ui/monolith-content";
+import { MonolithPageHero } from "@/components/ui/monolith-page-hero";
 import { MobileCta } from "@/components/ui/mobile-cta";
 import { RevealInit } from "@/components/ui/reveal-init";
-import { COMPANY_PILLARS, CONTACTS, STANDARDS } from "@/lib/site-data";
-import { createBreadcrumbStructuredData } from "@/lib/seo";
+import { CERTIFICATION_DOCUMENTS, COMPANY_PILLARS, OPERATIONS_GALLERY, STANDARDS } from "@/lib/site-data";
 import { assetPath } from "@/lib/site-utils";
 
 export function AboutPage() {
   return (
     <div className="page-shell">
-      <StructuredData
-        data={createBreadcrumbStructuredData([
-          { name: "Главная", path: "/" },
-          { name: "О компании", path: "/o-kompanii/" },
-        ])}
-      />
       <SiteHeader />
+      <main className="page-main monolith-inner-page">
+        <MonolithPageHero id="about-hero" breadcrumbs={[{ label: "Главная", href: "/" }, { label: "О компании" }]} title="СтеклоСтройГрупп — инженерия прозрачности" lead="Более 15 лет проектируем, производим и монтируем светопрозрачные конструкции для частных и коммерческих объектов по всей Беларуси." image="/assets/photos/hero-company-facade.png" imageAlt="Реализованный объект СтеклоСтройГрупп" rail={["Компания", "Компетенции", "Производство", "Документы", "Контакты"]} />
 
-      <main className="page-main">
-        <section className="page-hero page-hero-dark section">
-          <div className="page-hero-backdrop">
-            <Image
-              src={assetPath("/assets/photos/company-production.png")}
-              alt="Производственный цех СтеклоСтройГрупп"
-              fill
-              priority
-              sizes="100vw"
-            />
+        <section className="monolith-content-section" id="section-1">
+          <div className="container about-manifest-grid">
+            <MonolithSectionHeading label="КОМПАНИЯ" title="Архитектурная идея должна пережить производство и монтаж" text="Поэтому проектирование, комплектация, изготовление, логистика и установка работают как один контур — с понятной ответственностью на каждом этапе." />
+            <div className="about-manifest-image reveal"><Image src={assetPath("/assets/photos/team-site-supervision.png")} alt="Команда на объекте" fill sizes="(max-width: 860px) 100vw, 58vw" /></div>
           </div>
-
-          <div className="container page-hero-shell reveal" id="about-hero">
-            <div className="page-hero-copy">
-              <div className="page-breadcrumbs">
-                <Link href="/">Главная</Link>
-                <span>/</span>
-                <span>О компании</span>
-              </div>
-
-              <p className="section-kicker">О компании</p>
-              <h1>СтеклоСтройГрупп — подрядчик полного цикла по светопрозрачным конструкциям</h1>
-              <p className="hero-lead">
-                Собственное производство, конструкторское бюро, монтажные бригады и сервис после
-                сдачи объекта. Работаем с частными и коммерческими проектами по всей Беларуси.
-              </p>
-              <p className="page-hero-text">
-                Для заказчика это означает понятный процесс, техническую управляемость проекта и
-                одного подрядчика, который отвечает за результат от расчёта до монтажа.
-              </p>
-
-              <div className="hero-actions">
-                <Link className="button button-primary" href="/proekty/">
-                  Смотреть проекты
-                </Link>
-                <Link className="button button-secondary" href="/kontakty/">
-                  Контакты и реквизиты
-                </Link>
-              </div>
-            </div>
-
-            <aside className="page-hero-rail reveal reveal-delay">
-              <strong>Корпоративные опоры</strong>
-              <ul className="page-highlight-list">
-                <li>Производство и проектирование в одной связке</li>
-                <li>Монтаж любой сложности по всей Беларуси</li>
-                <li>Гарантия и сервис после сдачи объекта</li>
-              </ul>
-            </aside>
-          </div>
+          <div className="container"><MonolithFactRail>{COMPANY_PILLARS.map((item, index) => <MonolithFact key={item.title} index={String(index + 1).padStart(2, "0")} title={item.title} text={item.text} />)}</MonolithFactRail></div>
         </section>
 
-        <section className="section project-links">
+        <section className="monolith-content-section monolith-content-section-alt" id="section-2">
           <div className="container">
-            <MetricsBand />
+            <MonolithSectionHeading label="КОМПЕТЕНЦИИ" title="Дисциплина сложного объекта" />
+            <div className="monolith-spec-grid">{STANDARDS.map((item, index) => <article className="reveal" key={item.title}><span>{String(index + 1).padStart(2, "0")}</span><h3>{item.title}</h3><p>{item.text}</p></article>)}</div>
           </div>
         </section>
 
-        <DocumentsSection />
-
-        <section className="section">
+        <section className="monolith-content-section" id="section-3">
           <div className="container">
-            <SectionHeading
-              eyebrow="Что стоит за компанией"
-              title="Что обеспечивает качество и управляемость проекта"
-              description="Показываем реальные опоры компании: производство, инженерную подготовку, монтаж и сопровождение."
-            />
-
-            <div className="service-crosslinks">
-              {COMPANY_PILLARS.map((item, index) => (
-                <article
-                  className={`partner-card reveal ${index === 1 ? "reveal-delay" : index === 2 ? "reveal-delay-2" : ""}`}
-                  key={item.title}
-                >
-                  <h3>{item.title}</h3>
-                  <p>{item.text}</p>
-                </article>
-              ))}
+            <MonolithSectionHeading label="РАБОЧАЯ СРЕДА" title="Производство, объект и техническая консультация" />
+            <div className="operations-editorial-grid">
+              {OPERATIONS_GALLERY.slice(0, 5).map((item, index) => <article className={`reveal ${index === 0 ? "is-featured" : ""}`} key={item.title}><div><Image src={assetPath(item.image)} alt={item.alt} fill sizes="(max-width: 860px) 100vw, 40vw" /></div><span>{String(index + 1).padStart(2, "0")}</span><h3>{item.title}</h3><p>{item.text}</p></article>)}
             </div>
           </div>
         </section>
 
-        <section className="section service-summary">
-          <div className="container summary-shell reveal">
-            <div className="summary-copy">
-              <p className="eyebrow">Почему это важно</p>
-              <h2>Один подрядчик на проектирование, производство и монтаж</h2>
-              <p>
-                Это снижает количество разрывов между этапами, упрощает коммуникацию и помогает
-                выдерживать сроки, качество монтажа и сервис после сдачи объекта.
-              </p>
-            </div>
-
-            <div className="summary-grid">
-              {STANDARDS.slice(0, 3).map((item) => (
-                <article key={item.title}>
-                  <strong>{item.title}</strong>
-                  <p>{item.text}</p>
-                </article>
-              ))}
+        <section className="monolith-content-section monolith-content-section-alt" id="section-4">
+          <div className="container">
+            <MonolithSectionHeading label="ДОКУМЕНТЫ" title="Сертификаты и подтверждение компетенций" text="Сохраняем документы старого сайта в новой структуре, чтобы заказчик мог проверить их без поиска по внешним страницам." />
+            <div className="document-list">
+              {CERTIFICATION_DOCUMENTS.map((document, index) => <a className="document-row reveal" href={document.href} target="_blank" rel="noreferrer" key={document.title}><span>{String(index + 1).padStart(2, "0")}</span><FilePdf size={28} weight="thin" /><div><strong>{document.title}</strong><small>{document.note}</small></div><ArrowUpRight size={24} weight="thin" /></a>)}
             </div>
           </div>
         </section>
-
-        <OperationsSection
-          eyebrow="Что видно по компании"
-          title="Не только фасады на рендерах, но и реальная рабочая среда"
-          description="Со старого сайта забрали рабочие фото: объектный выезд, комплектующие, логистику, внутренние зоны и консультации. Это честный материал, который лучше фейковых отзывов показывает уровень компании."
-        />
-
-        <ProcessSection />
-
-        <section className="section contacts-layout">
-          <div className="container contacts-grid">
-            <div className="contact-card-grid">
-              <article className="contact-card reveal">
-                <h3>География работы</h3>
-                <div>
-                  <p>{CONTACTS.serviceArea}</p>
-                  <p>{CONTACTS.responseTime}</p>
-                </div>
-              </article>
-
-              <article className="contact-card reveal reveal-delay">
-                <h3>Почтовый адрес</h3>
-                <div>
-                  <p>{CONTACTS.postalAddress}</p>
-                </div>
-              </article>
-
-              <article className="contact-card reveal">
-                <h3>Юридический адрес</h3>
-                <div>
-                  <p>{CONTACTS.legalAddress}</p>
-                </div>
-              </article>
-
-              <article className="contact-card reveal reveal-delay">
-                <h3>Реквизиты</h3>
-                <div>
-                  <p>{CONTACTS.bankDetails}</p>
-                </div>
-              </article>
-            </div>
-
-            <div className="contact-map-shell reveal">
-              <div className="contact-map-footer">
-                <strong>Куда перейти дальше</strong>
-                <p>Откройте реализованные объекты, перейдите в профильную услугу или сразу отправьте запрос на расчёт.</p>
-                <div className="contact-actions">
-                  <Link className="button button-secondary" href="/proekty/">
-                    Смотреть проекты
-                  </Link>
-                  <Link className="button button-secondary" href="/uslugi/">
-                    Перейти в услуги
-                  </Link>
-                  <Link className="button button-secondary" href="/kontakty/">
-                    Открыть контакты
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <RequestSection
-          eyebrow="Обсудить проект"
-          title="Если вы уже понимаете масштаб задачи, перейдём к расчёту"
-          description="Покажите объект, задачу и ожидаемый результат. Мы предложим релевантное решение и следующий шаг по проекту."
-        />
+        <MonolithCta title="Познакомимся на вашем объекте" text="Расскажите о задаче — команда подключит инженера и определит следующий шаг: brief, замер или техническую консультацию." />
       </main>
-
       <SiteFooter />
       <RevealInit />
-      <MobileCta heroId="about-hero" requestId="request" href="#request" label="Обсудить проект" />
+      <MobileCta heroId="about-hero" requestId="request" href="/raschet/" label="Обсудить проект" />
     </div>
   );
 }

@@ -1,185 +1,95 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowUpRight } from "@phosphor-icons/react/dist/ssr/ArrowUpRight";
 import { SiteFooter } from "@/components/layout/site-footer";
-import { StructuredData } from "@/components/seo/structured-data";
 import { SiteHeader } from "@/components/layout/site-header";
+import { StructuredData } from "@/components/seo/structured-data";
 import {
-  FaqSection,
-  ProjectsGrid,
-  RequestSection,
-} from "@/components/sections/home-sections";
+  MonolithCta,
+  MonolithFact,
+  MonolithFactRail,
+  MonolithImagePair,
+  MonolithSectionHeading,
+} from "@/components/ui/monolith-content";
+import { MonolithPageHero } from "@/components/ui/monolith-page-hero";
 import { MobileCta } from "@/components/ui/mobile-cta";
 import { RevealInit } from "@/components/ui/reveal-init";
-import { getProjectsByIds, PROCESS_STEPS, ServicePageData } from "@/lib/site-data";
+import { getProjectsByIds, PROCESS_STEPS, type ServicePageData } from "@/lib/site-data";
+import { assetPath } from "@/lib/site-utils";
 import {
   createBreadcrumbStructuredData,
   createFaqStructuredData,
   createServiceStructuredData,
 } from "@/lib/seo";
-import { assetPath } from "@/lib/site-utils";
 
-type ServicePageProps = {
-  service: ServicePageData;
-};
-
-export function ServicePage({ service }: ServicePageProps) {
+export function ServicePage({ service }: { service: ServicePageData }) {
   const relatedProjects = getProjectsByIds(service.relatedProjectIds);
+  const heroImage = relatedProjects[0]?.image ?? "/assets/photos/product-facade-closeup.jpg";
+  const secondaryImage = relatedProjects[1]?.image ?? "/assets/photos/interior-gallery.png";
   const servicePath = `/uslugi/${service.slug}/`;
-  const heroImage = relatedProjects[0]?.image ?? "/assets/photos/hero-company-facade.png";
 
   return (
     <div className="page-shell">
-      <StructuredData
-        data={createBreadcrumbStructuredData([
-          { name: "Главная", path: "/" },
-          { name: "Услуги", path: "/uslugi/" },
-          { name: service.title, path: servicePath },
-        ])}
-      />
-      <StructuredData
-        data={createServiceStructuredData({
-          name: service.title,
-          description: service.lead,
-          path: servicePath,
-        })}
-      />
+      <StructuredData data={createBreadcrumbStructuredData([
+        { name: "Главная", path: "/" },
+        { name: "Продукция", path: "/produktsiya/" },
+        { name: service.title, path: servicePath },
+      ])} />
+      <StructuredData data={createServiceStructuredData({ name: service.title, description: service.lead, path: servicePath })} />
       <StructuredData data={createFaqStructuredData(service.faq)} />
       <SiteHeader />
 
-      <main className="page-main">
-        <section className="page-hero page-hero-dark section">
-          <div className="page-hero-backdrop">
-            <Image src={assetPath(heroImage)} alt={service.title} fill priority sizes="100vw" />
+      <main className="page-main monolith-inner-page">
+        <MonolithPageHero
+          id="service-hero"
+          breadcrumbs={[{ label: "Главная", href: "/" }, { label: "Продукция", href: "/produktsiya/" }, { label: service.menuLabel }]}
+          title={service.title}
+          lead={service.lead}
+          image={heroImage}
+          imageAlt={service.title}
+        />
+
+        <section className="monolith-content-section" id="section-1">
+          <div className="container monolith-editorial-grid">
+            <MonolithSectionHeading title={service.description} text="Инженерная проработка связывает архитектуру, энергоэффективность, безопасность и монтажный узел в одной системе." />
+            <MonolithImagePair primary={heroImage} primaryAlt={service.title} secondary={secondaryImage} secondaryAlt={`Деталь решения: ${service.title}`} />
           </div>
-
-          <div className="container page-hero-shell reveal" id="service-hero">
-            <div className="page-hero-copy">
-              <div className="page-breadcrumbs">
-                <Link href="/">Главная</Link>
-                <span>/</span>
-                <Link href="/uslugi/">Услуги</Link>
-                <span>/</span>
-                <span>{service.menuLabel}</span>
-              </div>
-
-              <p className="section-kicker">{service.heroEyebrow}</p>
-              <h1>{service.title}</h1>
-              <p className="hero-lead">{service.lead}</p>
-              <p className="page-hero-text">{service.description}</p>
-
-              <div className="hero-actions">
-                <a className="button button-primary" href="#request">
-                  Получить расчёт
-                </a>
-                <Link className="button button-secondary" href="/proekty/">
-                  Смотреть проекты
-                </Link>
-              </div>
-            </div>
-
-            <aside className="page-hero-rail reveal reveal-delay">
-              <strong>Ключевые преимущества</strong>
-              <ul className="page-highlight-list">
-                {service.highlights.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </aside>
-          </div>
-        </section>
-
-        <section className="section page-content-band">
           <div className="container">
-            <div className="content-split reveal">
-              <div className="content-split-copy">
-                <p className="section-kicker">Инженерная логика</p>
-                <h2>Почему это направление выбирают для сложных и типовых объектов</h2>
-                <p>
-                  Здесь важен не просто внешний вид конструкции. Решение должно одновременно
-                  работать по геометрии, эксплуатационному сценарию, монтажному узлу и визуальной
-                  подаче объекта.
-                </p>
-              </div>
-
-              <div className="content-split-panel">
-                <strong>Что берём в рабочий контур</strong>
-                <ul className="page-highlight-list">
-                  {service.deliverables.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            <div className="intro-list">
-              {service.benefits.map((item, index) => (
-                <article
-                  className={`intro-card reveal ${index === 1 ? "reveal-delay" : index === 2 ? "reveal-delay-2" : ""}`}
-                  key={item.title}
-                >
-                  <span>{String(index + 1).padStart(2, "0")}</span>
-                  <h3>{item.title}</h3>
-                  <p>{item.text}</p>
-                </article>
+            <MonolithFactRail>
+              {service.benefits.slice(0, 3).map((item, index) => (
+                <MonolithFact key={item.title} index={String(index + 1).padStart(2, "0")} title={item.title} text={item.text} />
               ))}
-            </div>
+            </MonolithFactRail>
           </div>
         </section>
 
-        <section className="section service-applications">
-          <div className="container service-application-shell">
-            <div className="section-heading reveal">
-              <p className="section-kicker">Применение</p>
-              <h2>Где и как это направление работает на объекте</h2>
-              <p>
-                Сценарии ниже нужны не ради заполнения страницы, а чтобы заказчик быстро соотнёс
-                свою задачу с типовым контуром применения.
-              </p>
-            </div>
-
-            <div className="service-application-list">
-              {service.applications.map((item, index) => (
-                <article
-                  className={`service-application-item reveal ${index === 1 ? "reveal-delay" : index === 3 ? "reveal-delay-2" : ""}`}
-                  key={item}
-                >
+        <section className="monolith-content-section monolith-content-section-alt" id="section-2">
+          <div className="container">
+            <MonolithSectionHeading label="СИСТЕМЫ И КОМПЛЕКТАЦИЯ" title="Что входит в рабочий контур" text="Состав решения уточняется после замера и технического задания. Здесь — честная структура без фиктивной цены до обследования объекта." />
+            <div className="monolith-spec-grid">
+              {service.deliverables.map((item, index) => (
+                <article className="reveal" key={item}>
                   <span>{String(index + 1).padStart(2, "0")}</span>
                   <h3>{item}</h3>
+                  <p>{service.highlights[index % service.highlights.length]}</p>
                 </article>
               ))}
+              <Link className="monolith-spec-action" href="/raschet/">
+                <span>Получить консультацию</span>
+                <ArrowUpRight size={28} weight="thin" aria-hidden="true" />
+              </Link>
             </div>
           </div>
         </section>
 
-        <section className="section projects projects-on-light">
+        <section className="monolith-content-section" id="section-3">
           <div className="container">
-            <div className="objects-header reveal">
-              <div>
-                <p className="section-kicker">Связанные проекты</p>
-                <h2>Объекты, по которым видно, как направление работает в реальной эксплуатации</h2>
-              </div>
-            </div>
-
-            <ProjectsGrid projects={relatedProjects} />
-          </div>
-        </section>
-
-        <section className="section editorial-band">
-          <div className="container editorial-shell reveal">
-            <div className="editorial-copy">
-              <p className="section-kicker">Почему это работает</p>
-              <h2>Что входит в работу помимо самой конструкции</h2>
-              <p>
-                Услуга работает только тогда, когда решение связано с расчётом, производством,
-                монтажом и сервисом. Поэтому на объекте важна не только система, но и весь контур
-                исполнения.
-              </p>
-            </div>
-
-            <div className="editorial-grid">
-              {PROCESS_STEPS.slice(0, 3).map((step) => (
-                <article key={step.step}>
-                  <strong>{step.title}</strong>
+            <MonolithSectionHeading label="ПРОЦЕСС" title="От замера до точного монтажа" />
+            <div className="monolith-process-line">
+              {PROCESS_STEPS.slice(0, 4).map((step) => (
+                <article className="reveal" key={step.step}>
+                  <span>{step.step}</span>
+                  <h3>{step.title}</h3>
                   <p>{step.text}</p>
                 </article>
               ))}
@@ -187,18 +97,43 @@ export function ServicePage({ service }: ServicePageProps) {
           </div>
         </section>
 
-        <FaqSection items={service.faq} />
-        <RequestSection
-          eyebrow="Запрос по услуге"
-          title={`Запросить консультацию по направлению «${service.title}»`}
-          description="Оставьте базовые данные по объекту, а все технические детали мы доберём уже на следующем касании."
-          defaultProduct={service.menuLabel}
-        />
+        <section className="monolith-content-section monolith-content-section-alt" id="section-4">
+          <div className="container">
+            <MonolithSectionHeading label="ОБЪЕКТЫ" title="Решение в реализованных проектах" />
+            <div className="monolith-project-row">
+              {relatedProjects.map((project, index) => (
+                <Link className="monolith-project-link reveal" href={`/proekty/${project.slug}/`} key={project.id}>
+                  <Image src={assetPath(project.image)} alt={project.alt} fill sizes="(max-width: 860px) 100vw, 50vw" />
+                  <span className="monolith-project-overlay" />
+                  <span className="monolith-project-meta">{String(index + 1).padStart(2, "0")} · {project.location}</span>
+                  <strong>{project.title}</strong>
+                  <ArrowUpRight size={28} weight="thin" aria-hidden="true" />
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="monolith-content-section" id="section-5">
+          <div className="container monolith-faq-layout">
+            <MonolithSectionHeading label="ВОПРОСЫ" title="Что важно уточнить до расчёта" />
+            <div className="monolith-faq-list">
+              {service.faq.map((item, index) => (
+                <details className="reveal" key={item.question} open={index === 0}>
+                  <summary><span>{String(index + 1).padStart(2, "0")}</span>{item.question}</summary>
+                  <p>{item.answer}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <MonolithCta title={`Рассчитать направление «${service.title}»`} text="Приложите фото или чертёж. Инженер изучит материалы и уточнит только недостающие данные." />
       </main>
 
       <SiteFooter />
       <RevealInit />
-      <MobileCta heroId="service-hero" requestId="request" href="#request" label="Получить расчёт" />
+      <MobileCta heroId="service-hero" requestId="request" href="/raschet/" label="Рассчитать проект" />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Manrope } from "next/font/google";
 import { StructuredData } from "@/components/seo/structured-data";
+import { MotionProvider } from "@/components/ui/motion-provider";
 import {
   createOrganizationStructuredData,
   createWebsiteStructuredData,
@@ -64,7 +65,7 @@ export default function RootLayout({
       <body>
         <StructuredData data={createOrganizationStructuredData()} />
         <StructuredData data={createWebsiteStructuredData()} />
-        {children}
+        <MotionProvider>{children}</MotionProvider>
       </body>
     </html>
   );

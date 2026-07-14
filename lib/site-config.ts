@@ -1,7 +1,7 @@
 export const siteConfig = {
   companyName: "СтеклоСтройГрупп",
   legalName: "ООО «СтеклоСтройГрупп»",
-  siteUrl: "https://vostroslava.github.io/olega",
+  siteUrl: "https://steklostroygroup.by",
   defaultTitle: "СтеклоСтройГрупп | Фасады, окна и остекление под ключ",
   titleTemplate: "%s | СтеклоСтройГрупп",
   defaultDescription:

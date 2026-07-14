@@ -95,10 +95,12 @@ export type CertificationDocument = {
 };
 
 export const NAV_ITEMS: NavItem[] = [
-  { label: "Продукция", href: "/uslugi/" },
+  { label: "Для дома", href: "/dlya-doma/" },
+  { label: "Для бизнеса", href: "/dlya-biznesa/" },
+  { label: "Продукция", href: "/produktsiya/" },
+  { label: "Услуги", href: "/uslugi/" },
   { label: "Проекты", href: "/proekty/" },
-  { label: "О компании", href: "/o-kompanii/" },
-  { label: "Партнёрам", href: "/partneram/" },
+  { label: "Компания", href: "/o-kompanii/" },
   { label: "Контакты", href: "/kontakty/" },
 ];
 
