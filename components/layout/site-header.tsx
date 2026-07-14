@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { useEffect, useState } from "react";
 import { ArrowUpRight } from "@phosphor-icons/react/dist/csr/ArrowUpRight";
 import { List } from "@phosphor-icons/react/dist/csr/List";
@@ -8,6 +9,7 @@ import { Phone } from "@phosphor-icons/react/dist/csr/Phone";
 import { SquareHalf } from "@phosphor-icons/react/dist/csr/SquareHalf";
 import { X } from "@phosphor-icons/react/dist/csr/X";
 import { CONTACTS, NAV_ITEMS } from "@/lib/site-data";
+import { assetPath } from "@/lib/site-utils";
 import { MagneticCtas } from "@/components/ui/magnetic-ctas";
 import { AtmosphereMode } from "@/components/ui/atmosphere-mode";
 
@@ -61,7 +63,11 @@ export function SiteHeader() {
           {menuOpen ? <X size={28} weight="thin" /> : <List size={30} weight="thin" />}
         </button>
 
-        <nav className={`site-nav ${menuOpen ? "is-open" : ""}`} id="site-nav">
+        <nav
+          className={`site-nav ${menuOpen ? "is-open" : ""}`}
+          id="site-nav"
+          style={{ "--nav-scene": `url("${assetPath("/assets/visuals/hero-optical-monolith.png")}")` } as CSSProperties}
+        >
           <div className="nav-primary-links">
             {NAV_ITEMS.map((item) => item.href === "/o-kompanii/" ? (
               <div className="nav-company-menu" key={item.href}>

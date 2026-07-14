@@ -6118,7 +6118,7 @@ p {
   .site-nav {
     background:
       linear-gradient(90deg, rgba(3, 7, 9, .98), rgba(3, 7, 9, .84)),
-      url("/assets/visuals/hero-optical-monolith.png") 66% center / cover;
+      var(--nav-scene) 66% center / cover;
   }
 
   .optical-hero {
