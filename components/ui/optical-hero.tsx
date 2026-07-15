@@ -148,7 +148,7 @@ export function OpticalHero() {
       <div className="mobile-glass-scene" aria-hidden="true">
         <div className="mobile-glass-base">
           <Image
-            src={assetPath("/assets/visuals/hero-mobile-house.webp")}
+            src={assetPath("/assets/visuals/hero-mobile-house-before.webp")}
             alt=""
             fill
             priority
