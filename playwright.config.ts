@@ -7,7 +7,7 @@ export default defineConfig({
   retries: 0,
   reporter: [["list"]],
   use: {
-    baseURL: "http://127.0.0.1:4173",
+    baseURL: "http://127.0.0.1:43174",
     channel: "chrome",
     locale: "ru-BY",
     timezoneId: "Europe/Minsk",
@@ -25,8 +25,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "python3 -m http.server 4173 -d out",
-    url: "http://127.0.0.1:4173",
-    reuseExistingServer: true,
+    command: "python3 -m http.server 43174 -d out",
+    url: "http://127.0.0.1:43174",
+    reuseExistingServer: false,
   },
 });

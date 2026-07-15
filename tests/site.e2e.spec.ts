@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("AI consultant fits the viewport and opens without runtime errors", async ({ page }, testInfo) => {
+test("consultation panel fits the viewport and gives a working next step", async ({ page }, testInfo) => {
   const runtimeErrors: string[] = [];
   page.on("pageerror", (error) => runtimeErrors.push(error.message));
   page.on("console", (message) => {
@@ -14,7 +14,8 @@ test("AI consultant fits the viewport and opens without runtime errors", async (
 
   const panel = page.getByRole("dialog", { name: "AI-консультант СтеклоСтройГрупп" });
   await expect(panel).toBeVisible();
-  await expect(panel.getByText("Разберём задачу до разговора с инженером")).toBeVisible();
+  await expect(panel.getByText("Передадим задачу инженеру")).toBeVisible();
+  await expect(panel.getByRole("link", { name: "Передать исходные данные" })).toBeVisible();
   const box = await panel.boundingBox();
   const viewport = page.viewportSize();
   expect(box).not.toBeNull();

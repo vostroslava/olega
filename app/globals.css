@@ -4020,8 +4020,12 @@ p {
   content: "";
 }
 
-.quote-progress button span {
+.quote-progress .quote-step-number {
   color: var(--accent);
+}
+
+.quote-progress .quote-step-label {
+  min-width: 0;
 }
 
 .quote-stage {
@@ -4746,6 +4750,22 @@ p {
   cursor: not-allowed;
 }
 
+.site-ai-chat-offline {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem;
+  padding: 0.8rem 0.85rem;
+  border-top: 1px solid rgba(218, 236, 240, 0.12);
+}
+
+.site-ai-chat-offline .button {
+  min-width: 0;
+  min-height: 3.25rem;
+  padding: 0 0.75rem;
+  justify-content: center;
+  font-size: 0.68rem;
+}
+
 .site-ai-chat-panel > footer {
   display: flex;
   align-items: center;
@@ -5446,19 +5466,28 @@ p {
   }
 
   .quote-progress button {
+    min-width: 0;
     min-height: 4rem;
     gap: 0.35rem;
     font-size: 0.72rem;
   }
 
-  .quote-progress button span {
+  .quote-progress .quote-step-number {
     font-size: 0.78rem;
+  }
+
+  .quote-progress .quote-step-label {
+    overflow-wrap: anywhere;
+    line-height: 1.05;
+    text-align: center;
   }
 
   .quote-progress {
     position: sticky;
     top: 4.75rem;
     z-index: 6;
+    min-width: 0;
+    overflow: clip;
     background: rgba(7, 10, 12, 0.96);
     backdrop-filter: blur(18px);
   }
@@ -5563,8 +5592,13 @@ p {
     letter-spacing: -0.02em;
   }
 
-  .quote-progress button span {
+  .quote-progress .quote-step-number {
     font-size: 0.64rem;
+  }
+
+  .quote-progress .quote-step-label {
+    font-size: 0.62rem;
+    letter-spacing: -0.03em;
   }
 
   .nav-mobile-extras {
@@ -6845,12 +6879,16 @@ p {
   .monolith-page-copy {
     justify-content: flex-end;
     min-height: 32rem;
+    width: 100%;
+    min-width: 0;
   }
 
   .monolith-page-copy h1 {
-    max-width: 28rem;
+    max-width: min(100%, 22rem);
     font-size: clamp(3.4rem, 14vw, 5rem);
     line-height: 0.9;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
   }
 
   .monolith-page-copy > p {
@@ -7100,7 +7138,8 @@ p {
 
 @media (max-width: 480px) {
   .monolith-page-copy h1 {
-    font-size: 3.6rem;
+    max-width: min(100%, 19rem);
+    font-size: clamp(3rem, 13vw, 3.6rem);
   }
 
   .monolith-content-heading h2,

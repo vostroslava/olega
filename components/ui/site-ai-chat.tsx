@@ -4,9 +4,11 @@ import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { ChatCircleDots } from "@phosphor-icons/react/dist/csr/ChatCircleDots";
 import { PaperPlaneTilt } from "@phosphor-icons/react/dist/csr/PaperPlaneTilt";
+import { Phone } from "@phosphor-icons/react/dist/csr/Phone";
 import { Sparkle } from "@phosphor-icons/react/dist/csr/Sparkle";
 import { X } from "@phosphor-icons/react/dist/csr/X";
 import { readApiError, siteApiEndpoint } from "@/lib/site-api";
+import { CONTACTS } from "@/lib/site-data";
 
 type ChatMessage = {
   id: string;
@@ -29,13 +31,14 @@ export function SiteAiChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
-  const [workerOnline, setWorkerOnline] = useState(false);
+  const [workerOnline, setWorkerOnline] = useState<boolean | null>(null);
   const [status, setStatus] = useState("AI-помощник по остеклению");
   const [error, setError] = useState("");
   const messagesRef = useRef<HTMLDivElement | null>(null);
   const sessionTokenRef = useRef("");
   const pollRunRef = useRef(0);
   const chatEndpoint = siteApiEndpoint("chat");
+  const aiAvailable = workerOnline === true && Boolean(chatEndpoint);
 
   const loadMessages = useCallback(async (token: string) => {
     if (!chatEndpoint || !token) return null;
@@ -104,12 +107,12 @@ export function SiteAiChat() {
 
   const sendMessage = async (value: string) => {
     const message = value.trim();
-    if (!message || sending || !chatEndpoint) return;
+    if (!message || sending || !aiAvailable || !chatEndpoint) return;
 
     setInput("");
     setError("");
     setSending(true);
-    setStatus(workerOnline ? "Анализируем вопрос…" : "Ставим вопрос в очередь…");
+    setStatus("Анализируем вопрос…");
     const optimisticId = `local-${Date.now()}`;
     setMessages((current) => [...current, { id: optimisticId, role: "user", content: message }]);
 
@@ -134,7 +137,7 @@ export function SiteAiChat() {
       sessionTokenRef.current = body.sessionToken;
       window.sessionStorage.setItem(sessionStorageKey, body.sessionToken);
       setWorkerOnline(Boolean(body.workerOnline));
-      setStatus(body.workerOnline ? "AI готовит ответ…" : "Вопрос в очереди локального AI");
+      setStatus(body.workerOnline ? "AI готовит ответ…" : "AI временно недоступен");
       const runId = pollRunRef.current + 1;
       pollRunRef.current = runId;
       void pollForReply(body.sessionToken, body.messageId, runId);
@@ -158,8 +161,8 @@ export function SiteAiChat() {
           <header>
             <div className="site-ai-chat-mark" aria-hidden="true"><Sparkle size={20} weight="thin" /></div>
             <div>
-              <strong>Оптический консультант</strong>
-              <span><i className={workerOnline ? "is-online" : ""} /> {status}</span>
+              <strong>{aiAvailable ? "Оптический консультант" : "Связь с инженером"}</strong>
+              <span><i className={aiAvailable ? "is-online" : ""} /> {aiAvailable ? status : "Ответит команда проекта"}</span>
             </div>
             <button type="button" onClick={() => setOpen(false)} aria-label="Закрыть чат">
               <X size={20} weight="thin" aria-hidden="true" />
@@ -168,9 +171,9 @@ export function SiteAiChat() {
 
           <div className="site-ai-chat-messages" ref={messagesRef} aria-live="polite">
             <div className="site-ai-chat-intro">
-              <p className="optical-label">ИНЖЕНЕРНЫЙ БРИФ · AI</p>
-              <h2>Разберём задачу до разговора с инженером</h2>
-              <p>Помогу с выбором системы и подготовкой исходных данных. Стоимость, сроки и технический расчёт подтвердит специалист.</p>
+              <p className="optical-label">{aiAvailable ? "ИНЖЕНЕРНЫЙ БРИФ · AI" : "ПРЕДВАРИТЕЛЬНЫЙ РАЗБОР"}</p>
+              <h2>{aiAvailable ? "Разберём задачу до разговора с инженером" : "Передадим задачу инженеру"}</h2>
+              <p>{aiAvailable ? "Помогу с выбором системы и подготовкой исходных данных. Стоимость, сроки и технический расчёт подтвердит специалист." : "Приложите фото, план или короткое описание — инженер увидит исходные данные и предложит следующий шаг."}</p>
             </div>
 
             {messages.map((message) => (
@@ -188,7 +191,7 @@ export function SiteAiChat() {
             {error ? <p className="site-ai-chat-error" role="alert">{error}</p> : null}
           </div>
 
-          {messages.length === 0 ? (
+          {aiAvailable && messages.length === 0 ? (
             <div className="site-ai-chat-suggestions" aria-label="Популярные вопросы">
               {suggestions.map((suggestion) => (
                 <button key={suggestion} type="button" onClick={() => void sendMessage(suggestion)}>
@@ -198,31 +201,40 @@ export function SiteAiChat() {
             </div>
           ) : null}
 
-          <form onSubmit={handleSubmit}>
-            <label>
-              <span className="sr-only">Ваш вопрос</span>
-              <textarea
-                value={input}
-                onChange={(event) => setInput(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" && !event.shiftKey) {
-                    event.preventDefault();
-                    void sendMessage(input);
-                  }
-                }}
-                maxLength={1200}
-                rows={1}
-                placeholder="Опишите объект или задайте вопрос…"
-                disabled={!chatEndpoint || sending}
-              />
-            </label>
-            <button type="submit" disabled={!input.trim() || sending || !chatEndpoint} aria-label="Отправить вопрос">
-              <PaperPlaneTilt size={21} weight="thin" aria-hidden="true" />
-            </button>
-          </form>
+          {aiAvailable ? (
+            <form onSubmit={handleSubmit}>
+              <label>
+                <span className="sr-only">Ваш вопрос</span>
+                <textarea
+                  value={input}
+                  onChange={(event) => setInput(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" && !event.shiftKey) {
+                      event.preventDefault();
+                      void sendMessage(input);
+                    }
+                  }}
+                  maxLength={1200}
+                  rows={1}
+                  placeholder="Опишите объект или задайте вопрос…"
+                  disabled={sending}
+                />
+              </label>
+              <button type="submit" disabled={!input.trim() || sending} aria-label="Отправить вопрос">
+                <PaperPlaneTilt size={21} weight="thin" aria-hidden="true" />
+              </button>
+            </form>
+          ) : (
+            <div className="site-ai-chat-offline">
+              <Link className="button button-primary" href="/raschet/">Передать исходные данные</Link>
+              <a className="button button-secondary button-on-dark" href={CONTACTS.phones[0].href}>
+                <Phone size={18} weight="thin" aria-hidden="true" /> Позвонить
+              </a>
+            </div>
+          )}
 
           <footer>
-            <span>AI может ошибаться в деталях</span>
+            <span>{aiAvailable ? "AI может ошибаться в деталях" : "Ответ даст специалист по проекту"}</span>
             <Link href="/raschet/">Передать проект инженеру</Link>
           </footer>
         </section>
@@ -236,7 +248,7 @@ export function SiteAiChat() {
         aria-label="Открыть AI-консультант"
       >
         <span className="site-ai-chat-trigger-icon"><ChatCircleDots size={26} weight="thin" aria-hidden="true" /></span>
-        <span><strong>Спросить AI</strong><small>Помощник по остеклению</small></span>
+        <span><strong>{aiAvailable ? "Спросить AI" : "Связаться"}</strong><small>{aiAvailable ? "Помощник по остеклению" : "с инженером"}</small></span>
       </button>
     </div>
   );

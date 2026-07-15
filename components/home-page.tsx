@@ -28,14 +28,14 @@ export function HomePage() {
       <main id="top" className="home-main">
         <div className="glass-thread" aria-hidden="true" />
         <OpticalHero />
+        <ProofBand />
         <AudiencePathways />
+        <ProjectShowcase />
         <GlassScrollScene />
         <GlassAnatomy />
         <ProjectLens />
         <SolutionsShowcase />
-        <ProjectShowcase />
         <ProductionStory />
-        <ProofBand />
         <HomeQuoteSection />
       </main>
 

@@ -167,8 +167,8 @@ export function QuoteWizard({ compact = false }: { compact?: boolean }) {
             aria-current={index === step ? "step" : undefined}
             aria-label={`${String(index + 1).padStart(2, "0")} ${label}${index === step ? ", текущий этап" : isStepComplete(index) ? ", заполнено" : ""}`}
           >
-            <span>{String(index + 1).padStart(2, "0")}</span>
-            {label}
+            <span className="quote-step-number">{String(index + 1).padStart(2, "0")}</span>
+            <span className="quote-step-label">{label}</span>
           </button>
         ))}
       </div>
