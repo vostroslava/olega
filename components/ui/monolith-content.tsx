@@ -69,7 +69,13 @@ export function MonolithCta({
   action?: string;
 }) {
   return (
-    <section className="monolith-cta" id="request">
+    <section
+      className="monolith-cta"
+      id="request"
+      style={{
+        backgroundImage: `linear-gradient(90deg, rgba(7, 10, 12, 0.96), rgba(7, 10, 12, 0.7)), url("${assetPath("/assets/photos/project-avenue.png")}")`,
+      }}
+    >
       <div className="container monolith-cta-inner reveal">
         <div>
           <p className="optical-label">{label}</p>

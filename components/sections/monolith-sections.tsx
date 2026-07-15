@@ -192,7 +192,13 @@ export function ProofBand() {
 
 export function HomeQuoteSection() {
   return (
-    <section className="home-quote-section" id="request">
+    <section
+      className="home-quote-section"
+      id="request"
+      style={{
+        backgroundImage: `linear-gradient(90deg, rgba(7, 10, 12, 0.98), rgba(7, 10, 12, 0.76)), url("${assetPath("/assets/photos/project-avenue.png")}")`,
+      }}
+    >
       <div className="container home-quote-grid">
         <div className="home-quote-intro reveal">
           <p className="optical-label">РАСЧЁТ ПРОЕКТА</p>

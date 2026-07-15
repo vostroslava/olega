@@ -1569,9 +1569,8 @@ p {
   align-items: center;
   min-height: 88svh;
   padding: 10rem 0 6rem;
-  background:
-    linear-gradient(90deg, rgba(7, 10, 12, 0.96), rgba(7, 10, 12, 0.58)),
-    url("/assets/photos/project-arbat.png") center / cover;
+  background-position: center;
+  background-size: cover;
 }
 
 .status-page-card {
@@ -3923,9 +3922,8 @@ p {
 
 .home-quote-section {
   padding: 7rem 0;
-  background:
-    linear-gradient(90deg, rgba(7, 10, 12, 0.98), rgba(7, 10, 12, 0.76)),
-    url("/assets/photos/project-avenue.png") center / cover;
+  background-position: center;
+  background-size: cover;
 }
 
 .home-quote-grid {
@@ -6043,9 +6041,8 @@ p {
 .monolith-cta {
   padding: 5rem 0;
   border-bottom: 1px solid var(--line);
-  background:
-    linear-gradient(90deg, rgba(7, 10, 12, 0.96), rgba(7, 10, 12, 0.7)),
-    url("/assets/photos/project-avenue.png") center / cover;
+  background-position: center;
+  background-size: cover;
 }
 
 .monolith-cta-inner {

@@ -170,6 +170,7 @@ final result: passed
 - Тестовая lead-заявка принята с HTTP `201`, получила статус `completed`, категорию `private_house` и AI-оценку полноты; тестовая заявка удалена каскадно.
 - `npm run lint`, production build Next.js `16.2.10`, Deno type-check Edge Function и синтаксическая проверка worker — passed.
 - Playwright: desktop Chrome `1440 × 1000` и mobile Chrome/iPhone 14; открытие/закрытие AI-чата, отсутствие viewport overflow и прямые переходы вкладок калькулятора — `4 passed`.
+- Публичный GitHub Pages проверен после deploy: страница и health API отвечают `200`, AI-панель помещается в viewport на desktop/mobile; абсолютные CSS-пути фоновых изображений заменены на basePath-aware `assetPath`, итоговый network log без `404`.
 - Production dependency audit: high и critical уязвимостей нет. Два moderate-сигнала PostCSS остаются транзитивно в Next.js и не имеют корректного non-breaking fix в npm audit.
 
 final result: passed
