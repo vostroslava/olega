@@ -76,6 +76,7 @@ export function OpticalHero() {
       hero.style.setProperty("--hero-y", `${y * 10}px`);
       hero.style.setProperty("--light-x", `${(x + 0.5) * 100}%`);
       hero.style.setProperty("--light-y", `${(y + 0.5) * 100}%`);
+      hero.style.setProperty("--desktop-glass-x", `${Math.min(80, Math.max(46, (x + 0.5) * 100))}%`);
       pointerFrame.current = null;
     });
   };
@@ -85,6 +86,7 @@ export function OpticalHero() {
     heroRef.current?.style.setProperty("--hero-y", "0px");
     heroRef.current?.style.setProperty("--light-x", "72%");
     heroRef.current?.style.setProperty("--light-y", "34%");
+    heroRef.current?.style.setProperty("--desktop-glass-x", "65%");
   };
 
   const setGlassPosition = (position: number) => {
@@ -138,13 +140,30 @@ export function OpticalHero() {
     >
       <div className="optical-hero-media" aria-hidden="true">
         <Image
-          src={assetPath("/assets/visuals/hero-optical-monolith.png")}
+          src={assetPath("/assets/visuals/hero-desktop-before.webp")}
           alt=""
           fill
-          priority
+          loading="lazy"
           sizes="100vw"
         />
       </div>
+      <div className="desktop-glass-reveal" aria-hidden="true">
+        <Image
+          src={assetPath("/assets/visuals/hero-desktop-after.webp")}
+          alt=""
+          fill
+          loading="lazy"
+          sizes="100vw"
+        />
+      </div>
+      <Image
+        className="desktop-glass-edge"
+        src={assetPath("/assets/visuals/hero-desktop-glass-edge.webp")}
+        alt=""
+        fill
+        loading="lazy"
+        sizes="100vw"
+      />
       <div className="mobile-glass-scene" aria-hidden="true">
         <div className="mobile-glass-base">
           <Image

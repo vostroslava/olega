@@ -2245,6 +2245,65 @@ p {
   }
 }
 
+/* Desktop optical reveal: cursor exposes the warm low-iron state. */
+.desktop-glass-reveal,
+.desktop-glass-edge {
+  display: none;
+}
+
+@media (min-width: 861px) {
+  .optical-hero {
+    --desktop-glass-x: 65%;
+  }
+
+  .desktop-glass-reveal {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    display: block;
+    overflow: hidden;
+    clip-path: polygon(
+      0 0,
+      calc(var(--desktop-glass-x) + 15%) 0,
+      calc(var(--desktop-glass-x) - 15%) 100%,
+      0 100%
+    );
+    pointer-events: none;
+    transition: clip-path 130ms linear;
+    will-change: clip-path;
+  }
+
+  .desktop-glass-reveal img {
+    object-fit: cover;
+    object-position: center 45%;
+    filter: brightness(1.04) saturate(1.08);
+    transform: translate3d(var(--hero-x), var(--hero-y), 0) scale(1.025);
+    transition: transform 800ms cubic-bezier(.18, .8, .2, 1);
+  }
+
+  .desktop-glass-edge {
+    z-index: 2;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+    opacity: .92;
+    mix-blend-mode: screen;
+    pointer-events: none;
+    transform: translateX(calc(var(--desktop-glass-x) - 65%)) scale(1.025);
+    transform-origin: center;
+    transition: transform 130ms linear;
+    will-change: transform;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) and (min-width: 861px) {
+  .desktop-glass-reveal,
+  .desktop-glass-reveal img,
+  .desktop-glass-edge {
+    transition: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .mobile-glass-reveal img,
   .mobile-glass-scene .mobile-glass-edge {
