@@ -4583,7 +4583,7 @@ p {
     padding: 7.5rem 2rem 2rem;
     background:
       linear-gradient(90deg, rgba(6, 9, 11, 0.97), rgba(6, 9, 11, 0.82)),
-      url("/assets/photos/project-arbat.png") 56% center / cover;
+      var(--nav-scene) 56% center / cover;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-1rem);
