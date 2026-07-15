@@ -1,9 +1,9 @@
 "use client";
 
-import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
+import type { PointerEvent as ReactPointerEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight } from "@phosphor-icons/react/dist/csr/ArrowUpRight";
 import { assetPath } from "@/lib/site-utils";
 
@@ -264,37 +264,55 @@ const projectScenes: ProjectScene[] = [
   },
 ];
 
-type LensStageStyle = CSSProperties & {
-  "--lens-x": string;
-  "--lens-y": string;
-};
-
 export function ProjectLens() {
   const [activeSceneId, setActiveSceneId] = useState(projectScenes[0].id);
   const [activeModeId, setActiveModeId] = useState(projectScenes[0].modes[0].id);
   const stageRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<number | null>(null);
+  const pointerTrackingRef = useRef(false);
   const activeScene = projectScenes.find((scene) => scene.id === activeSceneId) ?? projectScenes[0];
   const activeMode = activeScene.modes.find((mode) => mode.id === activeModeId) ?? activeScene.modes[0];
   const activeLensX = activeMode.x;
   const activeLensY = activeMode.y;
 
-  const moveLens = useCallback((event: ReactPointerEvent<HTMLDivElement>) => {
+  const moveLens = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (event.pointerType === "touch") return;
     const stage = stageRef.current;
     if (!stage) return;
+    pointerTrackingRef.current = true;
     const rect = stage.getBoundingClientRect();
     const x = Math.min(92, Math.max(8, ((event.clientX - rect.left) / rect.width) * 100));
     const y = Math.min(88, Math.max(12, ((event.clientY - rect.top) / rect.height) * 100));
+    const activationRadius = Math.min(rect.width, rect.height) * 0.16;
+    const distances = activeScene.modes.map((mode) => ({
+      mode,
+      distance: Math.hypot(
+        event.clientX - (rect.left + (mode.x / 100) * rect.width),
+        event.clientY - (rect.top + (mode.y / 100) * rect.height)
+      ),
+    }));
+    const nearest = distances.reduce((best, candidate) =>
+      candidate.distance < best.distance ? candidate : best
+    );
+    const currentDistance = distances.find(({ mode }) => mode.id === activeMode.id)?.distance ?? Infinity;
+
+    if (
+      nearest.mode.id !== activeMode.id &&
+      nearest.distance <= activationRadius &&
+      nearest.distance + 14 < currentDistance
+    ) {
+      setActiveModeId(nearest.mode.id);
+    }
 
     if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
     frameRef.current = requestAnimationFrame(() => {
       stage.style.setProperty("--lens-x", `${x}%`);
       stage.style.setProperty("--lens-y", `${y}%`);
     });
-  }, []);
+  };
 
   const resetLens = () => {
+    pointerTrackingRef.current = false;
     const stage = stageRef.current;
     if (!stage) return;
     stage.style.setProperty("--lens-x", `${activeLensX}%`);
@@ -303,8 +321,10 @@ export function ProjectLens() {
 
   useEffect(() => {
     const stage = stageRef.current;
-    stage?.style.setProperty("--lens-x", `${activeLensX}%`);
-    stage?.style.setProperty("--lens-y", `${activeLensY}%`);
+    if (!pointerTrackingRef.current) {
+      stage?.style.setProperty("--lens-x", `${activeLensX}%`);
+      stage?.style.setProperty("--lens-y", `${activeLensY}%`);
+    }
     return () => {
       if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
     };
@@ -313,11 +333,6 @@ export function ProjectLens() {
   const selectScene = (scene: ProjectScene) => {
     setActiveSceneId(scene.id);
     setActiveModeId(scene.modes[0].id);
-  };
-
-  const stageStyle: LensStageStyle = {
-    "--lens-x": `${activeMode.x}%`,
-    "--lens-y": `${activeMode.y}%`,
   };
 
   return (
@@ -357,7 +372,6 @@ export function ProjectLens() {
         <div
           ref={stageRef}
           className={`project-lens-stage is-${activeMode.effect}`}
-          style={stageStyle}
           onPointerMove={moveLens}
           onPointerLeave={resetLens}
         >
@@ -422,6 +436,7 @@ export function ProjectLens() {
           </div>
 
           <div
+            key={`${activeScene.id}-${activeMode.id}`}
             className="project-lens-detail"
             id={`project-lens-detail-${activeScene.id}`}
             role="tabpanel"

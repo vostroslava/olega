@@ -2787,6 +2787,8 @@ p {
 
 .project-lens-stage {
   --lens-size: clamp(12rem, 19vw, 17.5rem);
+  --lens-x: 44%;
+  --lens-y: 61%;
   position: relative;
   min-width: 0;
   min-height: 40.4rem;
@@ -2997,11 +2999,16 @@ p {
 .project-lens-tabs button.is-active { background: linear-gradient(135deg, rgba(237, 189, 151, .14), rgba(114, 193, 216, .04)); color: #fff; }
 .project-lens-tabs button.is-active span { color: var(--accent); }
 
-.project-lens-detail { position: relative; min-height: 20rem; padding: 3.2rem .4rem 1.6rem; }
+.project-lens-detail { position: relative; min-height: 20rem; padding: 3.2rem .4rem 1.6rem; animation: project-lens-detail-in 360ms cubic-bezier(.18,.8,.2,1) both; }
 .project-lens-detail-index { position: absolute; top: 2.5rem; right: .25rem; color: rgba(237, 189, 151, .1); font-size: 7.4rem; font-weight: 300; line-height: .7; }
 .project-lens-detail .optical-label { position: relative; z-index: 1; }
 .project-lens-detail h3 { position: relative; z-index: 1; max-width: 17rem; margin-top: 1.25rem; font-size: 2.35rem; font-weight: 300; line-height: .96; }
 .project-lens-detail > p:last-child { position: relative; z-index: 1; margin-top: 1.4rem; color: rgba(226, 235, 235, .68); font-size: .88rem; line-height: 1.65; }
+
+@keyframes project-lens-detail-in {
+  from { opacity: .35; transform: translateY(.55rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
 .project-lens-disclaimer { display: grid; grid-template-columns: 2.8rem 1fr; gap: .8rem; margin-top: auto; padding: 1rem 0; border-top: 1px solid rgba(207, 231, 237, .18); }
 .project-lens-disclaimer span { color: var(--accent); font-size: .57rem; letter-spacing: .12em; text-transform: uppercase; }
@@ -6624,6 +6631,7 @@ p {
 
 @media (prefers-reduced-motion: reduce) {
   .project-lens-image,
+  .project-lens-detail,
   .project-lens-optic,
   .project-lens-hotspot,
   .project-lens-tabs button {
