@@ -38,7 +38,7 @@ jobs:
       - name: Build static export
         run: npm run build
         env:
-          NEXT_PUBLIC_FORM_ENDPOINT: ${{ vars.NEXT_PUBLIC_FORM_ENDPOINT }}
+          NEXT_PUBLIC_SITE_API_URL: ${{ vars.NEXT_PUBLIC_SITE_API_URL }}
 
       - name: Disable Jekyll processing
         run: touch out/.nojekyll

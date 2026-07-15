@@ -3,22 +3,26 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { CONTACTS, REQUEST_OPTIONS } from "@/lib/site-data";
+import {
+  createClientRequestId,
+  getAttribution,
+  readApiError,
+  siteApiEndpoint,
+} from "@/lib/site-api";
 import { assetPath } from "@/lib/site-utils";
 
 type RequestFormProps = {
   defaultProduct?: string;
 };
 
-const formEndpoint = process.env.NEXT_PUBLIC_FORM_ENDPOINT?.trim() ?? "";
-const isGoogleAppsScriptEndpoint = /script\.google(?:usercontent)?\.com/.test(formEndpoint);
 const preferredProductStorageKey = "steklostroygroup.request.product";
 const preferredBriefStorageKey = "steklostroygroup.request.brief";
 
 export function RequestForm({ defaultProduct }: RequestFormProps) {
   const [note, setNote] = useState(
-    formEndpoint
-      ? "После отправки покажем статус заявки прямо на странице."
-      : "Пока форма работает через почтовый клиент. После нажатия откроется готовый черновик письма."
+    siteApiEndpoint("lead")
+      ? "Заявка попадёт напрямую инженеру. После отправки покажем её статус."
+      : `Сервис заявок ещё не подключён. Напишите нам: ${CONTACTS.primaryEmail}.`
   );
   const [noteSuccess, setNoteSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -27,6 +31,7 @@ export function RequestForm({ defaultProduct }: RequestFormProps) {
   const [messageValue, setMessageValue] = useState("");
   const selectRef = useRef<HTMLDivElement | null>(null);
   const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const clientRequestId = useRef("");
 
   const initialProduct = useMemo(() => {
     if (defaultProduct && REQUEST_OPTIONS.includes(defaultProduct)) {
@@ -94,43 +99,6 @@ export function RequestForm({ defaultProduct }: RequestFormProps) {
     focusOption(index);
   };
 
-  const fallbackToMail = ({
-    name,
-    phone,
-    product,
-    message,
-    consent,
-  }: {
-    name: string;
-    phone: string;
-    product: string;
-    message: string;
-    consent: boolean;
-  }) => {
-    const subject = encodeURIComponent(`Заявка на расчёт: ${product || "новый запрос"}`);
-    const body = encodeURIComponent(
-      [
-        "Новая заявка с сайта СтеклоСтройГрупп",
-        "",
-        `Имя: ${name}`,
-        `Телефон: ${phone}`,
-        `Тип запроса: ${product || "не указано"}`,
-        `Согласие на обработку персональных данных: ${consent ? "да" : "нет"}`,
-        "",
-        "Комментарий:",
-        message || "не указан",
-      ].join("\n")
-    );
-
-    window.location.href = `mailto:${CONTACTS.primaryEmail}?subject=${subject}&body=${body}`;
-    clearEstimateContext();
-    setMessageValue("");
-    setNote(
-      `Черновик письма подготовлен. Если почтовый клиент не открылся, используйте ${CONTACTS.primaryEmail}.`
-    );
-    setNoteSuccess(true);
-  };
-
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -142,6 +110,7 @@ export function RequestForm({ defaultProduct }: RequestFormProps) {
     const product = selectedProduct;
     const message = messageValue.trim();
     const consent = formData.get("consent") === "on";
+    const endpoint = siteApiEndpoint("lead");
 
     if (company) {
       setNote("Заявка отправлена. Мы свяжемся с вами в ближайшее рабочее время.");
@@ -151,67 +120,42 @@ export function RequestForm({ defaultProduct }: RequestFormProps) {
       return;
     }
 
-    if (!formEndpoint) {
-      fallbackToMail({ name, phone, product, message, consent });
+    if (!endpoint) {
+      setNote(`Сервис заявок ещё не подключён. Напишите нам: ${CONTACTS.primaryEmail}.`);
+      setNoteSuccess(false);
       return;
     }
+
+    if (!clientRequestId.current) clientRequestId.current = createClientRequestId();
 
     setSubmitting(true);
     setNoteSuccess(false);
     setNote("Отправляем заявку...");
 
     try {
-      if (isGoogleAppsScriptEndpoint) {
-        const payload = new URLSearchParams({
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          clientRequestId: clientRequestId.current,
           name,
           phone,
-          product,
+          objectType: product,
           message,
-          consent: consent ? "yes" : "no",
+          consent,
           company,
           source: "steklostroygroup-site",
           page: window.location.href,
           submittedAt: new Date().toISOString(),
-        });
+          ...getAttribution(),
+        }),
+      });
 
-        // Apps Script web apps work more reliably from static hosting without JSON preflight.
-        await fetch(formEndpoint, {
-          method: "POST",
-          body: payload,
-          mode: "no-cors",
-        });
-
-        form.reset();
-        clearEstimateContext();
-        setMessageValue("");
-        setNote(
-          "Запрос передан в обработку. Отдельную страницу подтверждения не показываем: если не вернёмся в ближайшее рабочее время, свяжитесь с нами по телефону."
-        );
-        setNoteSuccess(true);
-        return;
-      } else {
-        const response = await fetch(formEndpoint, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({
-            name,
-            phone,
-            product,
-            message,
-            consent,
-            company,
-            source: "steklostroygroup-site",
-            page: window.location.href,
-            submittedAt: new Date().toISOString(),
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Request failed");
-        }
+      if (!response.ok) {
+        throw new Error(await readApiError(response));
       }
 
       form.reset();
@@ -219,14 +163,14 @@ export function RequestForm({ defaultProduct }: RequestFormProps) {
       setMessageValue("");
       setNote("Заявка отправлена. Мы свяжемся с вами в ближайшее рабочее время.");
       setNoteSuccess(true);
+      clientRequestId.current = "";
       window.location.assign(
         assetPath(`/spasibo/?product=${encodeURIComponent(product)}`)
       );
-    } catch {
-      setNote(
-        `Не удалось отправить заявку напрямую. Открываем fallback через ${CONTACTS.primaryEmail}.`
-      );
-      fallbackToMail({ name, phone, product, message, consent });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Не удалось отправить заявку.";
+      setNote(`${message} Можно написать нам: ${CONTACTS.primaryEmail}.`);
+      setNoteSuccess(false);
     } finally {
       setSubmitting(false);
     }

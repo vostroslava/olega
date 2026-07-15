@@ -1,0 +1,16 @@
+{
+  "name": "steklostroy-local-ai-worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --check src/worker.mjs && node --check src/codex-analysis.mjs && node --check install-macos.mjs && node --check uninstall-macos.mjs",
+    "run:once": "node src/worker.mjs --once",
+    "run:watch": "node src/worker.mjs --watch",
+    "install:mac": "node install-macos.mjs",
+    "uninstall:mac": "node uninstall-macos.mjs"
+  },
+  "dependencies": {
+    "pg": "8.22.0"
+  }
+}

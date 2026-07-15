@@ -153,6 +153,27 @@
 
 final result: passed
 
+## Реальный intake и локальный AI — 2026-07-15
+
+### Архитектура
+
+- Создан отдельный Supabase-проект `steklostroygroup` (`zoopvbpzrielfzboyvqa`); база `aid-static` не используется и не изменялась.
+- Публичный Edge API принимает заявки, файлы и сообщения чата; браузер не получает ключ базы и не имеет прямого доступа к таблицам.
+- Семь таблиц защищены RLS, публичные роли не получили table grants; файлы заявок сохраняются в private bucket с лимитом 10 МБ.
+- Локальный worker установлен на внутренний диск в `~/Library/Application Support/StekloStroyGroup/ai-worker`, запускается через `launchd` и использует авторизованный Codex CLI по текущей ChatGPT-подписке.
+- После AI-разбора worker показывает локальное уведомление macOS без персональных данных; цена, срок и инженерные решения эскалируются специалисту.
+
+### Сквозная проверка
+
+- `GET /health`: `workerOnline: true`.
+- Тестовый chat-task принят с HTTP `202`, обработан локальным AI и вернул фактический ответ на русском; тестовая сессия удалена.
+- Тестовая lead-заявка принята с HTTP `201`, получила статус `completed`, категорию `private_house` и AI-оценку полноты; тестовая заявка удалена каскадно.
+- `npm run lint`, production build Next.js `16.2.10`, Deno type-check Edge Function и синтаксическая проверка worker — passed.
+- Playwright: desktop Chrome `1440 × 1000` и mobile Chrome/iPhone 14; открытие/закрытие AI-чата, отсутствие viewport overflow и прямые переходы вкладок калькулятора — `4 passed`.
+- Production dependency audit: high и critical уязвимостей нет. Два moderate-сигнала PostCSS остаются транзитивно в Next.js и не имеют корректного non-breaking fix в npm audit.
+
+final result: passed
+
 ## Мастер расчёта — интерактивные вкладки 2026-07-15
 
 ### Исправление

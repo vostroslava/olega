@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ChangeEvent, FormEvent, useMemo, useState } from "react";
+import { ChangeEvent, FormEvent, useMemo, useRef, useState } from "react";
 import { ArrowLeft } from "@phosphor-icons/react/dist/csr/ArrowLeft";
 import { ArrowRight } from "@phosphor-icons/react/dist/csr/ArrowRight";
 import { Check } from "@phosphor-icons/react/dist/csr/Check";
@@ -11,6 +11,12 @@ import { LockKey } from "@phosphor-icons/react/dist/csr/LockKey";
 import { UserCircleCheck } from "@phosphor-icons/react/dist/csr/UserCircleCheck";
 import { ArchitecturalIcon } from "@/components/ui/architectural-icons";
 import { CONTACTS } from "@/lib/site-data";
+import {
+  appendAttribution,
+  createClientRequestId,
+  readApiError,
+  siteApiEndpoint,
+} from "@/lib/site-api";
 import { assetPath } from "@/lib/site-utils";
 
 const steps = ["Объект", "Размеры", "Материалы", "Контакты"];
@@ -35,10 +41,15 @@ export function QuoteWizard({ compact = false }: { compact?: boolean }) {
   const [objectType, setObjectType] = useState(objectTypes[0].value);
   const [size, setSize] = useState("");
   const [material, setMaterial] = useState(materialOptions[3]);
+  const [attachment, setAttachment] = useState<File | null>(null);
   const [fileName, setFileName] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [consent, setConsent] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const clientRequestId = useRef("");
 
   const summary = useMemo(
     () => `${objectType}; ${size || "размеры уточнить"}; ${material}${fileName ? `; файл: ${fileName}` : ""}`,
@@ -65,47 +76,76 @@ export function QuoteWizard({ compact = false }: { compact?: boolean }) {
     if (index === 0) return Boolean(objectType);
     if (index === 1) return Boolean(size.trim());
     if (index === 2) return Boolean(material);
-    return Boolean(name.trim()) && phone.replace(/\D/g, "").length >= 7;
+    return Boolean(name.trim()) && phone.replace(/\D/g, "").length >= 7 && consent;
   };
 
   const handleFile = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) setFileName(file.name);
+    setAttachment(file ?? null);
+    setFileName(file?.name ?? "");
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const endpoint = process.env.NEXT_PUBLIC_FORM_ENDPOINT?.trim();
+    const endpoint = siteApiEndpoint("lead");
+    setSubmitError("");
 
-    if (endpoint) {
-      const payload = new URLSearchParams({
-        name,
-        phone,
-        product: objectType,
-        message: summary,
-        consent: "yes",
-        source: "optical-monolith-wizard",
-      });
-      void fetch(endpoint, { method: "POST", body: payload, mode: "no-cors" });
-      setSubmitted(true);
+    if (!endpoint) {
+      setSubmitError(`Сервис заявок ещё не подключён. Напишите нам: ${CONTACTS.primaryEmail}.`);
       return;
     }
 
-    const subject = encodeURIComponent(`Расчёт проекта: ${objectType}`);
-    const body = encodeURIComponent(`Имя: ${name}\nТелефон: ${phone}\nПроект: ${summary}`);
-    window.location.href = `mailto:${CONTACTS.primaryEmail}?subject=${subject}&body=${body}`;
-    setSubmitted(true);
+    if (!clientRequestId.current) clientRequestId.current = createClientRequestId();
+    const payload = new FormData();
+    payload.set("clientRequestId", clientRequestId.current);
+    payload.set("name", name.trim());
+    payload.set("phone", phone.trim());
+    payload.set("objectType", objectType);
+    payload.set("size", size.trim());
+    payload.set("material", material);
+    payload.set("message", summary);
+    payload.set("consent", consent ? "true" : "false");
+    payload.set("company", "");
+    payload.set("source", "optical-monolith-wizard");
+    payload.set("page", window.location.href);
+    payload.set("submittedAt", new Date().toISOString());
+    if (attachment) payload.set("attachment", attachment, attachment.name);
+    appendAttribution(payload);
+
+    setSubmitting(true);
+    try {
+      const response = await fetch(endpoint, { method: "POST", body: payload });
+      if (!response.ok) throw new Error(await readApiError(response));
+      setSubmitted(true);
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "Не удалось отправить заявку. Попробуйте ещё раз.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (submitted) {
     return (
       <div className="quote-success" role="status">
         <Check size={50} weight="thin" aria-hidden="true" />
-        <p className="optical-label">ЗАПРОС ПОДГОТОВЛЕН</p>
-        <h3>Инженер свяжется с вами и проверит исходные данные</h3>
-        <p>Если почтовый клиент не открылся, позвоните по номеру {CONTACTS.phones[0].label}.</p>
-        <button className="button button-secondary button-on-dark" type="button" onClick={() => setSubmitted(false)}>
-          Изменить данные
+        <p className="optical-label">ЗАЯВКА ПРИНЯТА</p>
+        <h3>Проект передан инженеру на предварительный разбор</h3>
+        <p>Мы сохранили исходные данные и свяжемся с вами по номеру {phone}.</p>
+        <button
+          className="button button-secondary button-on-dark"
+          type="button"
+          onClick={() => {
+            clientRequestId.current = "";
+            setSubmitted(false);
+            setStep(0);
+            setName("");
+            setPhone("");
+            setConsent(false);
+            setAttachment(null);
+            setFileName("");
+          }}
+        >
+          Рассчитать ещё один проект
         </button>
       </div>
     );
@@ -172,7 +212,7 @@ export function QuoteWizard({ compact = false }: { compact?: boolean }) {
                 <FileArrowUp size={36} weight="thin" aria-hidden="true" />
                 <b>{fileName || "Добавьте фото, чертёж или PDF"}</b>
                 <small>{fileName ? "Файл выбран" : "Можно добавить на этом шаге"}</small>
-                <input type="file" accept="image/*,.pdf" onChange={handleFile} />
+                <input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.pdf,.dwg,.dxf" onChange={handleFile} />
               </label>
             </div>
           </>
@@ -222,6 +262,24 @@ export function QuoteWizard({ compact = false }: { compact?: boolean }) {
               </label>
             </div>
             <p className="quote-summary">{summary}</p>
+            <label className="quote-consent">
+              <input
+                type="checkbox"
+                checked={consent}
+                onChange={(event) => setConsent(event.target.checked)}
+                required
+              />
+              <span>
+                Даю согласие на обработку персональных данных в соответствии с{" "}
+                <Link href="/politika-konfidentsialnosti/">политикой конфиденциальности</Link>.
+              </span>
+            </label>
+            {submitError ? (
+              <p className="quote-submit-error" role="alert">
+                {submitError}{" "}
+                <a href={`mailto:${CONTACTS.primaryEmail}`}>Написать на почту</a>
+              </p>
+            ) : null}
           </div>
         ) : null}
       </div>
@@ -244,8 +302,8 @@ export function QuoteWizard({ compact = false }: { compact?: boolean }) {
               Продолжить <ArrowRight size={20} weight="thin" aria-hidden="true" />
             </button>
           ) : (
-            <button className="button button-primary" type="submit">
-              Отправить проект <ArrowRight size={20} weight="thin" aria-hidden="true" />
+            <button className="button button-primary" type="submit" disabled={submitting}>
+              {submitting ? "Отправляем…" : "Отправить проект"} <ArrowRight size={20} weight="thin" aria-hidden="true" />
             </button>
           )}
         </div>

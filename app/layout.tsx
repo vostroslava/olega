@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Manrope } from "next/font/google";
 import { StructuredData } from "@/components/seo/structured-data";
 import { MotionProvider } from "@/components/ui/motion-provider";
+import { SiteAiChat } from "@/components/ui/site-ai-chat";
 import {
   createOrganizationStructuredData,
   createWebsiteStructuredData,
@@ -66,6 +67,7 @@ export default function RootLayout({
         <StructuredData data={createOrganizationStructuredData()} />
         <StructuredData data={createWebsiteStructuredData()} />
         <MotionProvider>{children}</MotionProvider>
+        <SiteAiChat />
       </body>
     </html>
   );
