@@ -8,6 +8,9 @@ function object(properties, required = Object.keys(properties)) {
 
 const text = { type: "string" };
 
+const reasoningEfforts = new Set(["minimal", "low", "medium", "high", "xhigh"]);
+const serviceTiers = new Set(["auto", "default", "priority", "flex"]);
+
 const schemas = {
   lead_intake: object({
     summary: text,
@@ -62,6 +65,26 @@ function promptForChat({ knowledge, history }) {
   ].join("\n\n");
 }
 
+function taskSetting(task, name) {
+  const prefix = task.kind === "site_chat" ? "STEKLOSTROY_CHAT" : "STEKLOSTROY_LEAD";
+  return process.env[`${prefix}_${name}`]?.trim() || process.env[`STEKLOSTROY_CODEX_${name}`]?.trim() || "";
+}
+
+function codexSettings(task) {
+  const model = taskSetting(task, "MODEL");
+  const reasoningEffort = taskSetting(task, "REASONING_EFFORT");
+  const serviceTier = taskSetting(task, "SERVICE_TIER");
+
+  if (reasoningEffort && !reasoningEfforts.has(reasoningEffort)) {
+    throw new Error(`Unsupported Codex reasoning effort: ${reasoningEffort}`);
+  }
+  if (serviceTier && !serviceTiers.has(serviceTier)) {
+    throw new Error(`Unsupported Codex service tier: ${serviceTier}`);
+  }
+
+  return { model, reasoningEffort, serviceTier };
+}
+
 export async function runCodexTask({ task, stagingDirectory, knowledge = "", history = [] }) {
   await mkdir(stagingDirectory, { recursive: true, mode: 0o700 });
   const schema = schemas[task.kind];
@@ -96,7 +119,13 @@ export async function runCodexTask({ task, stagingDirectory, knowledge = "", his
     outputPath,
     "-",
   ];
-  const model = process.env.STEKLOSTROY_CODEX_MODEL?.trim();
+  const { model, reasoningEffort, serviceTier } = codexSettings(task);
+  if (reasoningEffort) {
+    args.splice(args.length - 1, 0, "-c", `model_reasoning_effort=${JSON.stringify(reasoningEffort)}`);
+  }
+  if (serviceTier) {
+    args.splice(args.length - 1, 0, "-c", `service_tier=${JSON.stringify(serviceTier)}`);
+  }
   if (model) args.splice(args.length - 1, 0, "--model", model);
 
   await new Promise((resolve, reject) => {

@@ -97,6 +97,8 @@ const plist = `<?xml version="1.0" encoding="UTF-8"?>
   <key>EnvironmentVariables</key><dict>
     <key>HOME</key><string>${xml(os.homedir())}</string>
     <key>STEKLOSTROY_CODEX_BIN</key><string>${xml(runtimeCodex)}</string>
+    <key>STEKLOSTROY_CHAT_MODEL</key><string>gpt-5.6-luna</string>
+    <key>STEKLOSTROY_CHAT_REASONING_EFFORT</key><string>low</string>
     <key>STEKLOSTROY_WORKER_RUNTIME</key><string>${xml(runtimeRoot)}</string>
     <key>PATH</key><string>${xml(`${path.dirname(runtimeCodex)}:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin`)}</string>
   </dict>

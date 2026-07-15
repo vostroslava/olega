@@ -55,6 +55,13 @@ function compactError(error) {
     .slice(0, 1_000);
 }
 
+function configuredModel(kind) {
+  const taskModel = kind === "site_chat"
+    ? process.env.STEKLOSTROY_CHAT_MODEL
+    : process.env.STEKLOSTROY_LEAD_MODEL;
+  return taskModel?.trim() || process.env.STEKLOSTROY_CODEX_MODEL?.trim() || "codex-default";
+}
+
 async function heartbeat(state = "online", task = null, error = null) {
   await pool.query(`
     insert into public.worker_heartbeats (worker_key,worker_name,state,current_task_id,metadata,last_seen_at,updated_at)
@@ -143,7 +150,7 @@ async function completeLead(task, output) {
       JSON.stringify(output.missingQuestions || []),
       JSON.stringify(output.flags || []),
       output.managerReplyDraft,
-      process.env.STEKLOSTROY_CODEX_MODEL || "codex-default",
+      configuredModel("lead_intake"),
     ]);
     await client.query(`update public.leads set status='reviewed' where id=$1 and status='new'`, [task.lead_id]);
     await client.query(`
@@ -196,6 +203,10 @@ async function completeChat(task, output) {
       confidence: output.confidence,
       suggestedQuestions: output.suggestedQuestions || [],
       ai: true,
+      model: configuredModel("site_chat"),
+      reasoningEffort: process.env.STEKLOSTROY_CHAT_REASONING_EFFORT?.trim()
+        || process.env.STEKLOSTROY_CODEX_REASONING_EFFORT?.trim()
+        || null,
     })]);
     await client.query(`
       update public.chat_sessions
