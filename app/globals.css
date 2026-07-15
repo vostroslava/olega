@@ -2729,6 +2729,52 @@ p {
   line-height: 1.65;
 }
 
+.project-lens-scenes {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-bottom: 1rem;
+  border-top: 1px solid rgba(207, 231, 237, .2);
+  border-left: 1px solid rgba(207, 231, 237, .2);
+}
+
+.project-lens-scenes button {
+  display: flex;
+  min-width: 0;
+  min-height: 4.75rem;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 1.2rem;
+  border: 0;
+  border-right: 1px solid rgba(207, 231, 237, .2);
+  border-bottom: 1px solid rgba(207, 231, 237, .2);
+  background: rgba(255, 255, 255, .015);
+  color: rgba(229, 238, 239, .58);
+  font: inherit;
+  font-size: .78rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background 240ms ease, color 240ms ease, box-shadow 240ms ease;
+}
+
+.project-lens-scenes button span {
+  color: rgba(237, 189, 151, .56);
+  font-size: .58rem;
+  letter-spacing: .12em;
+}
+
+.project-lens-scenes button:hover,
+.project-lens-scenes button:focus-visible,
+.project-lens-scenes button.is-active {
+  background: linear-gradient(120deg, rgba(237, 189, 151, .14), rgba(109, 187, 211, .035));
+  color: #fff;
+}
+
+.project-lens-scenes button.is-active {
+  box-shadow: inset 0 -2px var(--accent);
+}
+
 .project-lens-shell {
   position: relative;
   z-index: 1;
@@ -2754,7 +2800,13 @@ p {
   object-fit: cover;
   filter: saturate(.74) brightness(.78) contrast(1.04);
   transform: scale(1.012);
+  animation: project-lens-image-in 620ms cubic-bezier(.18,.8,.2,1) both;
   transition: filter 500ms ease, transform 900ms cubic-bezier(.18,.8,.2,1);
+}
+
+@keyframes project-lens-image-in {
+  from { opacity: .25; transform: scale(1.035); }
+  to { opacity: 1; transform: scale(1.012); }
 }
 
 .project-lens-stage:hover .project-lens-image { filter: saturate(.8) brightness(.82) contrast(1.03); transform: scale(1.02); }
@@ -6524,6 +6576,10 @@ p {
     max-width: 31rem;
   }
 
+  .project-lens-scenes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .project-lens-shell {
     grid-template-columns: 1fr;
   }
@@ -6555,6 +6611,7 @@ p {
 @media (max-width: 480px) {
   .project-lens-section::before { display: none; }
   .project-lens-meta span:last-child { display: none; }
+  .project-lens-scenes button { min-height: 4.35rem; gap: .7rem; padding: 0 .8rem; font-size: .7rem; }
   .project-lens-grid { opacity: .14; }
   .project-lens-hotspot { width: 2.15rem; height: 2.15rem; }
   .project-lens-hotspot::before { inset: -.32rem; }
@@ -6570,6 +6627,7 @@ p {
   .project-lens-optic,
   .project-lens-hotspot,
   .project-lens-tabs button {
+    animation: none;
     transition: none;
   }
 }
