@@ -60,7 +60,7 @@ export function MonolithPageHero({
             </Link>
           </div>
         </div>
-        <div className="monolith-page-spec" aria-hidden="true">LOW-IRON GLASS<br /><strong>10 MM</strong></div>
+        <div className="monolith-page-spec" aria-hidden="true">ИНЖЕНЕРНОЕ<br /><strong>СТЕКЛО</strong></div>
         <aside className="monolith-page-rail" aria-label="Содержание страницы">
           {rail.map((item, index) => (
             <a className={index === 0 ? "is-active" : ""} href={`#section-${index + 1}`} key={item}>

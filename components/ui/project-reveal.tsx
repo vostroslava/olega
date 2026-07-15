@@ -17,7 +17,7 @@ export function ProjectReveal() {
   return (
     <section className="project-reveal reveal is-visible" id="project-reveal" aria-label="Концептуальная схема и реализация объекта">
       <div className="project-reveal-copy">
-        <p className="optical-label">КОНТУР → РЕАЛИЗАЦИЯ</p>
+        <p className="optical-label">ОТ ИДЕИ К РЕАЛИЗАЦИИ</p>
         <h3>Линия проекта становится фасадом</h3>
         <p>Проведите по изображению: слева — концептуальная схема, справа — реальный объект ТЦ «Авеню».</p>
       </div>

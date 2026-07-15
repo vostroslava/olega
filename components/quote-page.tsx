@@ -10,9 +10,9 @@ export function QuotePage() {
       <main className="quote-page-main">
         <div className="container quote-page-grid">
           <div className="quote-page-intro reveal is-visible">
-            <p className="optical-label">OPTICAL BRIEF</p>
+            <p className="optical-label">РАСЧЁТ ПРОЕКТА</p>
             <h1>Рассчитаем<br />ваш проект</h1>
-            <p>Четыре коротких шага превратят идею, фото или чертёж в структурированный brief для инженера.</p>
+            <p>Четыре коротких шага помогут собрать исходные данные из идеи, фото или чертежа для инженера.</p>
             <ul><li>Без автоматической «цены с потолка»</li><li>Файл увидит только команда проекта</li><li>Инженер проверит результат перед ответом</li></ul>
           </div>
           <QuoteWizard />

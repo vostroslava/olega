@@ -20,7 +20,7 @@ export function AudiencePathways() {
     <section className="monolith-section audience-section" id="audiences">
       <div className="container">
         <div className="monolith-section-title reveal">
-          <h2>Выберите контур проекта</h2>
+          <h2>Выберите формат проекта</h2>
           <p>Два сценария — одна инженерная дисциплина.</p>
         </div>
         <div className="audience-split">
@@ -89,7 +89,7 @@ export function SolutionsShowcase() {
           </div>
           <div className="solution-media">
             <Image src={assetPath(product.image)} alt={product.alt} fill sizes="(max-width: 860px) 100vw, 70vw" />
-            <span className="solution-spec" aria-hidden="true">LOW-IRON GLASS · 10 MM</span>
+            <span className="solution-spec" aria-hidden="true">ИНЖЕНЕРНОЕ СТЕКЛО</span>
           </div>
         </div>
       </div>
@@ -112,8 +112,8 @@ export function ProjectShowcase() {
       <div className="project-optic-frame" aria-hidden="true">
         <span className="project-optic-edge project-optic-edge-top" />
         <span className="project-optic-edge project-optic-edge-side" />
-        <span className="project-optic-marker project-optic-marker-one">THERMAL FRAME</span>
-        <span className="project-optic-marker project-optic-marker-two">ARCHITECTURAL GLASS</span>
+        <span className="project-optic-marker project-optic-marker-one">ТЕПЛОВОЙ УЗЕЛ</span>
+        <span className="project-optic-marker project-optic-marker-two">АРХИТЕКТУРНОЕ СТЕКЛО</span>
       </div>
       <div className="container project-showcase-inner">
         <div className="project-heading reveal">
@@ -141,9 +141,9 @@ export function ProductionStory() {
     <section className="production-story" id="production">
       <div className="container production-story-grid">
         <div className="production-copy reveal">
-          <p className="optical-label">PRECISION BY NATURE</p>
+          <p className="optical-label">СОБСТВЕННОЕ ПРОИЗВОДСТВО</p>
           <h2>Точность начинается на производстве</h2>
-          <p>Проектируем, изготавливаем и собираем конструкции в одном производственном контуре. Так архитектурная идея не теряется между чертежом и монтажом.</p>
+          <p>Проектируем, изготавливаем и монтируем конструкции силами одной команды. Так архитектурная идея не теряется между чертежом и монтажом.</p>
           <ul>
             <li>Собственное производство</li>
             <li>Контроль на каждом этапе</li>
@@ -159,8 +159,8 @@ export function ProductionStory() {
             <span className="production-scan-point production-scan-point-two" />
           </div>
           <div className="production-spec" aria-hidden="true">
-            <span>ДОПУСКИ</span><strong>± 0.2 MM</strong>
-            <span>КОНТРОЛЬ</span><strong>100%</strong>
+            <span>ДОПУСКИ</span><strong>ПО УЗЛАМ</strong>
+            <span>КОНТРОЛЬ</span><strong>НА ЭТАПАХ</strong>
           </div>
         </div>
       </div>
@@ -195,9 +195,9 @@ export function HomeQuoteSection() {
     <section className="home-quote-section" id="request">
       <div className="container home-quote-grid">
         <div className="home-quote-intro reveal">
-          <p className="optical-label">OPTICAL BRIEF</p>
+          <p className="optical-label">РАСЧЁТ ПРОЕКТА</p>
           <h2>Рассчитаем ваш проект</h2>
-          <p>Ответьте на четыре коротких вопроса — инженер получит структурированный brief и свяжется с вами.</p>
+          <p>Ответьте на четыре коротких вопроса — это поможет собрать исходные данные для инженера.</p>
           <small>Фото, чертёж или PDF можно приложить прямо к заявке.</small>
         </div>
         <QuoteWizard compact />

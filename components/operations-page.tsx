@@ -69,7 +69,7 @@ export function OperationsPage() {
             <MonolithSectionHeading
               label="ПРОЦЕСС"
               title="Одна команда отвечает за весь результат"
-              text="Сохранили все услуги старого сайта и выстроили их в понятный маршрут проекта — без разрыва между расчётом, производством и монтажом."
+              text="Замер, проектирование, производство, монтаж и сервис выстроены в понятный маршрут — без разрыва между этапами."
             />
             <div className="monolith-process-line services-process-line">
               {PROCESS_STEPS.map((item) => (
@@ -133,7 +133,7 @@ export function OperationsPage() {
           <div className="container monolith-route-grid">
             <Link href="/produktsiya/"><span>01</span><strong>Продукция</strong><small>Все системы и конструкции</small><ArrowUpRight size={28} weight="thin" /></Link>
             <Link href="/proizvodstvo/"><span>02</span><strong>Производство</strong><small>Оборудование и контроль</small><ArrowUpRight size={28} weight="thin" /></Link>
-            <Link href="/partneram/"><span>03</span><strong>Партнёрам</strong><small>Проектный и дилерский контур</small><ArrowUpRight size={28} weight="thin" /></Link>
+            <Link href="/partneram/"><span>03</span><strong>Партнёрам</strong><small>Проектный и дилерский формат</small><ArrowUpRight size={28} weight="thin" /></Link>
           </div>
         </section>
 
@@ -141,7 +141,7 @@ export function OperationsPage() {
       </main>
       <SiteFooter />
       <RevealInit />
-      <MobileCta heroId="operations-hero" requestId="request" href="/raschet/" label="Рассчитать проект" />
+      <MobileCta heroId="operations-hero" requestId="request" href="/raschet/" label="Передать исходные данные" />
     </div>
   );
 }

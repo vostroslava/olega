@@ -74,8 +74,8 @@ export function NewsPage() {
           <div className="container">
             <MonolithSectionHeading
               label="РУБРИКИ"
-              title="Полезное — вместо формального SEO-раздела"
-              text="Старая страница только перечисляла будущие темы. В новой структуре для каждой темы предусмотрен понятный редакционный формат."
+              title="Темы, которые полезны заказчику"
+              text="Производство, системы, объекты и эксплуатация — четыре направления, по которым мы готовим понятные материалы."
             />
             <div className="monolith-fact-rail services-four-rail">
               {newsDirections.map((item, index) => (

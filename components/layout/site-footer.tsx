@@ -13,7 +13,7 @@ export function SiteFooter() {
         <div className="container footer-contact-grid">
           <div>
             <h2>Обсудим объект?</h2>
-            <p>Подберём решение, которое подчеркнёт архитектуру и прослужит десятилетиями.</p>
+            <p>Подберём решение, которое подчеркнёт архитектуру объекта и будет удобно в ежедневной эксплуатации.</p>
           </div>
           <div className="footer-contact-item">
             <Phone size={24} weight="thin" aria-hidden="true" />
@@ -44,7 +44,7 @@ export function SiteFooter() {
             <strong>СтеклоСтройГрупп</strong>
           </Link>
           <p>Окна, фасады и панорамное остекление — от замера до монтажа по всей Беларуси.</p>
-          <small>PRECISION BY NATURE</small>
+          <small>ИНЖЕНЕРНЫЙ ПОДХОД</small>
         </div>
         <div className="footer-column">
           <h3>Решения</h3>
@@ -67,13 +67,13 @@ export function SiteFooter() {
         </div>
         <div className="footer-column">
           <h3>Клиентам</h3>
-          <Link href="/raschet/">Рассчитать проект</Link>
+          <Link href="/raschet/">Получить расчёт</Link>
           <Link href="/uslugi/">Все услуги</Link>
           <Link href="/politika-konfidentsialnosti/">Конфиденциальность</Link>
           <a href={`mailto:${CONTACTS.primaryEmail}`}>Написать нам</a>
         </div>
         <Link className="footer-cta" href="/raschet/">
-          <span>Рассчитать проект</span>
+          <span>Получить расчёт</span>
           <ArrowUpRight size={24} weight="thin" aria-hidden="true" />
         </Link>
       </div>

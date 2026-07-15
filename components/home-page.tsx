@@ -42,7 +42,7 @@ export function HomePage() {
       <SiteFooter />
       <RevealInit />
       <HomeMotion />
-      <MobileCta heroId="hero-shell" requestId="request" href="/raschet/" label="Рассчитать проект" />
+      <MobileCta heroId="hero-shell" requestId="request" href="/raschet/" label="Получить расчёт" />
     </div>
   );
 }

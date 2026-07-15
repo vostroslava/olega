@@ -65,7 +65,7 @@ export function ServicePage({ service }: { service: ServicePageData }) {
 
         <section className="monolith-content-section monolith-content-section-alt" id="section-2">
           <div className="container">
-            <MonolithSectionHeading label="СИСТЕМЫ И КОМПЛЕКТАЦИЯ" title="Что входит в рабочий контур" text="Состав решения уточняется после замера и технического задания. Здесь — честная структура без фиктивной цены до обследования объекта." />
+            <MonolithSectionHeading label="СИСТЕМЫ И КОМПЛЕКТАЦИЯ" title="Что входит в решение" text="Состав решения уточняется после замера и технического задания. Здесь — честная структура без фиктивной цены до обследования объекта." />
             <div className="monolith-spec-grid">
               {service.deliverables.map((item, index) => (
                 <article className="reveal" key={item}>
@@ -133,7 +133,7 @@ export function ServicePage({ service }: { service: ServicePageData }) {
 
       <SiteFooter />
       <RevealInit />
-      <MobileCta heroId="service-hero" requestId="request" href="/raschet/" label="Рассчитать проект" />
+      <MobileCta heroId="service-hero" requestId="request" href="/raschet/" label="Рассчитать направление" />
     </div>
   );
 }

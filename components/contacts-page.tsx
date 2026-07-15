@@ -19,7 +19,7 @@ export function ContactsPage() {
       <StructuredData data={createLocalBusinessStructuredData({ name: "СтеклоСтройГрупп", email: CONTACTS.primaryEmail, telephone: CONTACTS.phones.map((item) => item.label), streetAddress: "пер. Коммунистический, д. 2, оф. 5", addressLocality: "Могилёв", postalCode: "212030", addressCountry: "BY", areaServed: "Беларусь", path: "/kontakty/" })} />
       <SiteHeader />
       <main className="page-main monolith-inner-page">
-        <MonolithPageHero id="contacts-hero" breadcrumbs={[{ label: "Главная", href: "/" }, { label: "Контакты" }]} title="Начнём с вашего объекта" lead="Свяжитесь напрямую или отправьте brief. Работаем из Могилёва и выезжаем на объекты по всей Беларуси." image="/assets/photos/team-site-supervision.png" imageAlt="Инженеры СтеклоСтройГрупп на объекте" rail={["Связь", "Офис", "Маршрут", "Реквизиты", "Заявка"]} primaryLabel="Оставить заявку" secondaryLabel="Позвонить" secondaryHref={CONTACTS.phones[0].href} />
+        <MonolithPageHero id="contacts-hero" breadcrumbs={[{ label: "Главная", href: "/" }, { label: "Контакты" }]} title="Начнём с вашего объекта" lead="Свяжитесь напрямую или отправьте исходные данные. Работаем из Могилёва и выезжаем на объекты по всей Беларуси." image="/assets/photos/team-site-supervision.png" imageAlt="Инженеры СтеклоСтройГрупп на объекте" rail={["Связь", "Офис", "Маршрут", "Реквизиты", "Заявка"]} primaryLabel="Оставить заявку" secondaryLabel="Позвонить" secondaryHref={CONTACTS.phones[0].href} />
 
         <section className="monolith-content-section" id="section-1">
           <div className="container"><MonolithSectionHeading label="СВЯЗАТЬСЯ" title="Удобный канал для каждого запроса" /><div className="contact-monolith-grid">

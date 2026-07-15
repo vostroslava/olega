@@ -52,11 +52,11 @@ export function ProjectPage({ project }: { project: Project }) {
             <Link className="project-related-link" href={`/uslugi/${project.relatedServiceSlug}/`}><span>Связанное решение</span><strong>{project.relatedServiceLabel}</strong><ArrowUpRight size={28} weight="thin" /></Link>
           </div>
         </section>
-        <MonolithCta title="Рассчитать похожий проект" text="Покажите объект и желаемый результат — инженер предложит технический контур и следующий шаг." />
+        <MonolithCta title="Рассчитать похожий проект" text="Покажите объект и желаемый результат — инженер предложит техническое решение и следующий шаг." />
       </main>
       <SiteFooter />
       <RevealInit />
-      <MobileCta heroId="project-hero" requestId="request" href="/raschet/" label="Рассчитать проект" />
+      <MobileCta heroId="project-hero" requestId="request" href="/raschet/" label="Рассчитать похожий проект" />
     </div>
   );
 }

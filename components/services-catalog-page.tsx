@@ -31,7 +31,7 @@ export function ProductsCatalogPage() {
 
         <section className="monolith-content-section" id="section-1">
           <div className="container">
-            <MonolithSectionHeading label="КАТАЛОГ ПРОДУКЦИИ" title="Шесть направлений — один производственный контур" text="Перенесли все направления старой страницы продукции и раскрыли их в отдельных подробных страницах с применением, преимуществами и объектами." />
+            <MonolithSectionHeading label="КАТАЛОГ ПРОДУКЦИИ" title="Шесть направлений — одно производство" text="Каждое направление раскрыто на отдельной странице: применение, преимущества, комплектация и связанные объекты." />
             <div className="solution-catalog-list">
               {PRODUCTS.map((product, index) => (
                 <Link className="solution-catalog-row reveal" href={`/uslugi/${product.slug}/`} key={product.slug}>
@@ -74,7 +74,7 @@ export function ProductsCatalogPage() {
       </main>
       <SiteFooter />
       <RevealInit />
-      <MobileCta heroId="services-catalog-hero" requestId="request" href="/raschet/" label="Рассчитать проект" />
+      <MobileCta heroId="services-catalog-hero" requestId="request" href="/raschet/" label="Подобрать систему" />
     </div>
   );
 }

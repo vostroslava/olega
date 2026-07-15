@@ -115,9 +115,9 @@ export function HeroSection() {
 
           <div className="hero-stage">
             <div className="hero-copy">
-              <p className="section-kicker">Инженерный монолит</p>
+              <p className="section-kicker">Производитель и монтаж</p>
               <h1>
-                СтеклоСтройГрупп: <span>архитектурная мощь</span> и точность
+                Стекло, <span>которое меняет</span> архитектуру
               </h1>
               <p className="hero-lead">
                 Производим и монтируем окна ПВХ, алюминиевые системы, фасады, витражи и
@@ -141,7 +141,7 @@ export function HeroSection() {
             </div>
 
             <aside className="hero-rail">
-              <p className="card-tag">Контур ответственности</p>
+              <p className="card-tag">Ответственность по циклу</p>
               {TRUST_METRICS.slice(0, 3).map(([value, label]) => (
                 <article key={value}>
                   <strong>{value}</strong>
@@ -237,8 +237,8 @@ export function StandardsSection() {
     <section className="section editorial-band">
       <div className="container editorial-shell reveal">
         <div className="editorial-copy">
-          <p className="section-kicker">Производственный контур</p>
-          <h2>Собственное производство, проектирование и монтаж в одном контуре ответственности</h2>
+          <p className="section-kicker">Собственное производство</p>
+          <h2>Собственное производство, проектирование и монтаж — одна ответственность</h2>
           <p>
             Это не набор подрядчиков по цепочке. Компания держит в одной системе расчёт, узлы,
             изготовление, монтаж и дальнейшее сервисное сопровождение.
@@ -276,8 +276,8 @@ export function TrustSection() {
           <p className="section-kicker">Доверие и подтверждения</p>
           <h2>Не обещания, а факты: сертификация, объекты, гарантия и инженерный контроль</h2>
           <p>
-            На этой части сайта всё должно работать на одно решение: пользователь видит не
-            рекламные тезисы, а доказательства, что компания умеет доводить проект до результата.
+            Перед первым касанием важно видеть не рекламные тезисы, а подтверждения: документы,
+            гарантию, сроки включения в объект и модель ответственности.
           </p>
 
           <div className="metrics-band trust-metrics-band">
@@ -303,7 +303,7 @@ export function TrustSection() {
           <div className="trust-proof-board reveal reveal-delay">
             <div className="trust-proof-intro">
               <p className="card-tag">Публичные документы и рабочие гарантии</p>
-              <h3>Сайт должен подтверждать, что компания берёт проект как производственный контур</h3>
+              <h3>Компания берёт проект от расчёта до монтажа</h3>
               <p>
                 Здесь собраны факты, которые заказчик обычно ищет перед первым касанием:
                 сертификация, гарантия, скорость включения в объект и модель ответственности.
@@ -364,8 +364,8 @@ export function DocumentsSection() {
       <div className="container">
         <SectionHeading
           eyebrow="Сертификация и документы"
-          title="Публичные документы, которые были опубликованы на исходном сайте"
-          description="Собрали названия и ссылки на документы, подтверждающие процессы, компетентность и основные системы."
+          title="Публичные документы компании"
+          description="Названия и ссылки на документы, подтверждающие процессы, компетентность и основные системы."
         />
 
         <div className="document-proof-grid">
@@ -391,7 +391,7 @@ export function DocumentsSection() {
 export function OperationsSection({
   eyebrow = "Как выглядит работа",
   title = "Производство, выезд, логистика и сопровождение проекта",
-  description = "Показываем не абстрактный сервис, а реальные рабочие процессы и визуальный материал, который удалось собрать со старого сайта.",
+  description = "Показываем не абстрактный сервис, а реальные рабочие процессы: выезд, комплектацию, логистику и техническую консультацию.",
 }: {
   eyebrow?: string;
   title?: string;
@@ -435,7 +435,7 @@ export function ProjectsSection() {
         <div className="objects-header reveal">
           <div>
             <p className="section-kicker">Объекты</p>
-            <h2>Реальные проекты, по которым видно масштаб, контур и дисциплину исполнения</h2>
+            <h2>Реальные проекты, по которым видно масштаб и дисциплину исполнения</h2>
           </div>
         </div>
 
@@ -472,11 +472,11 @@ export function ProjectsSection() {
 
         <div className="document-summary-banner reveal">
           <div>
-            <p className="card-tag">Дальше по структуре сайта</p>
+            <p className="card-tag">Следующий шаг</p>
             <h3>Сравните объекты, а затем переходите в профильную услугу или сразу в расчёт</h3>
             <p>
-              Этот блок нужен как быстрый мост от доверия к действию: после кейсов не должно быть
-              тупика.
+              После кейсов удобно открыть похожее направление или сразу передать исходные данные
+              инженеру.
             </p>
           </div>
           <Link href="/proekty/">Все проекты</Link>
@@ -514,10 +514,10 @@ export function PartnersSection() {
       <div className="container partners-shell">
         <div className="partners-copy reveal">
           <p className="section-kicker">Партнёрам</p>
-          <h2>Для застройщиков, дилеров, архитекторов и подрядчиков — отдельный рабочий контур</h2>
+          <h2>Для застройщиков, дилеров, архитекторов и подрядчиков — отдельный рабочий формат</h2>
           <p>
-            Партнёрская работа должна выглядеть не как общий маркетинговый блок, а как отдельный
-            сценарий с понятной техподдержкой, расчётами и координацией.
+            Партнёрская работа — это отдельный сценарий с понятной техподдержкой, расчётами и
+            координацией по объекту.
           </p>
         </div>
 
@@ -542,7 +542,7 @@ export function FaqSection({ items = HOME_FAQ }: { items?: FaqItem[] }) {
     <section className="section faq">
       <div className="container faq-shell">
         <div className="section-heading reveal">
-          <p className="section-kicker">FAQ</p>
+          <p className="section-kicker">Вопросы</p>
           <h2>Частые вопросы перед расчётом и выездом на объект</h2>
         </div>
 

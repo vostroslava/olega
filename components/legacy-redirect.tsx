@@ -10,7 +10,7 @@ export function LegacyRedirect({ destination }: { destination: string }) {
 
   return (
     <main className="legacy-redirect-page">
-      <p>Страница переехала в новую структуру сайта.</p>
+      <p>Страница доступна по новому адресу.</p>
       <Link href={destination}>Перейти дальше</Link>
     </main>
   );

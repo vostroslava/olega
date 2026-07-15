@@ -15,11 +15,11 @@ export function PartnersPage() {
     <div className="page-shell">
       <SiteHeader />
       <main className="page-main monolith-inner-page">
-        <MonolithPageHero id="partners-hero" breadcrumbs={[{ label: "Главная", href: "/" }, { label: "Партнёрам" }]} title="Проектный партнёр для сложного остекления" lead="Для застройщиков, архитекторов, генподрядчиков и дилеров: расчёты, производство, техподдержка, логистика и монтаж в одном контуре." image="/assets/photos/team-consultation.png" imageAlt="Техническая консультация с партнёрами" rail={["Форматы", "Преимущества", "Процесс", "Решения", "Запрос"]} primaryLabel="Отправить brief" />
+        <MonolithPageHero id="partners-hero" breadcrumbs={[{ label: "Главная", href: "/" }, { label: "Партнёрам" }]} title="Проектный партнёр для сложного остекления" lead="Для застройщиков, архитекторов, генподрядчиков и дилеров: расчёты, производство, техподдержка, логистика и монтаж в одной команде." image="/assets/photos/team-consultation.png" imageAlt="Техническая консультация с партнёрами" rail={["Форматы", "Преимущества", "Процесс", "Решения", "Запрос"]} primaryLabel="Оставить партнёрский запрос" />
 
         <section className="monolith-content-section" id="section-1">
           <div className="container partner-audience-layout">
-            <MonolithSectionHeading label="ФОРМАТЫ" title="Подключаемся к проекту на нужной глубине" text="От производственной поставки по спецификации до полного контура с расчётом, проектированием и монтажом." />
+            <MonolithSectionHeading label="ФОРМАТЫ" title="Подключаемся к проекту на нужной глубине" text="От производственной поставки по спецификации до полного цикла с расчётом, проектированием и монтажом." />
             <div className="partner-audience-image reveal"><Image src={assetPath("/assets/photos/team-site-supervision.png")} alt="Технический контроль объекта" fill sizes="(max-width: 860px) 100vw, 58vw" /></div>
           </div>
           <div className="container partner-audience-rail">{PARTNER_AUDIENCES.map((item, index) => <article className="reveal" key={item}><span>{String(index + 1).padStart(2, "0")}</span><h3>{item}</h3></article>)}</div>
@@ -34,9 +34,9 @@ export function PartnersPage() {
         </section>
 
         <section className="monolith-content-section monolith-content-section-alt" id="section-4">
-          <div className="container"><MonolithSectionHeading label="РЕШЕНИЯ" title="Ключевые направления для B2B" /><div className="partner-solution-links">{PRODUCTS.slice(1, 5).map((product, index) => <Link href={`/uslugi/${product.slug}/`} className="reveal" key={product.slug}><span>{String(index + 1).padStart(2, "0")}</span><strong>{product.title}</strong><p>{product.text}</p><ArrowUpRight size={28} weight="thin" /></Link>)}</div></div>
+          <div className="container"><MonolithSectionHeading label="РЕШЕНИЯ" title="Ключевые направления для партнёров" /><div className="partner-solution-links">{PRODUCTS.slice(1, 5).map((product, index) => <Link href={`/uslugi/${product.slug}/`} className="reveal" key={product.slug}><span>{String(index + 1).padStart(2, "0")}</span><strong>{product.title}</strong><p>{product.text}</p><ArrowUpRight size={28} weight="thin" /></Link>)}</div></div>
         </section>
-        <MonolithCta title="Отправить партнёрский brief" text="Достаточно описания объекта, примерного объёма, сроков и формата сотрудничества. Технические детали доберём следующим касанием." action="Отправить запрос" />
+        <MonolithCta title="Оставить партнёрский запрос" text="Достаточно описания объекта, примерного объёма, сроков и формата сотрудничества. Технические детали доберём следующим касанием." action="Отправить запрос" />
       </main>
       <SiteFooter />
       <RevealInit />

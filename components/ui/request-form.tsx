@@ -57,9 +57,9 @@ export function RequestForm({ defaultProduct }: RequestFormProps) {
     }
 
     if (preferredBriefFromQuery) {
-      setMessageValue(`Предварительный brief: ${preferredBriefFromQuery}`);
+      setMessageValue(`Предварительные исходные данные: ${preferredBriefFromQuery}`);
     } else if (preferredBriefFromStorage) {
-      setMessageValue(`Предварительный brief: ${preferredBriefFromStorage}`);
+      setMessageValue(`Предварительные исходные данные: ${preferredBriefFromStorage}`);
     }
   }, [defaultProduct]);
 
