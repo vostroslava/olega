@@ -30,6 +30,8 @@ const sceneCopy = {
 
 export function QuoteWizard({ compact = false }: { compact?: boolean }) {
   const [step, setStep] = useState(0);
+  const [stepDirection, setStepDirection] = useState<"forward" | "backward">("forward");
+  const [visitedSteps, setVisitedSteps] = useState<Set<number>>(() => new Set([0]));
   const [objectType, setObjectType] = useState(objectTypes[0].value);
   const [size, setSize] = useState("");
   const [material, setMaterial] = useState(materialOptions[3]);
@@ -44,6 +46,27 @@ export function QuoteWizard({ compact = false }: { compact?: boolean }) {
   );
   const activeObject = objectTypes.find((item) => item.value === objectType) ?? objectTypes[0];
   const activeScene = sceneCopy[activeObject.value as keyof typeof sceneCopy];
+
+  const goToStep = (nextStep: number) => {
+    if (nextStep === step || nextStep < 0 || nextStep >= steps.length) return;
+
+    setStepDirection(nextStep > step ? "forward" : "backward");
+    setVisitedSteps((current) => {
+      const next = new Set(current);
+      next.add(step);
+      next.add(nextStep);
+      return next;
+    });
+    setStep(nextStep);
+  };
+
+  const isStepComplete = (index: number) => {
+    if (!visitedSteps.has(index)) return false;
+    if (index === 0) return Boolean(objectType);
+    if (index === 1) return Boolean(size.trim());
+    if (index === 2) return Boolean(material);
+    return Boolean(name.trim()) && phone.replace(/\D/g, "").length >= 7;
+  };
 
   const handleFile = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -95,8 +118,14 @@ export function QuoteWizard({ compact = false }: { compact?: boolean }) {
           <button
             key={label}
             type="button"
-            className={index === step ? "is-active" : index < step ? "is-complete" : ""}
-            onClick={() => index <= step && setStep(index)}
+            className={[
+              index === step ? "is-active" : "",
+              visitedSteps.has(index) ? "is-visited" : "",
+              index !== step && isStepComplete(index) ? "is-complete" : "",
+            ].filter(Boolean).join(" ")}
+            onClick={() => goToStep(index)}
+            aria-current={index === step ? "step" : undefined}
+            aria-label={`${String(index + 1).padStart(2, "0")} ${label}${index === step ? ", текущий этап" : isStepComplete(index) ? ", заполнено" : ""}`}
           >
             <span>{String(index + 1).padStart(2, "0")}</span>
             {label}
@@ -104,7 +133,7 @@ export function QuoteWizard({ compact = false }: { compact?: boolean }) {
         ))}
       </div>
 
-      <div className="quote-stage">
+      <div className="quote-stage" data-direction={stepDirection}>
         {step === 0 ? (
           <>
             <div className="quote-fields">
@@ -204,14 +233,14 @@ export function QuoteWizard({ compact = false }: { compact?: boolean }) {
         </div>
         <div>
           {step > 0 ? (
-            <button className="button button-secondary button-on-dark" type="button" onClick={() => setStep((value) => value - 1)}>
+            <button className="button button-secondary button-on-dark" type="button" onClick={() => goToStep(step - 1)}>
               <ArrowLeft size={20} weight="thin" aria-hidden="true" /> Назад
             </button>
           ) : compact ? (
             <Link className="button button-secondary button-on-dark" href="/raschet/">Полная форма</Link>
           ) : null}
           {step < steps.length - 1 ? (
-            <button className="button button-primary" type="button" onClick={() => setStep((value) => value + 1)}>
+            <button className="button button-primary" type="button" onClick={() => goToStep(step + 1)}>
               Продолжить <ArrowRight size={20} weight="thin" aria-hidden="true" />
             </button>
           ) : (

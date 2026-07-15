@@ -3979,7 +3979,20 @@ p {
   border-right: 1px solid var(--line);
   background: transparent;
   color: var(--text-muted);
-  cursor: default;
+  cursor: pointer;
+  transition: background-color 220ms ease, color 220ms ease;
+}
+
+.quote-progress button:hover,
+.quote-progress button:focus-visible {
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--text-soft);
+}
+
+.quote-progress button:focus-visible {
+  z-index: 1;
+  outline: 1px solid var(--accent);
+  outline-offset: -3px;
 }
 
 .quote-progress button:last-child {
@@ -3989,6 +4002,14 @@ p {
 .quote-progress button.is-active,
 .quote-progress button.is-complete {
   color: var(--text);
+}
+
+.quote-progress button.is-active {
+  background: linear-gradient(180deg, rgba(203, 164, 127, 0.055), transparent);
+}
+
+.quote-progress button.is-visited:not(.is-active):not(.is-complete) {
+  color: var(--text-soft);
 }
 
 .quote-progress button.is-active::after {
@@ -4009,6 +4030,24 @@ p {
   display: grid;
   grid-template-columns: 1fr 1.15fr;
   min-height: 30rem;
+}
+
+.quote-stage[data-direction="forward"] > * {
+  animation: quote-stage-forward 360ms var(--ease-out) both;
+}
+
+.quote-stage[data-direction="backward"] > * {
+  animation: quote-stage-backward 360ms var(--ease-out) both;
+}
+
+@keyframes quote-stage-forward {
+  from { opacity: 0; transform: translateX(0.7rem); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes quote-stage-backward {
+  from { opacity: 0; transform: translateX(-0.7rem); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 .quote-scene-panel {
@@ -4970,11 +5009,24 @@ p {
 
   .quote-progress button {
     min-height: 4rem;
-    font-size: 0;
+    gap: 0.35rem;
+    font-size: 0.72rem;
   }
 
   .quote-progress button span {
     font-size: 0.78rem;
+  }
+
+  .quote-progress {
+    position: sticky;
+    top: 4.75rem;
+    z-index: 6;
+    background: rgba(7, 10, 12, 0.96);
+    backdrop-filter: blur(18px);
+  }
+
+  .quote-wizard {
+    scroll-margin-top: 4.75rem;
   }
 
   .quote-stage {
@@ -5066,6 +5118,17 @@ p {
 }
 
 @media (max-width: 480px) {
+  .quote-progress button {
+    gap: 0.22rem;
+    padding: 0 0.15rem;
+    font-size: 0.58rem;
+    letter-spacing: -0.02em;
+  }
+
+  .quote-progress button span {
+    font-size: 0.64rem;
+  }
+
   .nav-mobile-extras {
     grid-template-columns: 1fr 1fr;
   }
@@ -5114,6 +5177,7 @@ p {
 @media (prefers-reduced-motion: reduce) {
   .glass-scroll-blueprint-path { stroke-dashoffset: 0; opacity: .48; }
   .quote-scene-object { animation: none; }
+  .quote-stage > * { animation: none !important; }
   [data-magnetic] { transform: none; }
 }
 
