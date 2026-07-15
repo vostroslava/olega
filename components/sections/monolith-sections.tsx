@@ -41,7 +41,7 @@ export function AudiencePathways() {
             <span className="audience-index">02</span>
             <Buildings className="audience-icon" size={42} weight="thin" aria-hidden="true" />
             <span className="audience-copy">
-              <strong>Для коммерческого объекта</strong>
+              <strong><span className="audience-label-desktop">Для коммерческого объекта</span><span className="audience-label-mobile">Для бизнеса</span></strong>
               <small>Фасады, входные группы и алюминиевые системы для бизнеса</small>
             </span>
             <ArrowUpRight size={34} weight="thin" aria-hidden="true" />

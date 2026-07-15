@@ -7,6 +7,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ArrowDown } from "@phosphor-icons/react/dist/csr/ArrowDown";
 import { ArrowUpRight } from "@phosphor-icons/react/dist/csr/ArrowUpRight";
+import { ArrowsHorizontal } from "@phosphor-icons/react/dist/csr/ArrowsHorizontal";
 import { Factory } from "@phosphor-icons/react/dist/csr/Factory";
 import { SealCheck } from "@phosphor-icons/react/dist/csr/SealCheck";
 import { ShieldCheck } from "@phosphor-icons/react/dist/csr/ShieldCheck";
@@ -14,7 +15,10 @@ import { assetPath } from "@/lib/site-utils";
 
 export function OpticalHero() {
   const heroRef = useRef<HTMLElement | null>(null);
+  const glassZoneRef = useRef<HTMLDivElement | null>(null);
   const pointerFrame = useRef<number | null>(null);
+  const glassDragging = useRef(false);
+  const glassPosition = useRef(42);
 
   useGSAP(
     () => {
@@ -58,6 +62,7 @@ export function OpticalHero() {
   );
 
   const handlePointerMove = (event: React.PointerEvent<HTMLElement>) => {
+    if (window.innerWidth <= 860) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const rect = event.currentTarget.getBoundingClientRect();
@@ -82,6 +87,47 @@ export function OpticalHero() {
     heroRef.current?.style.setProperty("--light-y", "34%");
   };
 
+  const setGlassPosition = (position: number) => {
+    const clampedPosition = Math.min(68, Math.max(18, position));
+    glassPosition.current = clampedPosition;
+    heroRef.current?.style.setProperty("--mobile-glass-x", `${clampedPosition}%`);
+    glassZoneRef.current?.setAttribute("aria-valuenow", `${Math.round(clampedPosition)}`);
+  };
+
+  const updateGlassFromPointer = (clientX: number) => {
+    const hero = heroRef.current;
+    if (!hero) return;
+
+    const rect = hero.getBoundingClientRect();
+    setGlassPosition(((clientX - rect.left) / rect.width) * 100);
+  };
+
+  const handleGlassPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+    glassDragging.current = true;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    updateGlassFromPointer(event.clientX);
+  };
+
+  const handleGlassPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!glassDragging.current) return;
+    event.stopPropagation();
+    updateGlassFromPointer(event.clientX);
+  };
+
+  const handleGlassPointerEnd = (event: React.PointerEvent<HTMLDivElement>) => {
+    glassDragging.current = false;
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+  };
+
+  const handleGlassKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    event.preventDefault();
+    setGlassPosition(glassPosition.current + (event.key === "ArrowRight" ? 4 : -4));
+  };
+
   return (
     <section
       className="optical-hero"
@@ -99,6 +145,34 @@ export function OpticalHero() {
           sizes="100vw"
         />
       </div>
+      <div className="mobile-glass-scene" aria-hidden="true">
+        <div className="mobile-glass-base">
+          <Image
+            src={assetPath("/assets/visuals/hero-mobile-house.webp")}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+          />
+        </div>
+        <div className="mobile-glass-reveal">
+          <Image
+            src={assetPath("/assets/visuals/hero-mobile-house.webp")}
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+          />
+        </div>
+        <Image
+          className="mobile-glass-edge"
+          src={assetPath("/assets/visuals/hero-mobile-glass-edge.webp")}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+        />
+      </div>
       <div className="optical-hero-shade" aria-hidden="true" />
       <div className="optical-light-caustic" aria-hidden="true" />
       <div className="optical-hero-intro-shutter" aria-hidden="true" />
@@ -109,7 +183,8 @@ export function OpticalHero() {
         <div className="optical-hero-copy reveal is-visible" data-hero-reveal>
           <h1>Стекло,<br />которое<span className="hero-mobile-break"><br /></span> меняет<br />архитектуру</h1>
           <p className="optical-hero-lead">
-            Окна, фасады и панорамное остекление — от замера и проектирования до производства и монтажа по всей Беларуси.
+            <span className="hero-lead-desktop">Окна, фасады и панорамное остекление — от замера и проектирования до производства и монтажа по всей Беларуси.</span>
+            <span className="hero-lead-mobile">От замера до монтажа<br />по всей Беларуси.</span>
           </p>
           <div className="hero-actions">
             <Link className="button button-primary" href="/raschet/" data-magnetic>
@@ -142,6 +217,28 @@ export function OpticalHero() {
           <span>Прокрутите вниз</span>
           <ArrowDown size={20} weight="thin" aria-hidden="true" />
         </a>
+      </div>
+
+      <div
+        className="mobile-glass-gesture-zone"
+        ref={glassZoneRef}
+        role="slider"
+        tabIndex={0}
+        aria-label="Положение стеклянной кромки"
+        aria-valuemin={18}
+        aria-valuemax={68}
+        aria-valuenow={42}
+        onPointerDown={handleGlassPointerDown}
+        onPointerMove={handleGlassPointerMove}
+        onPointerUp={handleGlassPointerEnd}
+        onPointerCancel={handleGlassPointerEnd}
+        onKeyDown={handleGlassKeyDown}
+      >
+        <div className="mobile-glass-control" aria-hidden="true">
+          <span className="mobile-glass-knob" />
+          <span className="mobile-glass-hint">Проведите<br />по стеклу</span>
+          <ArrowsHorizontal className="mobile-glass-direction" size={46} weight="thin" />
+        </div>
       </div>
     </section>
   );
