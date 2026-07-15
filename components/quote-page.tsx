@@ -1,13 +1,18 @@
+import type { CSSProperties } from "react";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { QuoteWizard } from "@/components/ui/quote-wizard";
 import { RevealInit } from "@/components/ui/reveal-init";
+import { assetPath } from "@/lib/site-utils";
 
 export function QuotePage() {
   return (
     <div className="page-shell">
       <SiteHeader />
-      <main className="quote-page-main">
+      <main
+        className="quote-page-main"
+        style={{ "--quote-page-scene": `url("${assetPath("/assets/photos/project-arbat.png")}")` } as CSSProperties}
+      >
         <div className="container quote-page-grid">
           <div className="quote-page-intro reveal is-visible">
             <p className="optical-label">РАСЧЁТ ПРОЕКТА</p>
