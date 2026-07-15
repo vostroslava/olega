@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { OpticalHero } from "@/components/ui/optical-hero";
 import { GlassScrollScene } from "@/components/ui/glass-scroll-scene";
 import { GlassAnatomy } from "@/components/ui/glass-anatomy";
+import { ProjectLens } from "@/components/ui/project-lens";
 import {
   AudiencePathways,
   HomeQuoteSection,
@@ -30,6 +31,7 @@ export function HomePage() {
         <AudiencePathways />
         <GlassScrollScene />
         <GlassAnatomy />
+        <ProjectLens />
         <SolutionsShowcase />
         <ProjectShowcase />
         <ProductionStory />

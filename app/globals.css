@@ -2680,6 +2680,282 @@ p {
 .glass-anatomy-list button:hover, .glass-anatomy-list button.is-active { padding-left: .9rem; background: linear-gradient(90deg, rgba(205, 162, 122, .12), transparent); color: var(--text); }
 .glass-anatomy-list button.is-active span { color: var(--accent); }
 
+.project-lens-section {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(6rem, 9vw, 9rem) 0;
+  border-bottom: 1px solid rgba(208, 233, 239, .14);
+  background:
+    radial-gradient(circle at 72% 38%, rgba(56, 112, 128, .13), transparent 28rem),
+    linear-gradient(180deg, #070a0c 0%, #0a1013 48%, #06090b 100%);
+  color: #f3f5f4;
+}
+
+.project-lens-section::before {
+  position: absolute;
+  inset: 0;
+  opacity: .16;
+  background-image:
+    linear-gradient(rgba(210, 236, 242, .09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(210, 236, 242, .09) 1px, transparent 1px);
+  background-size: 8rem 8rem;
+  mask-image: linear-gradient(90deg, transparent, #000 38%, transparent);
+  pointer-events: none;
+  content: "";
+}
+
+.project-lens-heading {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(17rem, 27rem);
+  align-items: end;
+  gap: clamp(2rem, 7vw, 8rem);
+  margin-bottom: 3.2rem;
+}
+
+.project-lens-heading h2 {
+  max-width: 53rem;
+  margin-top: 1.7rem;
+  font-size: clamp(3.5rem, 6vw, 6.8rem);
+  font-weight: 300;
+  line-height: .88;
+  letter-spacing: -.065em;
+}
+
+.project-lens-heading > p {
+  padding-bottom: .4rem;
+  color: rgba(226, 235, 235, .7);
+  line-height: 1.65;
+}
+
+.project-lens-shell {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 22rem;
+  border: 1px solid rgba(207, 231, 237, .2);
+  background: #070b0d;
+  box-shadow: 0 3rem 7rem rgba(0, 0, 0, .34);
+}
+
+.project-lens-stage {
+  --lens-size: clamp(12rem, 19vw, 17.5rem);
+  position: relative;
+  min-width: 0;
+  min-height: 40.4rem;
+  overflow: hidden;
+  isolation: isolate;
+  cursor: crosshair;
+  background: #0c1114;
+}
+
+.project-lens-image {
+  object-fit: cover;
+  filter: saturate(.74) brightness(.78) contrast(1.04);
+  transform: scale(1.012);
+  transition: filter 500ms ease, transform 900ms cubic-bezier(.18,.8,.2,1);
+}
+
+.project-lens-stage:hover .project-lens-image { filter: saturate(.8) brightness(.82) contrast(1.03); transform: scale(1.02); }
+
+.project-lens-shade,
+.project-lens-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.project-lens-shade {
+  z-index: 1;
+  background:
+    linear-gradient(90deg, rgba(4, 8, 10, .66), transparent 34%, transparent 72%, rgba(4, 8, 10, .24)),
+    linear-gradient(180deg, rgba(4, 8, 10, .36), transparent 24%, transparent 72%, rgba(4, 8, 10, .46));
+}
+
+.project-lens-grid {
+  z-index: 2;
+  opacity: .22;
+  background-image:
+    linear-gradient(rgba(223, 245, 249, .22) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(223, 245, 249, .22) 1px, transparent 1px);
+  background-size: 12.5% 16.666%;
+  mask-image: linear-gradient(90deg, transparent 32%, #000 58%, transparent 94%);
+}
+
+.project-lens-meta {
+  position: absolute;
+  z-index: 5;
+  top: 1.15rem;
+  right: 1.25rem;
+  left: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  color: rgba(236, 246, 247, .65);
+  font-size: .56rem;
+  letter-spacing: .18em;
+}
+
+.project-lens-hotspot {
+  position: absolute;
+  z-index: 7;
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  place-items: center;
+  border: 1px solid rgba(225, 244, 248, .62);
+  border-radius: 50%;
+  background: rgba(6, 12, 15, .52);
+  color: #f4f6f5;
+  font: inherit;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  transition: border-color 220ms ease, background 220ms ease, box-shadow 220ms ease, transform 220ms ease;
+}
+
+.project-lens-hotspot::before {
+  position: absolute;
+  inset: -.5rem;
+  border: 1px solid rgba(213, 241, 248, .12);
+  border-radius: inherit;
+  content: "";
+}
+
+.project-lens-hotspot span { font-size: .56rem; letter-spacing: .08em; }
+.project-lens-hotspot:hover,
+.project-lens-hotspot:focus-visible,
+.project-lens-hotspot.is-active {
+  border-color: var(--accent);
+  background: rgba(27, 20, 15, .78);
+  box-shadow: 0 0 0 .65rem rgba(237, 189, 151, .08), 0 0 1.8rem rgba(155, 222, 239, .2);
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+.project-lens-optic {
+  position: absolute;
+  z-index: 6;
+  top: var(--lens-y);
+  left: var(--lens-x);
+  width: var(--lens-size);
+  height: var(--lens-size);
+  overflow: hidden;
+  border: 1px solid rgba(206, 242, 250, .72);
+  border-radius: 50%;
+  background-repeat: no-repeat;
+  background-position: var(--lens-x) var(--lens-y);
+  background-size: 390% auto;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, .1),
+    inset 0 0 2.4rem rgba(129, 213, 237, .08),
+    0 1.6rem 3rem rgba(0, 0, 0, .34),
+    0 0 2.6rem rgba(123, 212, 240, .14);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: top 620ms cubic-bezier(.18,.8,.2,1), left 620ms cubic-bezier(.18,.8,.2,1), border-color 320ms ease;
+}
+
+.project-lens-optic::before,
+.project-lens-optic::after {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  content: "";
+}
+
+.project-lens-optic::before {
+  background: linear-gradient(132deg, rgba(255,255,255,.18), transparent 26%, transparent 68%, rgba(122, 220, 246, .16));
+  mix-blend-mode: screen;
+}
+
+.project-lens-optic::after {
+  inset: 5%;
+  border: 1px solid rgba(220, 243, 247, .2);
+}
+
+.project-lens-stage.is-thermal .project-lens-optic::before {
+  background: linear-gradient(135deg, rgba(37, 133, 182, .34), transparent 45%, rgba(235, 157, 84, .45));
+  mix-blend-mode: color;
+}
+
+.project-lens-stage.is-profile .project-lens-optic { border-color: rgba(237, 189, 151, .94); background-size: 430% auto; }
+.project-lens-stage.is-install .project-lens-optic { filter: saturate(.28) contrast(1.16); }
+
+.project-lens-optic-scan {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  bottom: 0;
+  left: 44%;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(237, 189, 151, .95), transparent);
+  box-shadow: 0 0 1.2rem rgba(237, 189, 151, .7);
+}
+
+.project-lens-optic-crosshair {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid rgba(232, 247, 250, .58);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.project-lens-optic-crosshair::before,
+.project-lens-optic-crosshair::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background: rgba(232, 247, 250, .64);
+  content: "";
+  transform: translate(-50%, -50%);
+}
+
+.project-lens-optic-crosshair::before { width: 3.5rem; height: 1px; }
+.project-lens-optic-crosshair::after { width: 1px; height: 3.5rem; }
+
+.project-lens-optic small {
+  position: absolute;
+  z-index: 3;
+  right: 1.7rem;
+  bottom: 1.45rem;
+  left: 1.7rem;
+  color: rgba(248, 250, 250, .78);
+  font-size: .52rem;
+  letter-spacing: .14em;
+  text-align: center;
+}
+
+.project-lens-panel {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: 1.25rem;
+  border-left: 1px solid rgba(207, 231, 237, .2);
+  background: linear-gradient(180deg, rgba(15, 22, 26, .98), rgba(8, 13, 16, .98));
+}
+
+.project-lens-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid rgba(207, 231, 237, .18); border-left: 1px solid rgba(207, 231, 237, .18); }
+.project-lens-tabs button { display: grid; min-height: 4.5rem; align-content: center; gap: .38rem; padding: .8rem; border: 0; border-right: 1px solid rgba(207, 231, 237, .18); border-bottom: 1px solid rgba(207, 231, 237, .18); background: transparent; color: rgba(229, 238, 239, .56); font: inherit; font-size: .72rem; text-align: left; cursor: pointer; transition: background 220ms ease, color 220ms ease; }
+.project-lens-tabs button span { color: rgba(229, 238, 239, .36); font-size: .52rem; letter-spacing: .12em; }
+.project-lens-tabs button:hover,
+.project-lens-tabs button:focus-visible,
+.project-lens-tabs button.is-active { background: linear-gradient(135deg, rgba(237, 189, 151, .14), rgba(114, 193, 216, .04)); color: #fff; }
+.project-lens-tabs button.is-active span { color: var(--accent); }
+
+.project-lens-detail { position: relative; min-height: 20rem; padding: 3.2rem .4rem 1.6rem; }
+.project-lens-detail-index { position: absolute; top: 2.5rem; right: .25rem; color: rgba(237, 189, 151, .1); font-size: 7.4rem; font-weight: 300; line-height: .7; }
+.project-lens-detail .optical-label { position: relative; z-index: 1; }
+.project-lens-detail h3 { position: relative; z-index: 1; max-width: 17rem; margin-top: 1.25rem; font-size: 2.35rem; font-weight: 300; line-height: .96; }
+.project-lens-detail > p:last-child { position: relative; z-index: 1; margin-top: 1.4rem; color: rgba(226, 235, 235, .68); font-size: .88rem; line-height: 1.65; }
+
+.project-lens-disclaimer { display: grid; grid-template-columns: 2.8rem 1fr; gap: .8rem; margin-top: auto; padding: 1rem 0; border-top: 1px solid rgba(207, 231, 237, .18); }
+.project-lens-disclaimer span { color: var(--accent); font-size: .57rem; letter-spacing: .12em; text-transform: uppercase; }
+.project-lens-disclaimer p { color: rgba(226, 235, 235, .52); font-size: .68rem; line-height: 1.5; }
+.project-lens-cta { width: 100%; margin-top: 1rem; padding-inline: .9rem; white-space: nowrap; }
+
 .monolith-section-title > p {
   max-width: 22rem;
   text-align: right;
@@ -6227,5 +6503,73 @@ p {
 
   .audience-panel > svg:not(.audience-icon) {
     right: 1.4rem;
+  }
+
+  .project-lens-section {
+    padding: 5.5rem 0;
+  }
+
+  .project-lens-heading {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2.25rem;
+  }
+
+  .project-lens-heading h2 {
+    max-width: 24rem;
+    font-size: clamp(3.15rem, 14vw, 4.7rem);
+  }
+
+  .project-lens-heading > p {
+    max-width: 31rem;
+  }
+
+  .project-lens-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .project-lens-stage {
+    --lens-size: clamp(9.5rem, 38vw, 13rem);
+    aspect-ratio: 3 / 2;
+    min-height: 0;
+    cursor: default;
+  }
+
+  .project-lens-optic { background-size: 305% auto; }
+  .project-lens-stage.is-profile .project-lens-optic { background-size: 335% auto; }
+
+  .project-lens-panel {
+    border-top: 1px solid rgba(207, 231, 237, .2);
+    border-left: 0;
+  }
+
+  .project-lens-detail {
+    min-height: 15.5rem;
+  }
+
+  .project-lens-detail h3 {
+    max-width: 22rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .project-lens-section::before { display: none; }
+  .project-lens-meta span:last-child { display: none; }
+  .project-lens-grid { opacity: .14; }
+  .project-lens-hotspot { width: 2.15rem; height: 2.15rem; }
+  .project-lens-hotspot::before { inset: -.32rem; }
+  .project-lens-optic small { right: .9rem; bottom: 1rem; left: .9rem; font-size: .45rem; }
+  .project-lens-tabs button { min-height: 4rem; }
+  .project-lens-detail-index { font-size: 6rem; }
+  .project-lens-detail h3 { font-size: 2rem; }
+  .project-lens-cta { white-space: normal; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-lens-image,
+  .project-lens-optic,
+  .project-lens-hotspot,
+  .project-lens-tabs button {
+    transition: none;
   }
 }
