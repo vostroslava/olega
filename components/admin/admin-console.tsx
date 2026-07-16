@@ -13,6 +13,7 @@ import { User } from "@phosphor-icons/react/dist/csr/User";
 import { UserPlus } from "@phosphor-icons/react/dist/csr/UserPlus";
 import { UsersThree } from "@phosphor-icons/react/dist/csr/UsersThree";
 import { X } from "@phosphor-icons/react/dist/csr/X";
+import { ContentStudio } from "@/components/admin/content-studio";
 import {
   bootstrapAdmin,
   createAdminStaff,
@@ -75,6 +76,7 @@ function EmptyInspector() {
 }
 
 export function AdminConsole() {
+  const [activePanel, setActivePanel] = useState<"leads" | "content">("leads");
   const [loginMode, setLoginMode] = useState<"admin" | "staff">("admin");
   const [login, setLogin] = useState("admin");
   const [email, setEmail] = useState("");
@@ -98,6 +100,7 @@ export function AdminConsole() {
   const [newStaffName, setNewStaffName] = useState("");
   const [newStaffEmail, setNewStaffEmail] = useState("");
   const [newStaffPassword, setNewStaffPassword] = useState("");
+  const [newStaffRole, setNewStaffRole] = useState<"manager" | "editor">("manager");
 
   const loadLeads = useCallback(async (token: string, selectedStatus: LeadStatus | "all") => {
     setItemsLoading(true);
@@ -228,11 +231,13 @@ export function AdminConsole() {
         fullName: newStaffName.trim(),
         email: newStaffEmail.trim(),
         password: newStaffPassword,
+        role: newStaffRole,
       });
       setTeamMembers((current) => [...current, created]);
       setNewStaffName("");
       setNewStaffEmail("");
       setNewStaffPassword("");
+      setNewStaffRole("manager");
       setNotice("Сотрудник добавлен");
     } catch (staffError) {
       setError(staffError instanceof Error ? staffError.message : "Не удалось добавить сотрудника.");
@@ -320,7 +325,8 @@ export function AdminConsole() {
           <span>СтеклоСтройГрупп</span>
         </Link>
         <div className="admin-rail-label">Операции</div>
-        <a className="admin-rail-link admin-rail-link--active" href="#leads"><FileText size={18} />Заявки</a>
+        <button className={`admin-rail-link admin-rail-button ${activePanel === "leads" ? "admin-rail-link--active" : ""}`} type="button" onClick={() => setActivePanel("leads")}><FileText size={18} />Заявки</button>
+        {currentStaff?.role === "admin" || currentStaff?.role === "editor" ? <button className={`admin-rail-link admin-rail-button ${activePanel === "content" ? "admin-rail-link--active" : ""}`} type="button" onClick={() => setActivePanel("content")}><Funnel size={18} />Контент</button> : null}
         {currentStaff?.role === "admin" ? <button className="admin-rail-link admin-rail-button" type="button" onClick={() => void openTeam()}><UsersThree size={18} />Команда</button> : null}
         <div className="admin-rail-foot">
           <span><User size={16} />{currentStaff?.full_name || (currentStaff?.role === "admin" ? "Администратор" : accountEmail)}</span>
@@ -329,6 +335,7 @@ export function AdminConsole() {
       </aside>
 
       <section className="admin-workspace" id="leads">
+        {activePanel === "content" ? <ContentStudio accessToken={accessToken} onError={setError} onNotice={setNotice} /> : <>
         <header className="admin-topbar">
           <div>
             <span className="admin-kicker">Контур заявок</span>
@@ -374,6 +381,7 @@ export function AdminConsole() {
             ) : <EmptyInspector />}
           </aside>
         </div>
+        </>}
         {error ? <div className="admin-toast admin-message admin-message--error"><X size={15} />{error}</div> : null}
         {teamOpen && currentStaff?.role === "admin" ? (
           <div className="admin-team-backdrop" role="presentation" onMouseDown={() => setTeamOpen(false)}>
@@ -383,9 +391,10 @@ export function AdminConsole() {
                 <label><span>Имя сотрудника</span><input value={newStaffName} onChange={(event) => setNewStaffName(event.target.value)} placeholder="Иван Петров" /></label>
                 <label><span>Рабочая почта</span><input value={newStaffEmail} onChange={(event) => setNewStaffEmail(event.target.value)} type="email" placeholder="team@company.by" required /></label>
                 <label><span>Временный пароль</span><input value={newStaffPassword} onChange={(event) => setNewStaffPassword(event.target.value)} type="password" minLength={10} required /></label>
+                <label><span>Роль</span><select value={newStaffRole} onChange={(event) => setNewStaffRole(event.target.value as "manager" | "editor")}><option value="manager">Менеджер заявок</option><option value="editor">Редактор сайта</option></select></label>
                 <button className="admin-primary-button" type="submit" disabled={teamLoading}><UserPlus size={18} />Добавить сотрудника</button>
               </form>
-              <div className="admin-team-list"><span className="admin-section-label">Доступы</span>{teamLoading && !teamMembers.length ? <p className="admin-muted">Загружаем команду…</p> : teamMembers.map((member) => <div key={member.id}><span><strong>{member.full_name || (member.role === "admin" ? "Администратор" : member.email)}</strong><small>{member.role === "admin" ? "Системный доступ без email-входа" : member.email}</small></span><span className={`admin-status admin-status--${member.role === "admin" ? "won" : "qualified"}`}>{member.role === "admin" ? "Администратор" : "Сотрудник"}</span></div>)}</div>
+              <div className="admin-team-list"><span className="admin-section-label">Доступы</span>{teamLoading && !teamMembers.length ? <p className="admin-muted">Загружаем команду…</p> : teamMembers.map((member) => <div key={member.id}><span><strong>{member.full_name || (member.role === "admin" ? "Администратор" : member.email)}</strong><small>{member.role === "admin" ? "Системный доступ без email-входа" : member.email}</small></span><span className={`admin-status admin-status--${member.role === "admin" ? "won" : "qualified"}`}>{member.role === "admin" ? "Администратор" : member.role === "editor" ? "Редактор сайта" : "Менеджер"}</span></div>)}</div>
             </section>
           </div>
         ) : null}

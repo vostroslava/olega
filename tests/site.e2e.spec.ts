@@ -92,3 +92,25 @@ test("bootstrap administrator can open the protected lead workspace", async ({ p
   await page.screenshot({ path: testInfo.outputPath("admin-workspace.png"), fullPage: false });
   expect(runtimeErrors).toEqual([]);
 });
+
+test("administrator can use Content Studio pages and preview", async ({ page }, testInfo) => {
+  test.skip(!process.env.TEST_ADMIN_LOGIN || !process.env.TEST_ADMIN_PASSWORD, "Bootstrap credentials are only provided to secure integration runs.");
+  const runtimeErrors: string[] = [];
+  page.on("pageerror", (error) => runtimeErrors.push(error.message));
+
+  await page.goto("/admin/", { waitUntil: "domcontentloaded" });
+  await page.getByLabel("Логин").fill(process.env.TEST_ADMIN_LOGIN ?? "");
+  await page.getByLabel("Пароль").fill(process.env.TEST_ADMIN_PASSWORD ?? "");
+  await page.getByRole("button", { name: "Войти" }).click();
+  await page.getByRole("button", { name: "Контент" }).click();
+  await expect(page.getByRole("heading", { name: "Страницы и поиск" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Проекты/ })).toBeVisible();
+  await page.getByRole("button", { name: /Проекты/ }).click();
+  await expect(page.getByLabel("Canonical URL")).toHaveValue("/proekty/");
+  await page.getByRole("button", { name: /Главная страница/ }).click();
+  await expect(page.getByLabel("Canonical URL")).toHaveValue("/");
+  await expect(page.getByRole("button", { name: "Сохранить черновик" })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+  await page.screenshot({ path: testInfo.outputPath("content-studio.png"), fullPage: false });
+  expect(runtimeErrors).toEqual([]);
+});

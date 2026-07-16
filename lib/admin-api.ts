@@ -2,7 +2,40 @@ import { readApiError, siteApiEndpoint } from "@/lib/site-api";
 
 export const leadStatuses = ["new", "reviewed", "contacted", "qualified", "won", "lost", "spam"] as const;
 export type LeadStatus = (typeof leadStatuses)[number];
-export type StaffRole = "admin" | "manager";
+export type StaffRole = "admin" | "manager" | "editor";
+
+export const sitePageStates = ["draft", "review", "published"] as const;
+export type SitePageState = (typeof sitePageStates)[number];
+
+export type SitePage = {
+  id: string;
+  slug: string;
+  navigation_label: string;
+  page_title: string;
+  meta_description: string;
+  canonical_path: string;
+  schema_type: "WebPage" | "Service" | "CollectionPage" | "ContactPage" | "AboutPage";
+  hero_title: string | null;
+  hero_lead: string | null;
+  hero_image_url: string | null;
+  content: Record<string, unknown>;
+  state: SitePageState;
+  published_page_title: string | null;
+  published_meta_description: string | null;
+  published_content: Record<string, unknown> | null;
+  published_at: string | null;
+  updated_at: string;
+};
+
+export type SiteMedia = {
+  id: string;
+  kind: "image" | "video" | "document";
+  source_url: string;
+  alt_text: string;
+  caption: string | null;
+  created_at: string;
+  updated_at: string;
+};
 
 export type StaffMember = {
   id: string;
@@ -143,11 +176,55 @@ export async function getAdminStaff(token: string) {
   return body.staff ?? [];
 }
 
-export async function createAdminStaff(token: string, values: { email: string; fullName: string; password: string }) {
+export async function createAdminStaff(token: string, values: { email: string; fullName: string; password: string; role?: Exclude<StaffRole, "admin"> }) {
   const body = await adminFetch("/staff", token, {
     method: "POST",
     body: JSON.stringify(values),
   }) as { staff?: StaffMember };
   if (!body.staff) throw new Error("Не удалось создать сотрудника.");
   return body.staff;
+}
+
+export async function getContentPages(token: string) {
+  const body = await adminFetch("/content/pages", token) as { pages?: SitePage[] };
+  return body.pages ?? [];
+}
+
+export async function saveContentPage(token: string, page: SitePage) {
+  const body = await adminFetch(`/content/pages?slug=${encodeURIComponent(page.slug)}`, token, {
+    method: "PATCH",
+    body: JSON.stringify({
+      pageTitle: page.page_title,
+      metaDescription: page.meta_description,
+      canonicalPath: page.canonical_path,
+      schemaType: page.schema_type,
+      heroTitle: page.hero_title,
+      heroLead: page.hero_lead,
+      heroImageUrl: page.hero_image_url,
+    }),
+  }) as { page?: SitePage };
+  if (!body.page) throw new Error("Не удалось сохранить черновик.");
+  return body.page;
+}
+
+export async function publishContentPage(token: string, slug: string) {
+  const body = await adminFetch(`/content/pages/publish?slug=${encodeURIComponent(slug)}`, token, {
+    method: "POST",
+  }) as { page?: SitePage };
+  if (!body.page) throw new Error("Не удалось опубликовать страницу.");
+  return body.page;
+}
+
+export async function getContentMedia(token: string) {
+  const body = await adminFetch("/content/media", token) as { media?: SiteMedia[] };
+  return body.media ?? [];
+}
+
+export async function addContentMedia(token: string, values: { sourceUrl: string; altText: string; caption?: string; kind?: SiteMedia["kind"] }) {
+  const body = await adminFetch("/content/media", token, {
+    method: "POST",
+    body: JSON.stringify(values),
+  }) as { media?: SiteMedia };
+  if (!body.media) throw new Error("Не удалось добавить материал.");
+  return body.media;
 }

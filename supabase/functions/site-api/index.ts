@@ -47,6 +47,7 @@ const db = createClient(supabaseUrl, serviceRoleKey, {
 const LEAD_STATUSES = ["new", "reviewed", "contacted", "qualified", "won", "lost", "spam"] as const;
 const adminLeadSelect = "id,status,source,page_url,name,phone,email,object_type,size_notes,material,message,utm,created_at,updated_at,lead_files(id,original_name,mime_type,byte_size,created_at)";
 const staffMemberSelect = "id,user_id,email,full_name,role,created_at";
+const sitePageSelect = "id,slug,navigation_label,page_title,meta_description,canonical_path,schema_type,hero_title,hero_lead,hero_image_url,content,state,published_page_title,published_meta_description,published_content,published_at,updated_at";
 
 type JsonRecord = Record<string, unknown>;
 
@@ -101,6 +102,15 @@ async function requireAdmin(request: Request) {
   if (!auth.user || !auth.staff) return auth;
   if (auth.staff.role !== "admin") {
     return { user: null, staff: null, status: 403, error: "Доступ к управлению командой есть только у администратора." };
+  }
+  return auth;
+}
+
+async function requireContentEditor(request: Request) {
+  const auth = await requireStaff(request);
+  if (!auth.user || !auth.staff) return auth;
+  if (auth.staff.role !== "admin" && auth.staff.role !== "editor") {
+    return { user: null, staff: null, status: 403, error: "Для Content Studio нужен доступ редактора или администратора." };
   }
   return auth;
 }
@@ -205,6 +215,48 @@ async function notifyNewLead(lead: { id: string; name: string; phone: string; ob
 
 function isUuid(value: string) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+}
+
+function siteSlug(value: unknown) {
+  const slug = text(value, 180);
+  return /^\/[a-z0-9/-]*$/.test(slug) ? slug : "";
+}
+
+function siteImageUrl(value: unknown) {
+  const url = text(value, 2000);
+  return !url || url.startsWith("/") || /^https:\/\//.test(url) ? url || null : null;
+}
+
+function sitePageSnapshot(page: Record<string, unknown>) {
+  return {
+    page_title: page.page_title,
+    meta_description: page.meta_description,
+    canonical_path: page.canonical_path,
+    schema_type: page.schema_type,
+    hero_title: page.hero_title,
+    hero_lead: page.hero_lead,
+    hero_image_url: page.hero_image_url,
+    content: page.content,
+    state: page.state,
+  };
+}
+
+async function addSitePageRevision(page: Record<string, unknown>, action: "draft_saved" | "published", userId: string) {
+  const current = await db.from("site_page_revisions")
+    .select("revision_number")
+    .eq("page_id", String(page.id))
+    .order("revision_number", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (current.error) throw current.error;
+  const inserted = await db.from("site_page_revisions").insert({
+    page_id: page.id,
+    revision_number: (current.data?.revision_number || 0) + 1,
+    action,
+    snapshot: sitePageSnapshot(page),
+    created_by: userId,
+  });
+  if (inserted.error) throw inserted.error;
 }
 
 function safeFileName(name: string) {
@@ -419,6 +471,7 @@ async function handleAdmin(request: Request, path: string) {
     const email = text(values.email, 320).toLowerCase();
     const fullName = text(values.fullName, 160);
     const password = text(values.password, 240);
+    const role = text(values.role, 20) === "editor" ? "editor" : "manager";
     if (!/^\S+@\S+\.\S+$/.test(email) || password.length < 10) {
       return json(request, { ok: false, error: "Укажите рабочую почту и временный пароль не короче 10 символов." }, 422);
     }
@@ -430,18 +483,110 @@ async function handleAdmin(request: Request, path: string) {
       password,
       email_confirm: true,
       user_metadata: fullName ? { full_name: fullName } : {},
-      app_metadata: { staff_role: "manager" },
+      app_metadata: { staff_role: role },
     });
     if (created.error || !created.data.user) throw created.error || new Error("Unable to create staff member");
     const inserted = await db.from("staff_members").insert({
       user_id: created.data.user.id,
       email,
       full_name: fullName || null,
-      role: "manager",
+      role,
       created_by: admin.user.id,
     }).select(staffMemberSelect).single();
     if (inserted.error) throw inserted.error;
     return json(request, { ok: true, staff: inserted.data }, 201);
+  }
+
+  if (request.method === "GET" && path === "/admin/content/pages") {
+    const contentEditor = await requireContentEditor(request);
+    if (!contentEditor.user) return json(request, { ok: false, error: contentEditor.error }, contentEditor.status);
+    const result = await db.from("site_pages").select(sitePageSelect).order("slug", { ascending: true });
+    if (result.error) throw result.error;
+    return json(request, { ok: true, pages: result.data || [] });
+  }
+
+  if (request.method === "PATCH" && path === "/admin/content/pages") {
+    const contentEditor = await requireContentEditor(request);
+    if (!contentEditor.user) return json(request, { ok: false, error: contentEditor.error }, contentEditor.status);
+    const slug = siteSlug(url.searchParams.get("slug"));
+    if (!slug) return json(request, { ok: false, error: "Некорректный адрес страницы." }, 422);
+    const values = await request.json() as JsonRecord;
+    const pageTitle = text(values.pageTitle, 160);
+    const metaDescription = text(values.metaDescription, 320);
+    const canonicalPath = siteSlug(values.canonicalPath);
+    const schemaType = text(values.schemaType, 40);
+    const heroImageUrl = siteImageUrl(values.heroImageUrl);
+    if (!pageTitle || !metaDescription || !canonicalPath || !["WebPage", "Service", "CollectionPage", "ContactPage", "AboutPage"].includes(schemaType) || heroImageUrl === null && text(values.heroImageUrl, 2000)) {
+      return json(request, { ok: false, error: "Проверьте title, description, canonical URL, schema и адрес изображения." }, 422);
+    }
+    const updated = await db.from("site_pages").update({
+      page_title: pageTitle,
+      meta_description: metaDescription,
+      canonical_path: canonicalPath,
+      schema_type: schemaType,
+      hero_title: text(values.heroTitle, 180) || null,
+      hero_lead: text(values.heroLead, 480) || null,
+      hero_image_url: heroImageUrl,
+      state: "draft",
+      updated_by: contentEditor.user.id,
+    }).eq("slug", slug).select(sitePageSelect).maybeSingle();
+    if (updated.error) throw updated.error;
+    if (!updated.data) return json(request, { ok: false, error: "Страница не найдена." }, 404);
+    await addSitePageRevision(updated.data as Record<string, unknown>, "draft_saved", contentEditor.user.id);
+    return json(request, { ok: true, page: updated.data });
+  }
+
+  if (request.method === "POST" && path === "/admin/content/pages/publish") {
+    const contentEditor = await requireContentEditor(request);
+    if (!contentEditor.user) return json(request, { ok: false, error: contentEditor.error }, contentEditor.status);
+    const slug = siteSlug(url.searchParams.get("slug"));
+    if (!slug) return json(request, { ok: false, error: "Некорректный адрес страницы." }, 422);
+    const current = await db.from("site_pages").select(sitePageSelect).eq("slug", slug).maybeSingle();
+    if (current.error) throw current.error;
+    if (!current.data) return json(request, { ok: false, error: "Страница не найдена." }, 404);
+    const published = await db.from("site_pages").update({
+      state: "published",
+      published_page_title: current.data.page_title,
+      published_meta_description: current.data.meta_description,
+      published_content: {
+        hero_title: current.data.hero_title,
+        hero_lead: current.data.hero_lead,
+        hero_image_url: current.data.hero_image_url,
+        content: current.data.content,
+      },
+      published_at: new Date().toISOString(),
+      published_by: contentEditor.user.id,
+      updated_by: contentEditor.user.id,
+    }).eq("id", current.data.id).select(sitePageSelect).single();
+    if (published.error) throw published.error;
+    await addSitePageRevision(published.data as Record<string, unknown>, "published", contentEditor.user.id);
+    return json(request, { ok: true, page: published.data });
+  }
+
+  if (request.method === "GET" && path === "/admin/content/media") {
+    const contentEditor = await requireContentEditor(request);
+    if (!contentEditor.user) return json(request, { ok: false, error: contentEditor.error }, contentEditor.status);
+    const result = await db.from("site_media").select("id,kind,source_url,alt_text,caption,created_at,updated_at").order("created_at", { ascending: false }).limit(100);
+    if (result.error) throw result.error;
+    return json(request, { ok: true, media: result.data || [] });
+  }
+
+  if (request.method === "POST" && path === "/admin/content/media") {
+    const contentEditor = await requireContentEditor(request);
+    if (!contentEditor.user) return json(request, { ok: false, error: contentEditor.error }, contentEditor.status);
+    const values = await request.json() as JsonRecord;
+    const sourceUrl = siteImageUrl(values.sourceUrl);
+    const kind = text(values.kind, 20) || "image";
+    if (!sourceUrl || !["image", "video", "document"].includes(kind)) return json(request, { ok: false, error: "Укажите корректный URL материала." }, 422);
+    const inserted = await db.from("site_media").insert({
+      kind,
+      source_url: sourceUrl,
+      alt_text: text(values.altText, 240),
+      caption: text(values.caption, 320) || null,
+      created_by: contentEditor.user.id,
+    }).select("id,kind,source_url,alt_text,caption,created_at,updated_at").single();
+    if (inserted.error) throw inserted.error;
+    return json(request, { ok: true, media: inserted.data }, 201);
   }
 
   if (request.method === "GET" && path === "/admin/leads") {
@@ -572,6 +717,20 @@ async function handleChatGet(request: Request) {
   return json(request, { ok: true, status: session.status, workerOnline: await workerOnline(), messages: result.data });
 }
 
+async function handlePublicSiteContent(request: Request) {
+  const url = new URL(request.url);
+  const slug = siteSlug(url.searchParams.get("slug"));
+  if (!slug) return json(request, { ok: false, error: "Некорректный адрес страницы." }, 422);
+  const result = await db.from("site_pages")
+    .select("slug,navigation_label,published_page_title,published_meta_description,published_content,published_at")
+    .eq("slug", slug)
+    .eq("state", "published")
+    .maybeSingle();
+  if (result.error) throw result.error;
+  if (!result.data) return json(request, { ok: false, error: "Страница не опубликована." }, 404);
+  return json(request, { ok: true, page: result.data });
+}
+
 const handler = {
   async fetch(request: Request) {
     if (!originAllowed(request)) return json(request, { ok: false, error: "Origin is not allowed" }, 403);
@@ -585,6 +744,7 @@ const handler = {
       if (request.method === "POST" && path === "/lead") return await handleLead(request);
       if (request.method === "POST" && path === "/chat") return await handleChatPost(request);
       if (request.method === "GET" && path === "/chat") return await handleChatGet(request);
+      if (request.method === "GET" && path === "/content/page") return await handlePublicSiteContent(request);
       if (path.startsWith("/admin")) return await handleAdmin(request, path);
       return json(request, { ok: false, error: "Not found" }, 404);
     } catch (error) {
