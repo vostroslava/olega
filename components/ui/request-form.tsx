@@ -10,6 +10,7 @@ import {
   siteApiEndpoint,
 } from "@/lib/site-api";
 import { assetPath } from "@/lib/site-utils";
+import { trackEvent } from "@/lib/analytics";
 
 type RequestFormProps = {
   defaultProduct?: string;
@@ -164,6 +165,11 @@ export function RequestForm({ defaultProduct }: RequestFormProps) {
       setNote("Заявка отправлена. Мы свяжемся с вами в ближайшее рабочее время.");
       setNoteSuccess(true);
       clientRequestId.current = "";
+      trackEvent("lead_submit", {
+        form: "request_form",
+        object_type: product,
+        has_message: Boolean(message),
+      });
       window.location.assign(
         assetPath(`/spasibo/?product=${encodeURIComponent(product)}`)
       );

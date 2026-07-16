@@ -2244,6 +2244,52 @@ p {
   }
 }
 
+.analytics-consent {
+  position: fixed;
+  z-index: 120;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  width: min(25rem, calc(100vw - 2.5rem));
+  padding: 1.1rem;
+  border: 1px solid rgba(214, 179, 144, .55);
+  background: rgba(7, 12, 14, .96);
+  box-shadow: 0 1rem 3.5rem rgba(0, 0, 0, .38);
+  color: rgba(255, 255, 255, .9);
+}
+
+.analytics-consent p {
+  margin: 0;
+  font-size: .82rem;
+  line-height: 1.55;
+}
+
+.analytics-consent > div {
+  display: flex;
+  gap: .6rem;
+  margin-top: .9rem;
+}
+
+.analytics-consent .button {
+  min-height: 2.45rem;
+  padding: 0 .8rem;
+  font-size: .72rem;
+}
+
+.analytics-consent > a {
+  display: inline-block;
+  margin-top: .7rem;
+  color: var(--sand-light);
+  font-size: .71rem;
+}
+
+@media (max-width: 620px) {
+  .analytics-consent {
+    right: 1rem;
+    bottom: 1rem;
+    width: calc(100vw - 2rem);
+  }
+}
+
 /* Desktop optical reveal: cursor exposes the warm low-iron state. */
 .desktop-glass-reveal,
 .desktop-glass-edge {

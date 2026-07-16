@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ChangeEvent, FormEvent, useMemo, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft } from "@phosphor-icons/react/dist/csr/ArrowLeft";
 import { ArrowRight } from "@phosphor-icons/react/dist/csr/ArrowRight";
 import { Check } from "@phosphor-icons/react/dist/csr/Check";
@@ -18,6 +18,7 @@ import {
   siteApiEndpoint,
 } from "@/lib/site-api";
 import { assetPath } from "@/lib/site-utils";
+import { trackEvent } from "@/lib/analytics";
 
 const steps = ["Объект", "Размеры", "Материалы", "Контакты"];
 const objectTypes = [
@@ -58,6 +59,10 @@ export function QuoteWizard({ compact = false }: { compact?: boolean }) {
   const activeObject = objectTypes.find((item) => item.value === objectType) ?? objectTypes[0];
   const activeScene = sceneCopy[activeObject.value as keyof typeof sceneCopy];
 
+  useEffect(() => {
+    trackEvent("quote_step_view", { step: step + 1, step_name: steps[step] });
+  }, [step]);
+
   const goToStep = (nextStep: number) => {
     if (nextStep === step || nextStep < 0 || nextStep >= steps.length) return;
 
@@ -83,6 +88,11 @@ export function QuoteWizard({ compact = false }: { compact?: boolean }) {
     const file = event.target.files?.[0];
     setAttachment(file ?? null);
     setFileName(file?.name ?? "");
+    if (file) {
+      trackEvent("quote_file_selected", {
+        extension: file.name.split(".").pop()?.toLowerCase() || "unknown",
+      });
+    }
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -116,6 +126,13 @@ export function QuoteWizard({ compact = false }: { compact?: boolean }) {
     try {
       const response = await fetch(endpoint, { method: "POST", body: payload });
       if (!response.ok) throw new Error(await readApiError(response));
+      trackEvent("lead_submit", {
+        form: "quote_wizard",
+        object_type: objectType,
+        material,
+        has_attachment: Boolean(attachment),
+        has_size: Boolean(size.trim()),
+      });
       setSubmitted(true);
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : "Не удалось отправить заявку. Попробуйте ещё раз.");
@@ -295,7 +312,7 @@ export function QuoteWizard({ compact = false }: { compact?: boolean }) {
               <ArrowLeft size={20} weight="thin" aria-hidden="true" /> Назад
             </button>
           ) : compact ? (
-            <Link className="button button-secondary button-on-dark" href="/raschet/">Полная форма</Link>
+            <Link className="button button-secondary button-on-dark" href="/raschet/" data-analytics-event="quote_full_form">Полная форма</Link>
           ) : null}
           {step < steps.length - 1 ? (
             <button className="button button-primary" type="button" onClick={() => goToStep(step + 1)}>

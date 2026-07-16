@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
   },
   env: {
     NEXT_PUBLIC_BASE_PATH: isGithubPagesBuild ? githubPagesBasePath : "",
+    NEXT_PUBLIC_SITE_ENV: isGithubPagesBuild ? "preview" : "production",
   },
   basePath: isGithubPagesBuild ? githubPagesBasePath : "",
   assetPrefix: isGithubPagesBuild ? githubPagesBasePath : undefined,

@@ -9,3 +9,5 @@ export const siteConfig = {
   locale: "ru_BY",
   ogImage: "/og/site-preview.png",
 } as const;
+
+export const isPreviewDeployment = process.env.NEXT_PUBLIC_SITE_ENV === "preview";

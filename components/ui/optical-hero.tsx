@@ -206,11 +206,11 @@ export function OpticalHero() {
             <span className="hero-lead-mobile">От замера до монтажа<br />по всей Беларуси.</span>
           </p>
           <div className="hero-actions">
-            <Link className="button button-primary" href="/raschet/" data-magnetic>
+            <Link className="button button-primary" href="/raschet/" data-magnetic data-analytics-event="hero_calculate_click">
               <span>Рассчитать проект</span>
               <ArrowUpRight size={20} weight="thin" aria-hidden="true" />
             </Link>
-            <Link className="button button-secondary button-on-dark" href="/proekty/" data-magnetic>
+            <Link className="button button-secondary button-on-dark" href="/proekty/" data-magnetic data-analytics-event="hero_projects_click">
               <span>Смотреть объекты</span>
               <ArrowUpRight size={20} weight="thin" aria-hidden="true" />
             </Link>

@@ -226,8 +226,8 @@ export function SiteAiChat() {
             </form>
           ) : (
             <div className="site-ai-chat-offline">
-              <Link className="button button-primary" href="/raschet/">Передать исходные данные</Link>
-              <a className="button button-secondary button-on-dark" href={CONTACTS.phones[0].href}>
+              <Link className="button button-primary" href="/raschet/" data-analytics-event="chat_engineer_brief_click">Передать исходные данные</Link>
+              <a className="button button-secondary button-on-dark" href={CONTACTS.phones[0].href} data-analytics-event="chat_engineer_phone_click">
                 <Phone size={18} weight="thin" aria-hidden="true" /> Позвонить
               </a>
             </div>
@@ -235,7 +235,7 @@ export function SiteAiChat() {
 
           <footer>
             <span>{aiAvailable ? "AI может ошибаться в деталях" : "Ответ даст специалист по проекту"}</span>
-            <Link href="/raschet/">Передать проект инженеру</Link>
+            <Link href="/raschet/" data-analytics-event="chat_engineer_project_click">Передать проект инженеру</Link>
           </footer>
         </section>
       ) : null}

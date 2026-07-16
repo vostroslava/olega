@@ -1,9 +1,18 @@
 import type { MetadataRoute } from "next";
-import { siteConfig } from "@/lib/site-config";
+import { isPreviewDeployment, siteConfig } from "@/lib/site-config";
 
 export const dynamic = "force-static";
 
 export default function robots(): MetadataRoute.Robots {
+  if (isPreviewDeployment) {
+    return {
+      rules: {
+        userAgent: "*",
+        disallow: "/",
+      },
+    };
+  }
+
   return {
     rules: {
       userAgent: "*",

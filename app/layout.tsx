@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import { Inter, Manrope } from "next/font/google";
+import { Suspense } from "react";
 import { StructuredData } from "@/components/seo/structured-data";
+import { Analytics } from "@/components/seo/analytics";
 import { MotionProvider } from "@/components/ui/motion-provider";
 import { SiteAiChat } from "@/components/ui/site-ai-chat";
 import {
   createOrganizationStructuredData,
   createWebsiteStructuredData,
 } from "@/lib/seo";
-import { siteConfig } from "@/lib/site-config";
+import { isPreviewDeployment, siteConfig } from "@/lib/site-config";
 import "./globals.css";
 
 const inter = Inter({
@@ -54,6 +56,7 @@ export const metadata: Metadata = {
     description: siteConfig.defaultDescription,
     images: [siteConfig.ogImage],
   },
+  robots: isPreviewDeployment ? { index: false, follow: false } : undefined,
 };
 
 export default function RootLayout({
@@ -66,6 +69,9 @@ export default function RootLayout({
       <body>
         <StructuredData data={createOrganizationStructuredData()} />
         <StructuredData data={createWebsiteStructuredData()} />
+        <Suspense fallback={null}>
+          <Analytics />
+        </Suspense>
         <MotionProvider>{children}</MotionProvider>
         <SiteAiChat />
       </body>
