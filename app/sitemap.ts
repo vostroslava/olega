@@ -1,10 +1,11 @@
 import type { MetadataRoute } from "next";
 import { PROJECTS, SERVICE_PAGES } from "@/lib/site-data";
 import { isPreviewDeployment, siteConfig } from "@/lib/site-config";
+import { getPublishedCmsPages } from "@/lib/cms-published";
 
 export const dynamic = "force-static";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (isPreviewDeployment) return [];
 
   const staticRoutes = [
@@ -22,7 +23,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/politika-konfidentsialnosti/",
   ];
 
-  return [
+  const cmsRoutes = (await getPublishedCmsPages())
+    .filter((page) => page.is_indexable)
+    .map((page) => ({
+      url: `${siteConfig.siteUrl}${page.slug}`,
+      lastModified: page.published_at,
+      changeFrequency: page.sitemap_change_frequency,
+      priority: Number(page.sitemap_priority),
+    }));
+
+  const routes = [
     ...staticRoutes.map((path) => ({
       url: `${siteConfig.siteUrl}${path}`,
       changeFrequency: "weekly" as const,
@@ -38,5 +48,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly" as const,
       priority: 0.7,
     })),
+    ...cmsRoutes,
   ];
+
+  return Array.from(new Map(routes.map((route) => [route.url, route])).values());
 }

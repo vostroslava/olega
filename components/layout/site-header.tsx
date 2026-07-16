@@ -10,11 +10,13 @@ import { SquareHalf } from "@phosphor-icons/react/dist/csr/SquareHalf";
 import { X } from "@phosphor-icons/react/dist/csr/X";
 import { CONTACTS, NAV_ITEMS } from "@/lib/site-data";
 import { assetPath } from "@/lib/site-utils";
+import { siteApiUrl } from "@/lib/site-api";
 import { MagneticCtas } from "@/components/ui/magnetic-ctas";
 import { AtmosphereMode } from "@/components/ui/atmosphere-mode";
 
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [navigation, setNavigation] = useState(NAV_ITEMS);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -39,6 +41,16 @@ export function SiteHeader() {
       document.body.style.overflow = "";
     };
   }, [menuOpen]);
+
+  useEffect(() => {
+    if (!siteApiUrl) return;
+    void fetch(`${siteApiUrl}/content/navigation`, { cache: "no-store" })
+      .then(async (response) => response.ok ? await response.json() as { navigation?: Array<{ label: string; href: string; opens_new_tab: boolean }> } : null)
+      .then((result) => {
+        if (result?.navigation?.length) setNavigation(result.navigation);
+      })
+      .catch(() => undefined);
+  }, []);
 
   return (
     <>
@@ -69,7 +81,7 @@ export function SiteHeader() {
           style={{ "--nav-scene": `url("${assetPath("/assets/visuals/hero-optical-monolith.png")}")` } as CSSProperties}
         >
           <div className="nav-primary-links">
-            {NAV_ITEMS.map((item) => item.href === "/o-kompanii/" ? (
+            {navigation.map((item) => item.href === "/o-kompanii/" ? (
               <div className="nav-company-menu" key={item.href}>
                 <Link href={item.href} onClick={() => setMenuOpen(false)}>
                   <span>{item.label}</span>
@@ -83,7 +95,7 @@ export function SiteHeader() {
                 </div>
               </div>
             ) : (
-              <Link key={item.href} href={item.href} onClick={() => setMenuOpen(false)}>
+              <Link key={item.href} href={item.href} onClick={() => setMenuOpen(false)} target={"opens_new_tab" in item && item.opens_new_tab ? "_blank" : undefined} rel={"opens_new_tab" in item && item.opens_new_tab ? "noreferrer" : undefined}>
                 <span>{item.label}</span>
                 <ArrowUpRight size={19} weight="thin" aria-hidden="true" />
               </Link>

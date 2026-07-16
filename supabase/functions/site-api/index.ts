@@ -310,6 +310,35 @@ async function markCmsPageDraft(pageId: string, userId: string) {
   if (changed.error) throw changed.error;
 }
 
+async function requestStaticSiteDeploy(pageId: string, slug: string, userId: string) {
+  const token = Deno.env.get("SITE_DEPLOY_GITHUB_TOKEN");
+  if (!token) return { status: "not_configured" as const };
+  const repository = Deno.env.get("SITE_DEPLOY_GITHUB_REPOSITORY") || "vostroslava/olega";
+  const event = await db.from("site_release_events").insert({
+    page_id: pageId,
+    kind: "deploy_requested",
+    status: "queued",
+    metadata: { slug, repository },
+    created_by: userId,
+  }).select("id").single();
+  if (event.error) throw event.error;
+
+  const response = await fetch(`https://api.github.com/repos/${repository}/actions/workflows/deploy-pages.yml/dispatches`, {
+    method: "POST",
+    headers: {
+      Accept: "application/vnd.github+json",
+      Authorization: `Bearer ${token}`,
+      "X-GitHub-Api-Version": "2022-11-28",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ ref: "main", inputs: { cms_publish: "true", cms_slug: slug } }),
+  });
+  const status = response.ok ? "completed" : "failed";
+  const updated = await db.from("site_release_events").update({ status, metadata: { slug, repository, github_status: response.status } }).eq("id", event.data.id);
+  if (updated.error) throw updated.error;
+  return { status: response.ok ? "requested" as const : "failed" as const };
+}
+
 function safeFileName(name: string) {
   const normalized = name.normalize("NFKD").replace(/[^A-Za-z0-9._-]+/g, "-").replace(/^-+|-+$/g, "");
   return normalized.slice(0, 120) || "attachment";
@@ -651,7 +680,8 @@ async function handleAdmin(request: Request, path: string) {
       created_by: contentEditor.user.id,
     });
     if (releaseEvent.error) throw releaseEvent.error;
-    return json(request, { ok: true, page: published.data });
+    const deployment = await requestStaticSiteDeploy(published.data.id, published.data.slug, contentEditor.user.id);
+    return json(request, { ok: true, page: published.data, deployment });
   }
 
   if (request.method === "POST" && path === "/admin/content/pages") {
@@ -1037,7 +1067,7 @@ async function handlePublicSiteContent(request: Request) {
   const slug = siteSlug(url.searchParams.get("slug"));
   if (!slug) return json(request, { ok: false, error: "Некорректный адрес страницы." }, 422);
   const result = await db.from("site_pages")
-    .select("id,slug,navigation_label,published_page_title,published_meta_description,published_content,published_snapshot,published_at")
+    .select("id,slug,navigation_label,published_page_title,published_meta_description,published_content,published_snapshot,published_at,is_indexable,is_in_navigation,navigation_order,sitemap_priority,sitemap_change_frequency,seo_robots,og_title,og_description,og_image_url,twitter_card")
     .eq("slug", slug)
     .eq("state", "published")
     .maybeSingle();
@@ -1065,6 +1095,33 @@ async function handlePublicSiteContent(request: Request) {
   return json(request, { ok: true, page: result.data, blocks: publishedBlocks, navigation: navigation.data || [], settings: settings.data || [] });
 }
 
+async function handlePublicSitePages(request: Request) {
+  const result = await db.from("site_pages")
+    .select("slug,navigation_label,published_page_title,published_meta_description,published_snapshot,published_at,is_indexable,is_in_navigation,navigation_order,sitemap_priority,sitemap_change_frequency,seo_robots,og_title,og_description,og_image_url,twitter_card")
+    .eq("state", "published")
+    .order("navigation_order");
+  if (result.error) throw result.error;
+  return json(request, { ok: true, pages: result.data || [] });
+}
+
+async function handlePublicNavigation(request: Request) {
+  const result = await db.from("site_navigation_items")
+    .select(siteNavigationSelect)
+    .eq("location", "header")
+    .eq("is_visible", true)
+    .order("position");
+  if (result.error) throw result.error;
+  return json(request, { ok: true, navigation: result.data || [] });
+}
+
+async function handlePublicSettings(request: Request) {
+  const result = await db.from("site_settings")
+    .select("setting_key,setting_value,updated_at")
+    .in("setting_key", ["brand", "contacts", "social", "default_seo", "analytics"]);
+  if (result.error) throw result.error;
+  return json(request, { ok: true, settings: result.data || [] });
+}
+
 const handler = {
   async fetch(request: Request) {
     if (!originAllowed(request)) return json(request, { ok: false, error: "Origin is not allowed" }, 403);
@@ -1079,6 +1136,9 @@ const handler = {
       if (request.method === "POST" && path === "/chat") return await handleChatPost(request);
       if (request.method === "GET" && path === "/chat") return await handleChatGet(request);
       if (request.method === "GET" && path === "/content/page") return await handlePublicSiteContent(request);
+      if (request.method === "GET" && path === "/content/pages") return await handlePublicSitePages(request);
+      if (request.method === "GET" && path === "/content/navigation") return await handlePublicNavigation(request);
+      if (request.method === "GET" && path === "/content/settings") return await handlePublicSettings(request);
       if (path.startsWith("/admin")) return await handleAdmin(request, path);
       return json(request, { ok: false, error: "Not found" }, 404);
     } catch (error) {

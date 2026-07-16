@@ -13,7 +13,20 @@ import { SealCheck } from "@phosphor-icons/react/dist/csr/SealCheck";
 import { ShieldCheck } from "@phosphor-icons/react/dist/csr/ShieldCheck";
 import { assetPath } from "@/lib/site-utils";
 
-export function OpticalHero() {
+type OpticalHeroContent = {
+  title?: string;
+  lead?: string;
+  primaryLabel?: string;
+  primaryHref?: string;
+  imageUrl?: string;
+};
+
+function mediaPath(value: string | undefined, fallback: string) {
+  if (!value) return assetPath(fallback);
+  return value.startsWith("/") ? assetPath(value) : value;
+}
+
+export function OpticalHero({ content }: { content?: OpticalHeroContent }) {
   const heroRef = useRef<HTMLElement | null>(null);
   const glassZoneRef = useRef<HTMLDivElement | null>(null);
   const pointerFrame = useRef<number | null>(null);
@@ -148,13 +161,19 @@ export function OpticalHero() {
         />
       </div>
       <div className="desktop-glass-reveal" aria-hidden="true">
-        <Image
-          src={assetPath("/assets/visuals/hero-desktop-after.webp")}
-          alt=""
-          fill
-          loading="lazy"
-          sizes="100vw"
-        />
+        {content?.imageUrl ? (
+          /* CMS media may be hosted on a customer-controlled domain, so this cannot rely on Next image allow-lists. */
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img src={mediaPath(content.imageUrl, "/assets/visuals/hero-desktop-after.webp")} alt="" loading="lazy" />
+        ) : (
+          <Image
+            src={assetPath("/assets/visuals/hero-desktop-after.webp")}
+            alt=""
+            fill
+            loading="lazy"
+            sizes="100vw"
+          />
+        )}
       </div>
       <Image
         className="desktop-glass-edge"
@@ -175,13 +194,18 @@ export function OpticalHero() {
           />
         </div>
         <div className="mobile-glass-reveal">
-          <Image
-            src={assetPath("/assets/visuals/hero-mobile-house.webp")}
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-          />
+          {content?.imageUrl ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img src={mediaPath(content.imageUrl, "/assets/visuals/hero-mobile-house.webp")} alt="" loading="eager" />
+          ) : (
+            <Image
+              src={assetPath("/assets/visuals/hero-mobile-house.webp")}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+            />
+          )}
         </div>
         <Image
           className="mobile-glass-edge"
@@ -200,14 +224,14 @@ export function OpticalHero() {
 
       <div className="container optical-hero-inner">
         <div className="optical-hero-copy reveal is-visible" data-hero-reveal>
-          <h1>Стекло,<br />которое<span className="hero-mobile-break"><br /></span> меняет<br />архитектуру</h1>
+          <h1>{content?.title || <>Стекло,<br />которое<span className="hero-mobile-break"><br /></span> меняет<br />архитектуру</>}</h1>
           <p className="optical-hero-lead">
-            <span className="hero-lead-desktop">Окна, фасады и панорамное остекление — от замера и проектирования до производства и монтажа по всей Беларуси.</span>
-            <span className="hero-lead-mobile">От замера до монтажа<br />по всей Беларуси.</span>
+            <span className="hero-lead-desktop">{content?.lead || "Окна, фасады и панорамное остекление — от замера и проектирования до производства и монтажа по всей Беларуси."}</span>
+            <span className="hero-lead-mobile">{content?.lead || <>От замера до монтажа<br />по всей Беларуси.</>}</span>
           </p>
           <div className="hero-actions">
-            <Link className="button button-primary" href="/raschet/" data-magnetic data-analytics-event="hero_calculate_click">
-              <span>Рассчитать проект</span>
+            <Link className="button button-primary" href={content?.primaryHref || "/raschet/"} data-magnetic data-analytics-event="hero_calculate_click">
+              <span>{content?.primaryLabel || "Рассчитать проект"}</span>
               <ArrowUpRight size={20} weight="thin" aria-hidden="true" />
             </Link>
             <Link className="button button-secondary button-on-dark" href="/proekty/" data-magnetic data-analytics-event="hero_projects_click">

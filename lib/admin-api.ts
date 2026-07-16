@@ -240,9 +240,9 @@ export async function saveContentPage(token: string, page: SitePage) {
 export async function publishContentPage(token: string, slug: string) {
   const body = await adminFetch(`/content/pages/publish?slug=${encodeURIComponent(slug)}`, token, {
     method: "POST",
-  }) as { page?: SitePage };
+  }) as { page?: SitePage; deployment?: { status?: "requested" | "failed" | "not_configured" } };
   if (!body.page) throw new Error("Не удалось опубликовать страницу.");
-  return body.page;
+  return { page: body.page, deployment: body.deployment?.status ?? "not_configured" };
 }
 
 export async function getContentMedia(token: string) {

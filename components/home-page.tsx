@@ -18,8 +18,11 @@ import { HomeMotion } from "@/components/ui/home-motion";
 import { RevealInit } from "@/components/ui/reveal-init";
 import { HOME_FAQ } from "@/lib/site-data";
 import { createFaqStructuredData } from "@/lib/seo";
+import type { CmsPublishedPage } from "@/lib/cms-published";
+import { cmsBlockText } from "@/lib/cms-published";
 
-export function HomePage() {
+export function HomePage({ cmsPage }: { cmsPage?: CmsPublishedPage | null }) {
+  const hero = cmsPage?.blocks?.find((block) => block.block_type === "hero");
   return (
     <div className="page-shell">
       <StructuredData data={createFaqStructuredData(HOME_FAQ)} />
@@ -27,7 +30,13 @@ export function HomePage() {
 
       <main id="top" className="home-main">
         <div className="glass-thread" aria-hidden="true" />
-        <OpticalHero />
+        <OpticalHero content={hero ? {
+          title: cmsBlockText(hero, "heading"),
+          lead: cmsBlockText(hero, "body"),
+          primaryLabel: cmsBlockText(hero, "ctaLabel"),
+          primaryHref: cmsBlockText(hero, "ctaHref"),
+          imageUrl: cmsBlockText(hero, "imageUrl"),
+        } : undefined} />
         <ProofBand />
         <AudiencePathways />
         <ProjectShowcase />

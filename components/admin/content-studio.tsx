@@ -114,9 +114,10 @@ export function ContentStudio({ accessToken, onError, onNotice }: ContentStudioP
     if (!draft) return; setSaving(true); onError("");
     try {
       const saved = await saveContentPage(accessToken, draft);
-      const finalPage = publish ? await publishContentPage(accessToken, saved.slug) : saved;
+      const published = publish ? await publishContentPage(accessToken, saved.slug) : null;
+      const finalPage = published?.page ?? saved;
       setPages((current) => current.map((page) => page.id === finalPage.id ? finalPage : page)); setDraft(finalPage);
-      onNotice(publish ? "Страница опубликована и ревизия зафиксирована" : "Настройки страницы сохранены");
+      onNotice(publish ? published?.deployment === "requested" ? "Страница опубликована: GitHub Pages пересобирается" : published?.deployment === "failed" ? "Страница опубликована, но автодеплой не запустился" : "Страница опубликована. Автодеплой пока не настроен" : "Настройки страницы сохранены");
     } catch (error) { onError(error instanceof Error ? error.message : "Не удалось сохранить страницу."); }
     finally { setSaving(false); }
   };

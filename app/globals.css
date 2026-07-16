@@ -1997,6 +1997,13 @@ p {
     object-position: center;
   }
 
+  .mobile-glass-scene .mobile-glass-reveal > img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
   .mobile-glass-base {
     filter: brightness(.82) saturate(.84) contrast(1.05);
   }
@@ -2626,6 +2633,33 @@ p {
   font-size: .71rem;
 }
 
+/* CMS-published pages reuse the Optical Monolith system without forcing a template rebuild. */
+.cms-public-page { background: #071012; color: #eef4f1; }
+.cms-public-block { position: relative; overflow: hidden; border-bottom: 1px solid rgba(207, 231, 237, .15); background: #071012; }
+.cms-public-block.is-first { min-height: min(82vh, 58rem); display: grid; align-items: end; }
+.cms-public-block-media { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .62; }
+.cms-public-block.is-first::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(4, 10, 12, .94) 0%, rgba(4, 10, 12, .62) 44%, rgba(4, 10, 12, .18) 100%); pointer-events: none; }
+.cms-public-block-inner { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 42rem) 1fr; padding-top: clamp(5rem, 11vw, 10rem); padding-bottom: clamp(4rem, 8vw, 7rem); }
+.cms-public-block-copy { display: grid; align-items: start; gap: 1.35rem; }
+.cms-public-block-copy h1, .cms-public-block-copy h2 { max-width: 18ch; color: #f4f7f5; font-weight: 300; letter-spacing: -.055em; line-height: .96; }
+.cms-public-block-copy h1 { font-size: clamp(3.4rem, 7vw, 7.4rem); }
+.cms-public-block-copy h2 { font-size: clamp(2.35rem, 5vw, 5.3rem); }
+.cms-public-block-copy > p:not(.optical-label) { max-width: 41rem; color: rgba(232, 240, 239, .76); font-size: clamp(1rem, 1.4vw, 1.2rem); line-height: 1.68; }
+.cms-public-block-copy ul { display: grid; gap: .7rem; padding: 0; list-style: none; color: rgba(232, 240, 239, .76); }
+.cms-public-block-copy li { display: grid; grid-template-columns: .4rem 1fr; gap: .75rem; }
+.cms-public-block-copy li::before { content: ""; width: .36rem; height: .36rem; margin-top: .5rem; background: var(--accent); }
+.cms-public-block:not(.is-first) .cms-public-block-inner { min-height: 25rem; }
+.cms-public-block:not(.is-first) .cms-public-block-media { opacity: .3; }
+
+@media (max-width: 720px) {
+  .cms-public-block.is-first { min-height: 44rem; }
+  .cms-public-block.is-first::after { background: linear-gradient(180deg, rgba(4, 10, 12, .22), rgba(4, 10, 12, .93) 77%); }
+  .cms-public-block-inner { grid-template-columns: 1fr; padding-top: 18rem; padding-bottom: 3.5rem; }
+  .cms-public-block:not(.is-first) .cms-public-block-inner { min-height: 0; padding-top: 4rem; padding-bottom: 4rem; }
+  .cms-public-block-copy h1 { font-size: clamp(3rem, 15vw, 4.8rem); }
+  .cms-public-block-copy h2 { font-size: clamp(2.25rem, 12vw, 3.8rem); }
+}
+
 @media (max-width: 620px) {
   .analytics-consent {
     right: 1rem;
@@ -2663,6 +2697,10 @@ p {
   }
 
   .desktop-glass-reveal img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     object-position: center 45%;
     filter: brightness(1.04) saturate(1.08);

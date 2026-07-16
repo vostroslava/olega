@@ -5,6 +5,16 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      cms_publish:
+        description: CMS publication trigger
+        required: false
+        type: boolean
+        default: false
+      cms_slug:
+        description: Published CMS page
+        required: false
+        type: string
 
 permissions:
   contents: read

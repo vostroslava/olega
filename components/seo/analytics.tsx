@@ -6,7 +6,6 @@ import { useCallback, useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import {
   analyticsConfig,
-  analyticsEnabled,
   analyticsEventName,
   type AnalyticsEvent,
   type AnalyticsParameters,
@@ -21,13 +20,6 @@ type AnalyticsWindow = Window & {
 };
 
 const consentStorageKey = "steklostroygroup.analytics.consent";
-const gaMeasurementId = /^G-[A-Z0-9]+$/i.test(analyticsConfig.gaMeasurementId)
-  ? analyticsConfig.gaMeasurementId
-  : "";
-const yandexMetrikaId = /^\d+$/.test(analyticsConfig.yandexMetrikaId)
-  ? analyticsConfig.yandexMetrikaId
-  : "";
-
 function cleanParameters(parameters?: AnalyticsParameters) {
   return Object.fromEntries(
     Object.entries(parameters ?? {}).filter(([, value]) => value !== undefined),
@@ -50,10 +42,17 @@ function getStoredConsent(): Consent {
   return savedConsent === "accepted" || savedConsent === "declined" ? savedConsent : null;
 }
 
-export function Analytics() {
+type AnalyticsProps = { config?: Partial<typeof analyticsConfig> };
+
+export function Analytics({ config }: AnalyticsProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [consent, setConsent] = useState<Consent>(getStoredConsent);
+  const configuredGaId = config?.gaMeasurementId || analyticsConfig.gaMeasurementId;
+  const configuredYandexId = config?.yandexMetrikaId || analyticsConfig.yandexMetrikaId;
+  const gaMeasurementId = /^G-[A-Z0-9]+$/i.test(configuredGaId) ? configuredGaId : "";
+  const yandexMetrikaId = /^\d+$/.test(configuredYandexId) ? configuredYandexId : "";
+  const analyticsEnabled = Boolean(gaMeasurementId || yandexMetrikaId);
 
   const sendEvent = useCallback((name: string, parameters?: AnalyticsParameters) => {
     const payload = cleanParameters(parameters);
@@ -71,7 +70,7 @@ export function Analytics() {
     if (yandexMetrikaId && analyticsWindow.ym) {
       analyticsWindow.ym(Number(yandexMetrikaId), "reachGoal", name, payload);
     }
-  }, []);
+  }, [gaMeasurementId, yandexMetrikaId]);
 
   useEffect(() => {
     if (pathname.startsWith("/admin")) return;

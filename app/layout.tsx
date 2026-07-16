@@ -10,6 +10,7 @@ import {
   createWebsiteStructuredData,
 } from "@/lib/seo";
 import { isPreviewDeployment, siteConfig } from "@/lib/site-config";
+import { getPublishedCmsSettings } from "@/lib/cms-published";
 import "./globals.css";
 
 const inter = Inter({
@@ -59,18 +60,20 @@ export const metadata: Metadata = {
   robots: isPreviewDeployment ? { index: false, follow: false } : undefined,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await getPublishedCmsSettings();
+  const analytics = settings.analytics ?? {};
   return (
     <html lang="ru" className={`${inter.variable} ${manrope.variable}`}>
       <body>
         <StructuredData data={createOrganizationStructuredData()} />
         <StructuredData data={createWebsiteStructuredData()} />
         <Suspense fallback={null}>
-          <Analytics />
+          <Analytics config={{ gaMeasurementId: analytics.gaMeasurementId, yandexMetrikaId: analytics.yandexMetrikaId }} />
         </Suspense>
         <MotionProvider>{children}</MotionProvider>
         <SiteAiChat />
