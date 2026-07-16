@@ -21,6 +21,7 @@ import {
   type SitePage,
   type SitePageState,
 } from "@/lib/admin-api";
+import { assetPath } from "@/lib/site-utils";
 
 type ContentStudioProps = {
   accessToken: string;
@@ -49,6 +50,10 @@ function seoScore(page: SitePage) {
     Boolean(page.hero_image_url),
   ];
   return checks.filter(Boolean).length;
+}
+
+function contentMediaPath(value: string) {
+  return value.startsWith("/") ? assetPath(value) : value;
 }
 
 export function ContentStudio({ accessToken, onError, onNotice }: ContentStudioProps) {
@@ -170,15 +175,15 @@ export function ContentStudio({ accessToken, onError, onNotice }: ContentStudioP
 
         <div className="content-page-editor">
           <section className="content-preview-panel" aria-label="Предпросмотр страницы">
-            <header><span>Превью страницы</span><a href={draft.slug} target="_blank" rel="noreferrer" aria-label="Открыть страницу"><ArrowSquareOut size={17} /></a></header>
+            <header><span>Превью страницы</span><a href={assetPath(draft.slug)} target="_blank" rel="noreferrer" aria-label="Открыть страницу"><ArrowSquareOut size={17} /></a></header>
             <div className="content-preview-frame">
               {/* Hero media can be an external published asset, so it is intentionally rendered without Next image optimization. */}
-              {draft.hero_image_url ? <img src={draft.hero_image_url} alt="" /> : null}
+              {draft.hero_image_url ? <img src={contentMediaPath(draft.hero_image_url)} alt="" /> : null}
               <div className="content-preview-overlay">
                 <span>СтеклоСтройГрупп</span>
                 <strong>{draft.hero_title || draft.navigation_label}</strong>
                 <p>{draft.hero_lead || draft.meta_description}</p>
-                <a href="/raschet/">Рассчитать проект</a>
+                <a href={assetPath("/raschet/")}>Рассчитать проект</a>
               </div>
             </div>
           </section>
