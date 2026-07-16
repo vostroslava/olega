@@ -2,6 +2,16 @@ import { readApiError, siteApiEndpoint } from "@/lib/site-api";
 
 export const leadStatuses = ["new", "reviewed", "contacted", "qualified", "won", "lost", "spam"] as const;
 export type LeadStatus = (typeof leadStatuses)[number];
+export type StaffRole = "admin" | "manager";
+
+export type StaffMember = {
+  id: string;
+  user_id: string;
+  email: string;
+  full_name: string | null;
+  role: StaffRole;
+  created_at: string;
+};
 
 export type LeadFile = {
   id: string;
@@ -111,4 +121,33 @@ export async function getAdminFileUrl(token: string, leadId: string, fileId: str
   const body = await adminFetch(`/leads/${encodeURIComponent(leadId)}/files/${encodeURIComponent(fileId)}`, token) as { url?: string };
   if (!body.url) throw new Error("Файл временно недоступен.");
   return body.url;
+}
+
+export async function bootstrapAdmin(login: string, password: string) {
+  const body = await adminFetch("/bootstrap", "", {
+    method: "POST",
+    body: JSON.stringify({ login, password }),
+  }) as { email?: string };
+  if (!body.email) throw new Error("Не удалось подготовить администраторский вход.");
+  return body.email;
+}
+
+export async function getAdminMe(token: string) {
+  const body = await adminFetch("/me", token) as { staff?: StaffMember };
+  if (!body.staff) throw new Error("Не удалось определить права доступа.");
+  return body.staff;
+}
+
+export async function getAdminStaff(token: string) {
+  const body = await adminFetch("/staff", token) as { staff?: StaffMember[] };
+  return body.staff ?? [];
+}
+
+export async function createAdminStaff(token: string, values: { email: string; fullName: string; password: string }) {
+  const body = await adminFetch("/staff", token, {
+    method: "POST",
+    body: JSON.stringify(values),
+  }) as { staff?: StaffMember };
+  if (!body.staff) throw new Error("Не удалось создать сотрудника.");
+  return body.staff;
 }

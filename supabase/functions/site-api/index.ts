@@ -46,6 +46,7 @@ const db = createClient(supabaseUrl, serviceRoleKey, {
 
 const LEAD_STATUSES = ["new", "reviewed", "contacted", "qualified", "won", "lost", "spam"] as const;
 const adminLeadSelect = "id,status,source,page_url,name,phone,email,object_type,size_notes,material,message,utm,created_at,updated_at,lead_files(id,original_name,mime_type,byte_size,created_at)";
+const staffMemberSelect = "id,user_id,email,full_name,role,created_at";
 
 type JsonRecord = Record<string, unknown>;
 
@@ -82,29 +83,87 @@ function text(value: unknown, maxLength = 4000) {
   return String(value ?? "").trim().slice(0, maxLength);
 }
 
-function adminEmails() {
-  return new Set(
-    (Deno.env.get("SITE_ADMIN_EMAILS") || "")
-      .split(",")
-      .map((value) => value.trim().toLowerCase())
-      .filter(Boolean),
-  );
+async function requireStaff(request: Request) {
+  const authorization = request.headers.get("authorization") || "";
+  const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+  if (!token) return { user: null, staff: null, status: 401, error: "Требуется вход." };
+
+  const { data, error } = await db.auth.getUser(token);
+  if (error || !data.user) return { user: null, staff: null, status: 403, error: "Недостаточно прав для этого контура." };
+  const staff = await db.from("staff_members").select(staffMemberSelect).eq("user_id", data.user.id).maybeSingle();
+  if (staff.error) throw staff.error;
+  if (!staff.data) return { user: null, staff: null, status: 403, error: "Для этой учётной записи не выдан доступ." };
+  return { user: data.user, staff: staff.data, status: 200, error: "" };
 }
 
 async function requireAdmin(request: Request) {
-  const allowedEmails = adminEmails();
-  if (allowedEmails.size === 0) return { user: null, status: 503, error: "Админ-контур ещё не настроен." };
-
-  const authorization = request.headers.get("authorization") || "";
-  const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
-  if (!token) return { user: null, status: 401, error: "Требуется вход." };
-
-  const { data, error } = await db.auth.getUser(token);
-  const email = data.user?.email?.toLowerCase();
-  if (error || !data.user || !email || !allowedEmails.has(email)) {
-    return { user: null, status: 403, error: "Недостаточно прав для этого контура." };
+  const auth = await requireStaff(request);
+  if (!auth.user || !auth.staff) return auth;
+  if (auth.staff.role !== "admin") {
+    return { user: null, staff: null, status: 403, error: "Доступ к управлению командой есть только у администратора." };
   }
-  return { user: data.user, status: 200, error: "" };
+  return auth;
+}
+
+function secureEquals(left: string, right: string) {
+  const leftBytes = new TextEncoder().encode(left);
+  const rightBytes = new TextEncoder().encode(right);
+  if (leftBytes.length !== rightBytes.length) return false;
+  let difference = 0;
+  for (let index = 0; index < leftBytes.length; index += 1) difference |= leftBytes[index] ^ rightBytes[index];
+  return difference === 0;
+}
+
+async function adminLoginRateLimited(fingerprint: string) {
+  const threshold = new Date(Date.now() - 15 * 60_000).toISOString();
+  const { count } = await db.from("admin_login_attempts")
+    .select("id", { count: "exact", head: true })
+    .eq("request_fingerprint", fingerprint)
+    .gte("created_at", threshold);
+  return (count || 0) >= 5;
+}
+
+async function recordAdminLoginFailure(fingerprint: string) {
+  const result = await db.from("admin_login_attempts").insert({ request_fingerprint: fingerprint });
+  if (result.error) console.error("Unable to record admin login attempt", result.error);
+}
+
+async function bootstrapAdmin(login: string, password: string, fingerprint: string) {
+  const expectedLogin = Deno.env.get("SITE_BOOTSTRAP_ADMIN_LOGIN") || "";
+  const expectedPassword = Deno.env.get("SITE_BOOTSTRAP_ADMIN_PASSWORD") || "";
+  const internalEmail = (Deno.env.get("SITE_BOOTSTRAP_ADMIN_EMAIL") || "").toLowerCase();
+  if (!expectedLogin || !expectedPassword || !internalEmail) throw new Error("Bootstrap administrator is not configured");
+  if (await adminLoginRateLimited(fingerprint)) return { ok: false, status: 429, error: "Слишком много попыток. Попробуйте через 15 минут." };
+  if (!secureEquals(login, expectedLogin) || !secureEquals(password, expectedPassword)) {
+    await recordAdminLoginFailure(fingerprint);
+    return { ok: false, status: 401, error: "Неверный логин или пароль." };
+  }
+
+  const existing = await db.from("staff_members").select(staffMemberSelect).eq("email", internalEmail).maybeSingle();
+  if (existing.error) throw existing.error;
+  if (existing.data) {
+    if (existing.data.role !== "admin") {
+      const repaired = await db.from("staff_members").update({ role: "admin" }).eq("id", existing.data.id);
+      if (repaired.error) throw repaired.error;
+    }
+    return { ok: true, email: internalEmail };
+  }
+
+  const created = await db.auth.admin.createUser({
+    email: internalEmail,
+    password: expectedPassword,
+    email_confirm: true,
+    app_metadata: { staff_role: "admin" },
+  });
+  if (created.error || !created.data.user) throw created.error || new Error("Unable to create bootstrap administrator");
+  const inserted = await db.from("staff_members").insert({
+    user_id: created.data.user.id,
+    email: internalEmail,
+    full_name: "Администратор",
+    role: "admin",
+  });
+  if (inserted.error) throw inserted.error;
+  return { ok: true, email: internalEmail };
 }
 
 async function addLeadEvent(
@@ -326,12 +385,64 @@ async function handleLead(request: Request) {
 }
 
 async function handleAdmin(request: Request, path: string) {
-  const auth = await requireAdmin(request);
+  if (request.method === "POST" && path === "/admin/bootstrap") {
+    const values = await request.json() as JsonRecord;
+    const result = await bootstrapAdmin(text(values.login, 80), text(values.password, 240), await requestFingerprint(request));
+    return result.ok
+      ? json(request, { ok: true, email: result.email || "" })
+      : json(request, { ok: false, error: result.error || "Не удалось войти." }, result.status || 500);
+  }
+
+  const auth = await requireStaff(request);
   if (!auth.user) return json(request, { ok: false, error: auth.error }, auth.status);
 
   const url = new URL(request.url);
   const segments = path.split("/").filter(Boolean);
   const leadId = segments[2] || "";
+
+  if (request.method === "GET" && path === "/admin/me") {
+    return json(request, { ok: true, staff: auth.staff });
+  }
+
+  if (request.method === "GET" && path === "/admin/staff") {
+    const admin = await requireAdmin(request);
+    if (!admin.user) return json(request, { ok: false, error: admin.error }, admin.status);
+    const result = await db.from("staff_members").select(staffMemberSelect).order("created_at", { ascending: true });
+    if (result.error) throw result.error;
+    return json(request, { ok: true, staff: result.data || [] });
+  }
+
+  if (request.method === "POST" && path === "/admin/staff") {
+    const admin = await requireAdmin(request);
+    if (!admin.user) return json(request, { ok: false, error: admin.error }, admin.status);
+    const values = await request.json() as JsonRecord;
+    const email = text(values.email, 320).toLowerCase();
+    const fullName = text(values.fullName, 160);
+    const password = text(values.password, 240);
+    if (!/^\S+@\S+\.\S+$/.test(email) || password.length < 10) {
+      return json(request, { ok: false, error: "Укажите рабочую почту и временный пароль не короче 10 символов." }, 422);
+    }
+    const existing = await db.from("staff_members").select("id").eq("email", email).maybeSingle();
+    if (existing.error) throw existing.error;
+    if (existing.data) return json(request, { ok: false, error: "Этот сотрудник уже добавлен." }, 409);
+    const created = await db.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+      user_metadata: fullName ? { full_name: fullName } : {},
+      app_metadata: { staff_role: "manager" },
+    });
+    if (created.error || !created.data.user) throw created.error || new Error("Unable to create staff member");
+    const inserted = await db.from("staff_members").insert({
+      user_id: created.data.user.id,
+      email,
+      full_name: fullName || null,
+      role: "manager",
+      created_by: admin.user.id,
+    }).select(staffMemberSelect).single();
+    if (inserted.error) throw inserted.error;
+    return json(request, { ok: true, staff: inserted.data }, 201);
+  }
 
   if (request.method === "GET" && path === "/admin/leads") {
     const requestedStatus = url.searchParams.get("status") || "all";

@@ -14,8 +14,13 @@ test("consultation panel fits the viewport and gives a working next step", async
 
   const panel = page.getByRole("dialog", { name: "AI-консультант СтеклоСтройГрупп" });
   await expect(panel).toBeVisible();
-  await expect(panel.getByText("Передадим задачу инженеру")).toBeVisible();
-  await expect(panel.getByRole("link", { name: "Передать исходные данные" })).toBeVisible();
+  const aiConfigured = Boolean(process.env.NEXT_PUBLIC_SITE_API_URL);
+  await expect(panel.getByRole("heading", { name: aiConfigured ? "Разберём задачу до разговора с инженером" : "Передадим задачу инженеру" })).toBeVisible();
+  if (aiConfigured) {
+    await expect(panel.getByRole("textbox", { name: "Ваш вопрос" })).toBeVisible();
+  } else {
+    await expect(panel.getByRole("link", { name: "Передать исходные данные" })).toBeVisible();
+  }
   const box = await panel.boundingBox();
   const viewport = page.viewportSize();
   expect(box).not.toBeNull();
@@ -57,12 +62,33 @@ test("admin route keeps the lead database closed until auth is configured", asyn
   await page.goto("/admin/", { waitUntil: "domcontentloaded" });
   const authConfigured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY);
   if (authConfigured) {
-    await expect(page.getByRole("heading", { name: "Вход в контур заявок" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Вход администратора" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Войти" })).toBeVisible();
   } else {
     await expect(page.getByRole("heading", { name: "Админка ещё не подключена" })).toBeVisible();
     await expect(page.getByText("NEXT_PUBLIC_SUPABASE_URL · NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY")).toBeVisible();
   }
   await page.screenshot({ path: testInfo.outputPath("admin-setup.png"), fullPage: true });
+  expect(runtimeErrors).toEqual([]);
+});
+
+test("bootstrap administrator can open the protected lead workspace", async ({ page }, testInfo) => {
+  test.skip(!process.env.TEST_ADMIN_LOGIN || !process.env.TEST_ADMIN_PASSWORD, "Bootstrap credentials are only provided to secure integration runs.");
+  const runtimeErrors: string[] = [];
+  page.on("pageerror", (error) => runtimeErrors.push(error.message));
+
+  await page.goto("/admin/", { waitUntil: "domcontentloaded" });
+  await page.getByLabel("Тип входа").getByRole("button", { name: "Администратор" }).click();
+  await page.getByLabel("Логин").fill(process.env.TEST_ADMIN_LOGIN ?? "");
+  await page.getByLabel("Пароль").fill(process.env.TEST_ADMIN_PASSWORD ?? "");
+  await page.getByRole("button", { name: "Войти" }).click();
+  await expect(page.getByRole("heading", { name: "Входящие" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Команда" })).toBeVisible();
+  await page.getByRole("button", { name: "Команда" }).click();
+  const teamDialog = page.getByRole("dialog", { name: "Управление командой" });
+  await expect(teamDialog).toBeVisible();
+  await expect(teamDialog.getByText("Доступы")).toBeVisible();
+  await expect(teamDialog.getByText("Администратор", { exact: true }).last()).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath("admin-workspace.png"), fullPage: false });
   expect(runtimeErrors).toEqual([]);
 });

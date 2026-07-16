@@ -2262,6 +2262,7 @@ p {
 .admin-rail-label { margin: 4rem .55rem 1rem; color: #647070; }
 .admin-rail-link { display: flex; align-items: center; gap: .75rem; padding: .9rem .7rem; border-left: 1px solid transparent; color: #a9b0af; font-size: .82rem; text-decoration: none; }
 .admin-rail-link--active { border-color: #d2aa81; background: rgba(210, 170, 129, .08); color: #f0ebe5; }
+.admin-rail-button { width: 100%; border-top: 0; border-right: 0; border-bottom: 0; background: transparent; cursor: pointer; font: inherit; text-align: left; }
 .admin-rail-foot { display: grid; gap: .8rem; margin-top: auto; padding: 1rem .55rem .1rem; border-top: 1px solid rgba(255,255,255,.12); color: #88918f; font-size: .68rem; }
 .admin-rail-foot span, .admin-rail-foot button { display: flex; align-items: center; gap: .45rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .admin-rail-foot button { padding: 0; border: 0; background: transparent; color: #c6ccc9; cursor: pointer; font: inherit; }
@@ -2330,9 +2331,27 @@ p {
 .admin-auth-panel label { display: grid; gap: .45rem; color: #d7d9d3; font-size: .7rem; }
 .admin-auth-panel input { width: 100%; padding: .85rem .9rem; border: 1px solid rgba(255,255,255,.2); border-radius: 0; outline: 0; background: #0e1416; color: #f0f0eb; font: .82rem var(--font-manrope), sans-serif; }
 .admin-auth-panel input:focus { border-color: #d2aa81; }
+.admin-login-mode { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid rgba(255,255,255,.18); }
+.admin-login-mode button { padding: .7rem; border: 0; border-right: 1px solid rgba(255,255,255,.18); background: transparent; color: #89938f; cursor: pointer; font: .66rem var(--font-manrope), sans-serif; }
+.admin-login-mode button:last-child { border-right: 0; }
+.admin-login-mode button.is-active { background: rgba(210,170,129,.12); color: #e4bd95; }
 .admin-primary-button { display: inline-flex; align-items: center; justify-content: center; gap: .6rem; min-height: 3rem; border: 1px solid #e1b98e; background: #d2aa81; color: #151413; cursor: pointer; font: 600 .77rem var(--font-manrope), sans-serif; }
 .admin-auth-panel code { overflow-wrap: anywhere; color: #c5a47f; font-size: .61rem; line-height: 1.6; }
 .admin-loading-copy { color: #b9c0bc; font-size: .82rem; }
+.admin-team-backdrop { position: fixed; z-index: 20; inset: 0; display: grid; place-items: center; padding: 1.2rem; background: rgba(0,0,0,.72); backdrop-filter: blur(6px); }
+.admin-team-panel { width: min(40rem, 100%); max-height: min(44rem, calc(100svh - 2.4rem)); overflow: auto; padding: clamp(1.25rem, 3vw, 2.3rem); border: 1px solid rgba(210,170,129,.58); background: #0b1012; box-shadow: 0 2rem 6rem rgba(0,0,0,.6); }
+.admin-team-panel header { display: flex; align-items: start; justify-content: space-between; gap: 1rem; padding-bottom: 1.2rem; border-bottom: 1px solid rgba(255,255,255,.12); }
+.admin-team-panel h2 { margin: .4rem 0 0; font-size: 2rem; font-weight: 400; letter-spacing: -.06em; }
+.admin-team-panel header > button { display: grid; width: 2rem; height: 2rem; place-items: center; border: 1px solid rgba(255,255,255,.18); background: transparent; color: #e5e9e2; cursor: pointer; }
+.admin-team-panel form { display: grid; gap: .85rem; padding: 1.3rem 0; border-bottom: 1px solid rgba(255,255,255,.12); }
+.admin-team-panel label { display: grid; gap: .35rem; color: #d9ddd6; font-size: .68rem; }
+.admin-team-panel input { width: 100%; padding: .75rem .85rem; border: 1px solid rgba(255,255,255,.2); border-radius: 0; outline: 0; background: #0e1416; color: #eff0eb; font: .76rem var(--font-manrope), sans-serif; }
+.admin-team-panel input:focus { border-color: #d2aa81; }
+.admin-team-list { display: grid; gap: .6rem; padding-top: 1.3rem; }
+.admin-team-list > div { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .72rem 0; border-bottom: 1px solid rgba(255,255,255,.08); }
+.admin-team-list > div > span:first-of-type { display: grid; gap: .18rem; min-width: 0; }
+.admin-team-list strong { overflow: hidden; color: #e5e8e1; font-size: .75rem; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+.admin-team-list small { overflow: hidden; color: #78827f; font-size: .63rem; text-overflow: ellipsis; white-space: nowrap; }
 
 @media (max-width: 980px) {
   .admin-shell { grid-template-columns: 1fr; }

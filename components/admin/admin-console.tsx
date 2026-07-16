@@ -10,15 +10,22 @@ import { Funnel } from "@phosphor-icons/react/dist/csr/Funnel";
 import { LockKey } from "@phosphor-icons/react/dist/csr/LockKey";
 import { SignOut } from "@phosphor-icons/react/dist/csr/SignOut";
 import { User } from "@phosphor-icons/react/dist/csr/User";
+import { UserPlus } from "@phosphor-icons/react/dist/csr/UserPlus";
+import { UsersThree } from "@phosphor-icons/react/dist/csr/UsersThree";
 import { X } from "@phosphor-icons/react/dist/csr/X";
 import {
+  bootstrapAdmin,
+  createAdminStaff,
   getAdminFileUrl,
   getAdminLead,
   getAdminLeads,
+  getAdminMe,
+  getAdminStaff,
   leadStatuses,
   type LeadDetail,
   type LeadStatus,
   type LeadSummary,
+  type StaffMember,
   updateAdminLeadStatus,
 } from "@/lib/admin-api";
 import { adminAuthConfigured, getAdminAuthClient } from "@/lib/admin-auth";
@@ -68,6 +75,8 @@ function EmptyInspector() {
 }
 
 export function AdminConsole() {
+  const [loginMode, setLoginMode] = useState<"admin" | "staff">("admin");
+  const [login, setLogin] = useState("admin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [accessToken, setAccessToken] = useState("");
@@ -82,6 +91,13 @@ export function AdminConsole() {
   const [selectedLead, setSelectedLead] = useState<LeadDetail | null>(null);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [currentStaff, setCurrentStaff] = useState<StaffMember | null>(null);
+  const [teamOpen, setTeamOpen] = useState(false);
+  const [teamLoading, setTeamLoading] = useState(false);
+  const [teamMembers, setTeamMembers] = useState<StaffMember[]>([]);
+  const [newStaffName, setNewStaffName] = useState("");
+  const [newStaffEmail, setNewStaffEmail] = useState("");
+  const [newStaffPassword, setNewStaffPassword] = useState("");
 
   const loadLeads = useCallback(async (token: string, selectedStatus: LeadStatus | "all") => {
     setItemsLoading(true);
@@ -136,6 +152,21 @@ export function AdminConsole() {
   }, [accessToken, filter, loadLeads]);
 
   useEffect(() => {
+    if (!accessToken) {
+      setCurrentStaff(null);
+      return;
+    }
+    const loadProfile = async () => {
+      try {
+        setCurrentStaff(await getAdminMe(accessToken));
+      } catch (profileError) {
+        setError(profileError instanceof Error ? profileError.message : "Не удалось проверить права доступа.");
+      }
+    };
+    void loadProfile();
+  }, [accessToken]);
+
+  useEffect(() => {
     if (accessToken && selectedId) void openLead(accessToken, selectedId);
   }, [accessToken, openLead, selectedId]);
 
@@ -143,12 +174,15 @@ export function AdminConsole() {
 
   const signIn = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!email.trim() || !password) return;
+    if ((loginMode === "admin" ? !login.trim() : !email.trim()) || !password) return;
     setLoginLoading(true);
     setError("");
     try {
+      const authEmail = loginMode === "admin"
+        ? await bootstrapAdmin(login.trim(), password)
+        : email.trim().toLowerCase();
       const { error: signInError } = await getAdminAuthClient().auth.signInWithPassword({
-        email: email.trim(),
+        email: authEmail,
         password,
       });
       if (signInError) throw signInError;
@@ -166,6 +200,45 @@ export function AdminConsole() {
     setSelectedId("");
     setSelectedLead(null);
     setNotice("");
+    setCurrentStaff(null);
+    setTeamOpen(false);
+  };
+
+  const openTeam = async () => {
+    if (!accessToken || currentStaff?.role !== "admin") return;
+    setTeamOpen(true);
+    setTeamLoading(true);
+    setError("");
+    try {
+      setTeamMembers(await getAdminStaff(accessToken));
+    } catch (teamError) {
+      setError(teamError instanceof Error ? teamError.message : "Не удалось загрузить команду.");
+    } finally {
+      setTeamLoading(false);
+    }
+  };
+
+  const addStaffMember = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!accessToken) return;
+    setTeamLoading(true);
+    setError("");
+    try {
+      const created = await createAdminStaff(accessToken, {
+        fullName: newStaffName.trim(),
+        email: newStaffEmail.trim(),
+        password: newStaffPassword,
+      });
+      setTeamMembers((current) => [...current, created]);
+      setNewStaffName("");
+      setNewStaffEmail("");
+      setNewStaffPassword("");
+      setNotice("Сотрудник добавлен");
+    } catch (staffError) {
+      setError(staffError instanceof Error ? staffError.message : "Не удалось добавить сотрудника.");
+    } finally {
+      setTeamLoading(false);
+    }
   };
 
   const changeStatus = async (status: LeadStatus) => {
@@ -219,12 +292,13 @@ export function AdminConsole() {
         <form className="admin-auth-panel" onSubmit={signIn}>
           <span className="admin-brand-mark" aria-hidden="true" />
           <span className="admin-kicker">СтеклоСтройГрупп / CRM</span>
-          <h1>Вход в контур заявок</h1>
-          <p>Только для сотрудников, которым выдан доступ в Supabase.</p>
-          <label>
-            <span>Почта</span>
-            <input value={email} onChange={(event) => setEmail(event.target.value)} type="email" autoComplete="email" required />
-          </label>
+          <h1>{loginMode === "admin" ? "Вход администратора" : "Вход сотрудника"}</h1>
+          <p>{loginMode === "admin" ? "Управление заявками и командой." : "Используйте доступ, который выдал администратор."}</p>
+          <div className="admin-login-mode" role="group" aria-label="Тип входа">
+            <button className={loginMode === "admin" ? "is-active" : ""} type="button" onClick={() => setLoginMode("admin")}>Администратор</button>
+            <button className={loginMode === "staff" ? "is-active" : ""} type="button" onClick={() => setLoginMode("staff")}>Сотрудник</button>
+          </div>
+          {loginMode === "admin" ? <label><span>Логин</span><input value={login} onChange={(event) => setLogin(event.target.value)} autoComplete="username" required /></label> : <label><span>Почта</span><input value={email} onChange={(event) => setEmail(event.target.value)} type="email" autoComplete="email" required /></label>}
           <label>
             <span>Пароль</span>
             <input value={password} onChange={(event) => setPassword(event.target.value)} type="password" autoComplete="current-password" required />
@@ -247,8 +321,9 @@ export function AdminConsole() {
         </Link>
         <div className="admin-rail-label">Операции</div>
         <a className="admin-rail-link admin-rail-link--active" href="#leads"><FileText size={18} />Заявки</a>
+        {currentStaff?.role === "admin" ? <button className="admin-rail-link admin-rail-button" type="button" onClick={() => void openTeam()}><UsersThree size={18} />Команда</button> : null}
         <div className="admin-rail-foot">
-          <span><User size={16} />{accountEmail}</span>
+          <span><User size={16} />{currentStaff?.full_name || (currentStaff?.role === "admin" ? "Администратор" : accountEmail)}</span>
           <button type="button" onClick={signOut}><SignOut size={17} />Выйти</button>
         </div>
       </aside>
@@ -300,6 +375,20 @@ export function AdminConsole() {
           </aside>
         </div>
         {error ? <div className="admin-toast admin-message admin-message--error"><X size={15} />{error}</div> : null}
+        {teamOpen && currentStaff?.role === "admin" ? (
+          <div className="admin-team-backdrop" role="presentation" onMouseDown={() => setTeamOpen(false)}>
+            <section className="admin-team-panel" role="dialog" aria-modal="true" aria-label="Управление командой" onMouseDown={(event) => event.stopPropagation()}>
+              <header><div><span className="admin-kicker">Полный доступ</span><h2>Команда</h2></div><button type="button" onClick={() => setTeamOpen(false)} aria-label="Закрыть"><X size={19} /></button></header>
+              <form onSubmit={addStaffMember}>
+                <label><span>Имя сотрудника</span><input value={newStaffName} onChange={(event) => setNewStaffName(event.target.value)} placeholder="Иван Петров" /></label>
+                <label><span>Рабочая почта</span><input value={newStaffEmail} onChange={(event) => setNewStaffEmail(event.target.value)} type="email" placeholder="team@company.by" required /></label>
+                <label><span>Временный пароль</span><input value={newStaffPassword} onChange={(event) => setNewStaffPassword(event.target.value)} type="password" minLength={10} required /></label>
+                <button className="admin-primary-button" type="submit" disabled={teamLoading}><UserPlus size={18} />Добавить сотрудника</button>
+              </form>
+              <div className="admin-team-list"><span className="admin-section-label">Доступы</span>{teamLoading && !teamMembers.length ? <p className="admin-muted">Загружаем команду…</p> : teamMembers.map((member) => <div key={member.id}><span><strong>{member.full_name || (member.role === "admin" ? "Администратор" : member.email)}</strong><small>{member.role === "admin" ? "Системный доступ без email-входа" : member.email}</small></span><span className={`admin-status admin-status--${member.role === "admin" ? "won" : "qualified"}`}>{member.role === "admin" ? "Администратор" : "Сотрудник"}</span></div>)}</div>
+            </section>
+          </div>
+        ) : null}
       </section>
     </main>
   );
