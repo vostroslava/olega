@@ -47,7 +47,9 @@ const db = createClient(supabaseUrl, serviceRoleKey, {
 const LEAD_STATUSES = ["new", "reviewed", "contacted", "qualified", "won", "lost", "spam"] as const;
 const adminLeadSelect = "id,status,source,page_url,name,phone,email,object_type,size_notes,material,message,utm,created_at,updated_at,lead_files(id,original_name,mime_type,byte_size,created_at)";
 const staffMemberSelect = "id,user_id,email,full_name,role,created_at";
-const sitePageSelect = "id,slug,navigation_label,page_title,meta_description,canonical_path,schema_type,hero_title,hero_lead,hero_image_url,content,state,published_page_title,published_meta_description,published_content,published_at,updated_at";
+const sitePageSelect = "id,slug,navigation_label,page_title,meta_description,canonical_path,schema_type,hero_title,hero_lead,hero_image_url,content,template_key,seo_robots,og_title,og_description,og_image_url,twitter_card,sitemap_priority,sitemap_change_frequency,is_indexable,is_in_navigation,navigation_order,navigation_parent,state,published_page_title,published_meta_description,published_content,published_snapshot,published_at,updated_at";
+const siteBlockSelect = "id,page_id,block_key,block_type,label,position,is_visible,data,published_data,published_position,published_is_visible,published_at,created_at,updated_at";
+const siteNavigationSelect = "id,location,label,href,position,is_visible,opens_new_tab,page_id,created_at,updated_at";
 
 type JsonRecord = Record<string, unknown>;
 
@@ -227,6 +229,38 @@ function siteImageUrl(value: unknown) {
   return !url || url.startsWith("/") || /^https:\/\//.test(url) ? url || null : null;
 }
 
+function safeJson(value: unknown, maxKeys = 24) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+  return Object.fromEntries(
+    Object.entries(value as JsonRecord)
+      .slice(0, maxKeys)
+      .map(([key, entry]) => [text(key, 80), typeof entry === "string" ? text(entry, 6000) : entry]),
+  );
+}
+
+function blockKey(value: unknown) {
+  const key = text(value, 80).toLowerCase();
+  return /^[a-z0-9_-]{2,80}$/.test(key) ? key : "";
+}
+
+function navigationHref(value: unknown) {
+  const href = text(value, 2000);
+  return /^(https:\/\/|\/)/.test(href) ? href : "";
+}
+
+function contentBlockData(values: JsonRecord) {
+  return {
+    eyebrow: text(values.eyebrow, 120),
+    heading: text(values.heading, 240),
+    body: text(values.body, 6000),
+    ctaLabel: text(values.ctaLabel, 80),
+    ctaHref: navigationHref(values.ctaHref),
+    imageUrl: siteImageUrl(values.imageUrl),
+    imageAlt: text(values.imageAlt, 240),
+    items: Array.isArray(values.items) ? values.items.slice(0, 12).map((item) => safeJson(item, 8)) : [],
+  };
+}
+
 function sitePageSnapshot(page: Record<string, unknown>) {
   return {
     page_title: page.page_title,
@@ -237,6 +271,18 @@ function sitePageSnapshot(page: Record<string, unknown>) {
     hero_lead: page.hero_lead,
     hero_image_url: page.hero_image_url,
     content: page.content,
+    template_key: page.template_key,
+    seo_robots: page.seo_robots,
+    og_title: page.og_title,
+    og_description: page.og_description,
+    og_image_url: page.og_image_url,
+    twitter_card: page.twitter_card,
+    sitemap_priority: page.sitemap_priority,
+    sitemap_change_frequency: page.sitemap_change_frequency,
+    is_indexable: page.is_indexable,
+    is_in_navigation: page.is_in_navigation,
+    navigation_order: page.navigation_order,
+    navigation_parent: page.navigation_parent,
     state: page.state,
   };
 }
@@ -257,6 +303,11 @@ async function addSitePageRevision(page: Record<string, unknown>, action: "draft
     created_by: userId,
   });
   if (inserted.error) throw inserted.error;
+}
+
+async function markCmsPageDraft(pageId: string, userId: string) {
+  const changed = await db.from("site_pages").update({ state: "draft", updated_by: userId }).eq("id", pageId);
+  if (changed.error) throw changed.error;
 }
 
 function safeFileName(name: string) {
@@ -511,15 +562,22 @@ async function handleAdmin(request: Request, path: string) {
     const slug = siteSlug(url.searchParams.get("slug"));
     if (!slug) return json(request, { ok: false, error: "Некорректный адрес страницы." }, 422);
     const values = await request.json() as JsonRecord;
+    const navigationLabel = text(values.navigationLabel, 120);
     const pageTitle = text(values.pageTitle, 160);
     const metaDescription = text(values.metaDescription, 320);
     const canonicalPath = siteSlug(values.canonicalPath);
     const schemaType = text(values.schemaType, 40);
     const heroImageUrl = siteImageUrl(values.heroImageUrl);
-    if (!pageTitle || !metaDescription || !canonicalPath || !["WebPage", "Service", "CollectionPage", "ContactPage", "AboutPage"].includes(schemaType) || heroImageUrl === null && text(values.heroImageUrl, 2000)) {
+    const templateKey = text(values.templateKey, 30) || "landing";
+    const seoRobots = text(values.seoRobots, 30) || "index,follow";
+    const ogImageUrl = siteImageUrl(values.ogImageUrl);
+    const sitemapPriority = Number(values.sitemapPriority ?? 0.5);
+    const sitemapChangeFrequency = text(values.sitemapChangeFrequency, 20) || "monthly";
+    if (!navigationLabel || !pageTitle || !metaDescription || !canonicalPath || !["WebPage", "Service", "CollectionPage", "ContactPage", "AboutPage"].includes(schemaType) || !["home", "audience", "projects", "production", "contacts", "landing", "article"].includes(templateKey) || !["index,follow", "noindex,follow", "noindex,nofollow"].includes(seoRobots) || !["summary", "summary_large_image"].includes(text(values.twitterCard, 30) || "summary_large_image") || !["always", "hourly", "daily", "weekly", "monthly", "yearly", "never"].includes(sitemapChangeFrequency) || !Number.isFinite(sitemapPriority) || sitemapPriority < 0 || sitemapPriority > 1 || heroImageUrl === null && text(values.heroImageUrl, 2000) || ogImageUrl === null && text(values.ogImageUrl, 2000)) {
       return json(request, { ok: false, error: "Проверьте title, description, canonical URL, schema и адрес изображения." }, 422);
     }
     const updated = await db.from("site_pages").update({
+      navigation_label: navigationLabel,
       page_title: pageTitle,
       meta_description: metaDescription,
       canonical_path: canonicalPath,
@@ -527,6 +585,18 @@ async function handleAdmin(request: Request, path: string) {
       hero_title: text(values.heroTitle, 180) || null,
       hero_lead: text(values.heroLead, 480) || null,
       hero_image_url: heroImageUrl,
+      template_key: templateKey,
+      seo_robots: seoRobots,
+      og_title: text(values.ogTitle, 160) || null,
+      og_description: text(values.ogDescription, 320) || null,
+      og_image_url: ogImageUrl,
+      twitter_card: text(values.twitterCard, 30) || "summary_large_image",
+      sitemap_priority: sitemapPriority,
+      sitemap_change_frequency: sitemapChangeFrequency,
+      is_indexable: values.isIndexable !== false,
+      is_in_navigation: values.isInNavigation !== false,
+      navigation_order: Math.max(0, Math.min(9999, Number(values.navigationOrder ?? 100) || 100)),
+      navigation_parent: text(values.navigationParent, 80) || null,
       state: "draft",
       updated_by: contentEditor.user.id,
     }).eq("slug", slug).select(sitePageSelect).maybeSingle();
@@ -544,6 +614,18 @@ async function handleAdmin(request: Request, path: string) {
     const current = await db.from("site_pages").select(sitePageSelect).eq("slug", slug).maybeSingle();
     if (current.error) throw current.error;
     if (!current.data) return json(request, { ok: false, error: "Страница не найдена." }, 404);
+    const blocks = await db.from("site_page_blocks").select(siteBlockSelect).eq("page_id", current.data.id).order("position");
+    if (blocks.error) throw blocks.error;
+    for (const block of blocks.data || []) {
+      const publishedBlock = await db.from("site_page_blocks").update({
+        published_data: block.data,
+        published_position: block.position,
+        published_is_visible: block.is_visible,
+        published_at: new Date().toISOString(),
+      }).eq("id", block.id);
+      if (publishedBlock.error) throw publishedBlock.error;
+    }
+    const snapshot = { ...sitePageSnapshot(current.data as Record<string, unknown>), blocks: blocks.data || [] };
     const published = await db.from("site_pages").update({
       state: "published",
       published_page_title: current.data.page_title,
@@ -554,13 +636,246 @@ async function handleAdmin(request: Request, path: string) {
         hero_image_url: current.data.hero_image_url,
         content: current.data.content,
       },
+      published_snapshot: snapshot,
       published_at: new Date().toISOString(),
       published_by: contentEditor.user.id,
       updated_by: contentEditor.user.id,
     }).eq("id", current.data.id).select(sitePageSelect).single();
     if (published.error) throw published.error;
     await addSitePageRevision(published.data as Record<string, unknown>, "published", contentEditor.user.id);
+    const releaseEvent = await db.from("site_release_events").insert({
+      page_id: published.data.id,
+      kind: "page_published",
+      status: "completed",
+      metadata: { slug: published.data.slug },
+      created_by: contentEditor.user.id,
+    });
+    if (releaseEvent.error) throw releaseEvent.error;
     return json(request, { ok: true, page: published.data });
+  }
+
+  if (request.method === "POST" && path === "/admin/content/pages") {
+    const contentEditor = await requireContentEditor(request);
+    if (!contentEditor.user) return json(request, { ok: false, error: contentEditor.error }, contentEditor.status);
+    const values = await request.json() as JsonRecord;
+    const slug = siteSlug(values.slug);
+    const label = text(values.navigationLabel, 120);
+    if (!slug || slug === "/" || !label) return json(request, { ok: false, error: "Укажите адрес и название новой страницы." }, 422);
+    const created = await db.from("site_pages").insert({
+      slug,
+      navigation_label: label,
+      page_title: text(values.pageTitle, 160) || `${label} | СтеклоСтройГрупп`,
+      meta_description: text(values.metaDescription, 320) || `Информация о разделе «${label}» компании СтеклоСтройГрупп.`,
+      canonical_path: slug,
+      schema_type: "WebPage",
+      template_key: "landing",
+      is_in_navigation: false,
+      updated_by: contentEditor.user.id,
+    }).select(sitePageSelect).single();
+    if (created.error) {
+      if (/duplicate/i.test(created.error.message)) return json(request, { ok: false, error: "Страница с таким адресом уже существует." }, 409);
+      throw created.error;
+    }
+    const block = await db.from("site_page_blocks").insert({
+      page_id: created.data.id,
+      block_key: "hero",
+      block_type: "hero",
+      label: "Первый экран",
+      position: 0,
+      data: contentBlockData({ heading: label, body: created.data.meta_description, ctaLabel: "Оставить заявку", ctaHref: "/raschet/" }),
+    });
+    if (block.error) throw block.error;
+    await addSitePageRevision(created.data as Record<string, unknown>, "draft_saved", contentEditor.user.id);
+    return json(request, { ok: true, page: created.data }, 201);
+  }
+
+  if (request.method === "POST" && path === "/admin/content/pages/duplicate") {
+    const contentEditor = await requireContentEditor(request);
+    if (!contentEditor.user) return json(request, { ok: false, error: contentEditor.error }, contentEditor.status);
+    const values = await request.json() as JsonRecord;
+    const sourceSlug = siteSlug(values.sourceSlug);
+    const slug = siteSlug(values.slug);
+    if (!sourceSlug || !slug || slug === "/") return json(request, { ok: false, error: "Проверьте исходную и новую страницу." }, 422);
+    const source = await db.from("site_pages").select(sitePageSelect).eq("slug", sourceSlug).maybeSingle();
+    if (source.error) throw source.error;
+    if (!source.data) return json(request, { ok: false, error: "Исходная страница не найдена." }, 404);
+    const created = await db.from("site_pages").insert({
+      ...sitePageSnapshot(source.data as Record<string, unknown>),
+      slug,
+      navigation_label: text(values.navigationLabel, 120) || `${source.data.navigation_label} — копия`,
+      canonical_path: slug,
+      state: "draft",
+      published_page_title: null,
+      published_meta_description: null,
+      published_content: null,
+      published_snapshot: null,
+      published_at: null,
+      updated_by: contentEditor.user.id,
+    }).select(sitePageSelect).single();
+    if (created.error) throw created.error;
+    const blocks = await db.from("site_page_blocks").select(siteBlockSelect).eq("page_id", source.data.id).order("position");
+    if (blocks.error) throw blocks.error;
+    if (blocks.data?.length) {
+      const copied = await db.from("site_page_blocks").insert(blocks.data.map((block) => ({
+        page_id: created.data.id,
+        block_key: block.block_key,
+        block_type: block.block_type,
+        label: block.label,
+        position: block.position,
+        is_visible: block.is_visible,
+        data: block.data,
+      })));
+      if (copied.error) throw copied.error;
+    }
+    await addSitePageRevision(created.data as Record<string, unknown>, "draft_saved", contentEditor.user.id);
+    return json(request, { ok: true, page: created.data }, 201);
+  }
+
+  if (request.method === "DELETE" && path === "/admin/content/pages") {
+    const admin = await requireAdmin(request);
+    if (!admin.user) return json(request, { ok: false, error: admin.error }, admin.status);
+    const slug = siteSlug(url.searchParams.get("slug"));
+    if (!slug || slug === "/") return json(request, { ok: false, error: "Главную страницу нельзя удалить." }, 422);
+    const deleted = await db.from("site_pages").delete().eq("slug", slug).select("id").maybeSingle();
+    if (deleted.error) throw deleted.error;
+    if (!deleted.data) return json(request, { ok: false, error: "Страница не найдена." }, 404);
+    return json(request, { ok: true, deletedSlug: slug });
+  }
+
+  if (request.method === "GET" && path === "/admin/content/blocks") {
+    const contentEditor = await requireContentEditor(request);
+    if (!contentEditor.user) return json(request, { ok: false, error: contentEditor.error }, contentEditor.status);
+    const slug = siteSlug(url.searchParams.get("slug"));
+    const page = await db.from("site_pages").select("id").eq("slug", slug).maybeSingle();
+    if (page.error) throw page.error;
+    if (!page.data) return json(request, { ok: false, error: "Страница не найдена." }, 404);
+    const blocks = await db.from("site_page_blocks").select(siteBlockSelect).eq("page_id", page.data.id).order("position");
+    if (blocks.error) throw blocks.error;
+    return json(request, { ok: true, blocks: blocks.data || [] });
+  }
+
+  if (request.method === "POST" && path === "/admin/content/blocks") {
+    const contentEditor = await requireContentEditor(request);
+    if (!contentEditor.user) return json(request, { ok: false, error: contentEditor.error }, contentEditor.status);
+    const values = await request.json() as JsonRecord;
+    const slug = siteSlug(values.slug);
+    const type = text(values.blockType, 30);
+    const page = await db.from("site_pages").select("id").eq("slug", slug).maybeSingle();
+    if (page.error) throw page.error;
+    if (!page.data || !["hero", "text", "image", "cards", "projects", "technology", "faq", "quote", "cta"].includes(type)) return json(request, { ok: false, error: "Проверьте страницу и тип блока." }, 422);
+    const last = await db.from("site_page_blocks").select("position").eq("page_id", page.data.id).order("position", { ascending: false }).limit(1).maybeSingle();
+    if (last.error) throw last.error;
+    const key = blockKey(values.blockKey) || `${type}-${Date.now().toString(36)}`;
+    const created = await db.from("site_page_blocks").insert({
+      page_id: page.data.id,
+      block_key: key,
+      block_type: type,
+      label: text(values.label, 120) || "Новый блок",
+      position: (last.data?.position || 0) + 10,
+      data: contentBlockData(values),
+    }).select(siteBlockSelect).single();
+    if (created.error) throw created.error;
+    await markCmsPageDraft(created.data.page_id, contentEditor.user.id);
+    return json(request, { ok: true, block: created.data }, 201);
+  }
+
+  if (request.method === "PUT" && path === "/admin/content/blocks/order") {
+    const contentEditor = await requireContentEditor(request);
+    if (!contentEditor.user) return json(request, { ok: false, error: contentEditor.error }, contentEditor.status);
+    const values = await request.json() as JsonRecord;
+    const slug = siteSlug(values.slug);
+    const blockIds = Array.isArray(values.blockIds) ? values.blockIds.map((value) => text(value, 80)).filter(isUuid) : [];
+    const page = await db.from("site_pages").select("id").eq("slug", slug).maybeSingle();
+    if (page.error) throw page.error;
+    if (!page.data || !blockIds.length) return json(request, { ok: false, error: "Проверьте порядок блоков." }, 422);
+    const existing = await db.from("site_page_blocks").select("id").eq("page_id", page.data.id);
+    if (existing.error) throw existing.error;
+    if (existing.data?.length !== blockIds.length || existing.data.some((block) => !blockIds.includes(block.id))) return json(request, { ok: false, error: "Набор блоков страницы изменился. Обновите редактор." }, 409);
+    for (let index = 0; index < blockIds.length; index += 1) {
+      const temporary = await db.from("site_page_blocks").update({ position: 10_000 + index }).eq("id", blockIds[index]);
+      if (temporary.error) throw temporary.error;
+    }
+    for (let index = 0; index < blockIds.length; index += 1) {
+      const final = await db.from("site_page_blocks").update({ position: index * 10 }).eq("id", blockIds[index]);
+      if (final.error) throw final.error;
+    }
+    await markCmsPageDraft(page.data.id, contentEditor.user.id);
+    return json(request, { ok: true });
+  }
+
+  if (request.method === "PATCH" && segments.length === 4 && segments[0] === "admin" && segments[1] === "content" && segments[2] === "blocks" && isUuid(segments[3])) {
+    const contentEditor = await requireContentEditor(request);
+    if (!contentEditor.user) return json(request, { ok: false, error: contentEditor.error }, contentEditor.status);
+    const values = await request.json() as JsonRecord;
+    const blockType = text(values.blockType, 30);
+    const update: JsonRecord = {
+      label: text(values.label, 120),
+      is_visible: values.isVisible !== false,
+      data: contentBlockData(values),
+    };
+    if (["hero", "text", "image", "cards", "projects", "technology", "faq", "quote", "cta"].includes(blockType)) update.block_type = blockType;
+    if (Number.isFinite(Number(values.position))) update.position = Math.max(0, Math.min(9999, Number(values.position)));
+    const updated = await db.from("site_page_blocks").update(update).eq("id", segments[3]).select(siteBlockSelect).maybeSingle();
+    if (updated.error) throw updated.error;
+    if (!updated.data) return json(request, { ok: false, error: "Блок не найден." }, 404);
+    await markCmsPageDraft(updated.data.page_id, contentEditor.user.id);
+    return json(request, { ok: true, block: updated.data });
+  }
+
+  if (request.method === "DELETE" && segments.length === 4 && segments[0] === "admin" && segments[1] === "content" && segments[2] === "blocks" && isUuid(segments[3])) {
+    const contentEditor = await requireContentEditor(request);
+    if (!contentEditor.user) return json(request, { ok: false, error: contentEditor.error }, contentEditor.status);
+    const deleted = await db.from("site_page_blocks").delete().eq("id", segments[3]).select("id,page_id").maybeSingle();
+    if (deleted.error) throw deleted.error;
+    if (!deleted.data) return json(request, { ok: false, error: "Блок не найден." }, 404);
+    await markCmsPageDraft(deleted.data.page_id, contentEditor.user.id);
+    return json(request, { ok: true });
+  }
+
+  if (request.method === "GET" && path === "/admin/content/navigation") {
+    const contentEditor = await requireContentEditor(request);
+    if (!contentEditor.user) return json(request, { ok: false, error: contentEditor.error }, contentEditor.status);
+    const navigation = await db.from("site_navigation_items").select(siteNavigationSelect).order("location").order("position");
+    if (navigation.error) throw navigation.error;
+    return json(request, { ok: true, navigation: navigation.data || [] });
+  }
+
+  if (request.method === "PUT" && path === "/admin/content/navigation") {
+    const contentEditor = await requireContentEditor(request);
+    if (!contentEditor.user) return json(request, { ok: false, error: contentEditor.error }, contentEditor.status);
+    const values = await request.json() as JsonRecord;
+    const items = Array.isArray(values.items) ? values.items.slice(0, 30) : [];
+    const normalized = items.map((item, index) => {
+      const value = safeJson(item, 10);
+      return { id: text(value.id, 80), location: text(value.location, 20) || "header", label: text(value.label, 120), href: navigationHref(value.href), position: index * 10, is_visible: value.isVisible !== false, opens_new_tab: value.opensNewTab === true };
+    });
+    if (normalized.some((item) => !item.id || !item.label || !item.href || !["header", "footer", "utility"].includes(item.location))) return json(request, { ok: false, error: "Проверьте пункты меню." }, 422);
+    for (const item of normalized) {
+      const updated = await db.from("site_navigation_items").update({ location: item.location, label: item.label, href: item.href, position: item.position, is_visible: item.is_visible, opens_new_tab: item.opens_new_tab }).eq("id", item.id);
+      if (updated.error) throw updated.error;
+    }
+    await db.from("site_release_events").insert({ kind: "navigation_published", status: "completed", metadata: { count: normalized.length }, created_by: contentEditor.user.id });
+    return json(request, { ok: true });
+  }
+
+  if (request.method === "GET" && path === "/admin/content/settings") {
+    const contentEditor = await requireContentEditor(request);
+    if (!contentEditor.user) return json(request, { ok: false, error: contentEditor.error }, contentEditor.status);
+    const settings = await db.from("site_settings").select("setting_key,setting_value,updated_at").order("setting_key");
+    if (settings.error) throw settings.error;
+    return json(request, { ok: true, settings: settings.data || [] });
+  }
+
+  if (request.method === "PUT" && path === "/admin/content/settings") {
+    const admin = await requireAdmin(request);
+    if (!admin.user) return json(request, { ok: false, error: admin.error }, admin.status);
+    const values = await request.json() as JsonRecord;
+    const key = text(values.key, 80);
+    if (!["brand", "contacts", "social", "default_seo", "analytics"].includes(key)) return json(request, { ok: false, error: "Этот раздел настроек недоступен." }, 422);
+    const saved = await db.from("site_settings").upsert({ setting_key: key, setting_value: safeJson(values.value, 20), updated_by: admin.user.id }, { onConflict: "setting_key" }).select("setting_key,setting_value,updated_at").single();
+    if (saved.error) throw saved.error;
+    await db.from("site_release_events").insert({ kind: "settings_saved", status: "completed", metadata: { key }, created_by: admin.user.id });
+    return json(request, { ok: true, setting: saved.data });
   }
 
   if (request.method === "GET" && path === "/admin/content/media") {
@@ -722,13 +1037,32 @@ async function handlePublicSiteContent(request: Request) {
   const slug = siteSlug(url.searchParams.get("slug"));
   if (!slug) return json(request, { ok: false, error: "Некорректный адрес страницы." }, 422);
   const result = await db.from("site_pages")
-    .select("slug,navigation_label,published_page_title,published_meta_description,published_content,published_at")
+    .select("id,slug,navigation_label,published_page_title,published_meta_description,published_content,published_snapshot,published_at")
     .eq("slug", slug)
     .eq("state", "published")
     .maybeSingle();
   if (result.error) throw result.error;
   if (!result.data) return json(request, { ok: false, error: "Страница не опубликована." }, 404);
-  return json(request, { ok: true, page: result.data });
+  const [blocks, navigation, settings] = await Promise.all([
+    db.from("site_page_blocks").select("id,page_id,block_key,block_type,label,published_data,published_position,published_is_visible,published_at").eq("page_id", result.data.id).eq("published_is_visible", true).order("published_position"),
+    db.from("site_navigation_items").select(siteNavigationSelect).eq("location", "header").eq("is_visible", true).order("position"),
+    db.from("site_settings").select("setting_key,setting_value").in("setting_key", ["brand", "contacts", "social", "default_seo"]),
+  ]);
+  if (blocks.error) throw blocks.error;
+  if (navigation.error) throw navigation.error;
+  if (settings.error) throw settings.error;
+  const publishedBlocks = (blocks.data || []).map((block) => ({
+    id: block.id,
+    page_id: block.page_id,
+    block_key: block.block_key,
+    block_type: block.block_type,
+    label: block.label,
+    position: block.published_position,
+    is_visible: block.published_is_visible,
+    data: block.published_data,
+    published_at: block.published_at,
+  }));
+  return json(request, { ok: true, page: result.data, blocks: publishedBlocks, navigation: navigation.data || [], settings: settings.data || [] });
 }
 
 const handler = {
