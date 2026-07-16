@@ -10,7 +10,7 @@ const attributionKeys = [
 
 export const siteApiUrl = configuredSiteApiUrl;
 
-export function siteApiEndpoint(path: "lead" | "chat" | "health") {
+export function siteApiEndpoint(path: "lead" | "chat" | "health" | "admin") {
   return siteApiUrl ? `${siteApiUrl}/${path}` : "";
 }
 

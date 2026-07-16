@@ -44,6 +44,9 @@ const db = createClient(supabaseUrl, serviceRoleKey, {
   auth: { persistSession: false, autoRefreshToken: false },
 });
 
+const LEAD_STATUSES = ["new", "reviewed", "contacted", "qualified", "won", "lost", "spam"] as const;
+const adminLeadSelect = "id,status,source,page_url,name,phone,email,object_type,size_notes,material,message,utm,created_at,updated_at,lead_files(id,original_name,mime_type,byte_size,created_at)";
+
 type JsonRecord = Record<string, unknown>;
 
 function allowedOrigins() {
@@ -77,6 +80,68 @@ function json(request: Request, body: JsonRecord, status = 200) {
 
 function text(value: unknown, maxLength = 4000) {
   return String(value ?? "").trim().slice(0, maxLength);
+}
+
+function adminEmails() {
+  return new Set(
+    (Deno.env.get("SITE_ADMIN_EMAILS") || "")
+      .split(",")
+      .map((value) => value.trim().toLowerCase())
+      .filter(Boolean),
+  );
+}
+
+async function requireAdmin(request: Request) {
+  const allowedEmails = adminEmails();
+  if (allowedEmails.size === 0) return { user: null, status: 503, error: "Админ-контур ещё не настроен." };
+
+  const authorization = request.headers.get("authorization") || "";
+  const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+  if (!token) return { user: null, status: 401, error: "Требуется вход." };
+
+  const { data, error } = await db.auth.getUser(token);
+  const email = data.user?.email?.toLowerCase();
+  if (error || !data.user || !email || !allowedEmails.has(email)) {
+    return { user: null, status: 403, error: "Недостаточно прав для этого контура." };
+  }
+  return { user: data.user, status: 200, error: "" };
+}
+
+async function addLeadEvent(
+  leadId: string,
+  kind: "created" | "status_changed" | "notification_sent" | "notification_failed",
+  values: JsonRecord = {},
+) {
+  const result = await db.from("lead_events").insert({ lead_id: leadId, kind, ...values });
+  if (result.error) console.error("Unable to create lead event", result.error);
+}
+
+async function notifyNewLead(lead: { id: string; name: string; phone: string; objectType: string; message: string }) {
+  const token = Deno.env.get("TELEGRAM_BOT_TOKEN");
+  const chatId = Deno.env.get("TELEGRAM_LEADS_CHAT_ID");
+  if (!token || !chatId) return;
+
+  const message = [
+    "Новая заявка с сайта СтеклоСтройГрупп",
+    `Клиент: ${lead.name}`,
+    `Телефон: ${lead.phone}`,
+    lead.objectType ? `Объект: ${lead.objectType}` : "",
+    lead.message ? `Задача: ${lead.message.slice(0, 700)}` : "",
+    `ID: ${lead.id}`,
+  ].filter(Boolean).join("\n");
+
+  try {
+    const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: chatId, text: message, disable_web_page_preview: true }),
+    });
+    if (!response.ok) throw new Error(`Telegram returned ${response.status}`);
+    await addLeadEvent(lead.id, "notification_sent", { metadata: { channel: "telegram" } });
+  } catch (error) {
+    console.error("Telegram notification failed", error);
+    await addLeadEvent(lead.id, "notification_failed", { metadata: { channel: "telegram" } });
+  }
 }
 
 function isUuid(value: string) {
@@ -174,6 +239,7 @@ async function handleLead(request: Request) {
   };
 
   let { data: lead } = await db.from("leads").select("id").eq("client_request_id", clientRequestId).maybeSingle();
+  let createdNewLead = false;
   if (!lead) {
     const created = await db.from("leads").insert({
       client_request_id: clientRequestId,
@@ -193,6 +259,8 @@ async function handleLead(request: Request) {
     }).select("id").single();
     if (created.error) throw created.error;
     lead = created.data;
+    createdNewLead = true;
+    await addLeadEvent(lead.id, "created", { metadata: { source: text(values.source, 160) || "website" } });
   }
 
   let fileUploaded = false;
@@ -237,6 +305,16 @@ async function handleLead(request: Request) {
   const queued = await db.from("ai_tasks").insert({ kind: "lead_intake", lead_id: lead.id, priority: 40, payload: { source: "site-api" } });
   if (queued.error && queued.error.code !== "23505") throw queued.error;
 
+  if (createdNewLead) {
+    await notifyNewLead({
+      id: lead.id,
+      name,
+      phone,
+      objectType: text(values.objectType ?? values.product, 240),
+      message: text(values.message, 12000),
+    });
+  }
+
   return json(request, {
     ok: true,
     accepted: true,
@@ -245,6 +323,70 @@ async function handleLead(request: Request) {
     aiQueued: true,
     workerOnline: await workerOnline(),
   }, 201);
+}
+
+async function handleAdmin(request: Request, path: string) {
+  const auth = await requireAdmin(request);
+  if (!auth.user) return json(request, { ok: false, error: auth.error }, auth.status);
+
+  const url = new URL(request.url);
+  const segments = path.split("/").filter(Boolean);
+  const leadId = segments[2] || "";
+
+  if (request.method === "GET" && path === "/admin/leads") {
+    const requestedStatus = url.searchParams.get("status") || "all";
+    if (requestedStatus !== "all" && !LEAD_STATUSES.includes(requestedStatus as typeof LEAD_STATUSES[number])) {
+      return json(request, { ok: false, error: "Некорректный статус." }, 422);
+    }
+    let query = db.from("leads").select(adminLeadSelect, { count: "exact" }).order("created_at", { ascending: false }).range(0, 99);
+    if (requestedStatus !== "all") query = query.eq("status", requestedStatus);
+    const result = await query;
+    if (result.error) throw result.error;
+    return json(request, { ok: true, leads: result.data || [], total: result.count || 0 });
+  }
+
+  if (request.method === "GET" && segments.length === 3 && segments[0] === "admin" && segments[1] === "leads" && isUuid(leadId)) {
+    const result = await db.from("leads")
+      .select(`${adminLeadSelect},lead_events(id,kind,from_status,to_status,metadata,created_at),lead_ai_reviews(id,summary,category,priority,completeness,missing_questions,flags,manager_reply_draft,model,created_at)`)
+      .eq("id", leadId).maybeSingle();
+    if (result.error) throw result.error;
+    if (!result.data) return json(request, { ok: false, error: "Заявка не найдена." }, 404);
+    return json(request, { ok: true, lead: result.data });
+  }
+
+  if (request.method === "PATCH" && segments.length === 4 && segments[0] === "admin" && segments[1] === "leads" && segments[3] === "status" && isUuid(leadId)) {
+    const values = await request.json() as JsonRecord;
+    const nextStatus = text(values.status, 30) as typeof LEAD_STATUSES[number];
+    if (!LEAD_STATUSES.includes(nextStatus)) return json(request, { ok: false, error: "Некорректный статус." }, 422);
+    const current = await db.from("leads").select("id,status").eq("id", leadId).maybeSingle();
+    if (current.error) throw current.error;
+    if (!current.data) return json(request, { ok: false, error: "Заявка не найдена." }, 404);
+    if (current.data.status !== nextStatus) {
+      const updated = await db.from("leads").update({ status: nextStatus }).eq("id", leadId);
+      if (updated.error) throw updated.error;
+      await addLeadEvent(leadId, "status_changed", {
+        actor_user_id: auth.user.id,
+        from_status: current.data.status,
+        to_status: nextStatus,
+      });
+    }
+    const result = await db.from("leads")
+      .select(`${adminLeadSelect},lead_events(id,kind,from_status,to_status,metadata,created_at),lead_ai_reviews(id,summary,category,priority,completeness,missing_questions,flags,manager_reply_draft,model,created_at)`)
+      .eq("id", leadId).single();
+    if (result.error) throw result.error;
+    return json(request, { ok: true, lead: result.data });
+  }
+
+  if (request.method === "GET" && segments.length === 5 && segments[0] === "admin" && segments[1] === "leads" && segments[3] === "files" && isUuid(leadId) && isUuid(segments[4])) {
+    const file = await db.from("lead_files").select("bucket,object_path").eq("lead_id", leadId).eq("id", segments[4]).maybeSingle();
+    if (file.error) throw file.error;
+    if (!file.data) return json(request, { ok: false, error: "Файл не найден." }, 404);
+    const signed = await db.storage.from(file.data.bucket).createSignedUrl(file.data.object_path, 60);
+    if (signed.error || !signed.data?.signedUrl) throw signed.error || new Error("Unable to sign file");
+    return json(request, { ok: true, url: signed.data.signedUrl });
+  }
+
+  return json(request, { ok: false, error: "Not found" }, 404);
 }
 
 async function chatSession(token: string) {
@@ -332,6 +474,7 @@ const handler = {
       if (request.method === "POST" && path === "/lead") return await handleLead(request);
       if (request.method === "POST" && path === "/chat") return await handleChatPost(request);
       if (request.method === "GET" && path === "/chat") return await handleChatGet(request);
+      if (path.startsWith("/admin")) return await handleAdmin(request, path);
       return json(request, { ok: false, error: "Not found" }, 404);
     } catch (error) {
       console.error(error);

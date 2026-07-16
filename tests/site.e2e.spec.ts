@@ -49,3 +49,20 @@ test("quote wizard tabs are directly navigable and preserve the project", async 
   await expect(size).toHaveValue("Фасад 8 × 3 м");
   expect(runtimeErrors).toEqual([]);
 });
+
+test("admin route keeps the lead database closed until auth is configured", async ({ page }, testInfo) => {
+  const runtimeErrors: string[] = [];
+  page.on("pageerror", (error) => runtimeErrors.push(error.message));
+
+  await page.goto("/admin/", { waitUntil: "domcontentloaded" });
+  const authConfigured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY);
+  if (authConfigured) {
+    await expect(page.getByRole("heading", { name: "Вход в контур заявок" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Войти" })).toBeVisible();
+  } else {
+    await expect(page.getByRole("heading", { name: "Админка ещё не подключена" })).toBeVisible();
+    await expect(page.getByText("NEXT_PUBLIC_SUPABASE_URL · NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY")).toBeVisible();
+  }
+  await page.screenshot({ path: testInfo.outputPath("admin-setup.png"), fullPage: true });
+  expect(runtimeErrors).toEqual([]);
+});

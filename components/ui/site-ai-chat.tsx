@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { ChatCircleDots } from "@phosphor-icons/react/dist/csr/ChatCircleDots";
 import { PaperPlaneTilt } from "@phosphor-icons/react/dist/csr/PaperPlaneTilt";
@@ -27,6 +28,7 @@ const suggestions = [
 const wait = (duration: number) => new Promise((resolve) => window.setTimeout(resolve, duration));
 
 export function SiteAiChat() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -153,6 +155,8 @@ export function SiteAiChat() {
     event.preventDefault();
     void sendMessage(input);
   };
+
+  if (pathname.startsWith("/admin")) return null;
 
   return (
     <div className={`site-ai-chat ${open ? "is-open" : ""}`}>

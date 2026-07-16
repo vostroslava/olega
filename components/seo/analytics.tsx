@@ -74,6 +74,7 @@ export function Analytics() {
   }, []);
 
   useEffect(() => {
+    if (pathname.startsWith("/admin")) return;
     if (consent !== "accepted") return;
 
     const onTrackedEvent = (event: Event) => {
@@ -109,6 +110,7 @@ export function Analytics() {
   }, [consent, pathname, sendEvent]);
 
   useEffect(() => {
+    if (pathname.startsWith("/admin")) return;
     if (consent !== "accepted") return;
     const query = searchParams.toString();
     sendEvent("page_view", { page_path: `${pathname}${query ? `?${query}` : ""}` });
